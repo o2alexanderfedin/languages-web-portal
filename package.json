@@ -12,13 +12,15 @@
   "scripts": {
     "build": "tsc --build",
     "build:clean": "tsc --build --clean",
-    "dev": "npm run dev --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
+    "dev": "npm run dev -w @repo/server",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "npm run lint --workspaces --if-present",
     "format": "npm run format --workspaces --if-present",
-    "typecheck": "tsc --build --dry"
+    "typecheck": "tsc --build --noEmit"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.6"
   }
 }

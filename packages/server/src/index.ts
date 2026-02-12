@@ -4,9 +4,13 @@ import "express-async-errors";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import path from "path";
+import { fileURLToPath } from "url";
 import { config } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import healthRouter from "./routes/health.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
@@ -16,17 +20,32 @@ app.use(cors());
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// API routes
+// API routes (MUST be before Vite middleware and static files)
 app.use("/api", healthRouter);
 
-// Development mode placeholder
+// Development mode: Vite middleware
 if (config.nodeEnv === "development") {
-  console.log("[dev] Vite middleware will be added in Plan 02");
+  const { createServer: createViteServer } = await import("vite");
+  const clientRoot = path.resolve(__dirname, "../../client");
+  const vite = await createViteServer({
+    server: { middlewareMode: true },
+    appType: "spa",
+    root: clientRoot,
+  });
+  app.use(vite.middlewares);
+  console.log("[dev] Vite middleware enabled");
 }
 
-// Production mode placeholder
+// Production mode: static file serving
 if (config.nodeEnv === "production") {
-  // Static file serving will be added in Plan 02
+  const clientDistPath = path.resolve(__dirname, "../../client/dist");
+  app.use(express.static(clientDistPath));
+
+  // Catch-all route for client-side routing
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(clientDistPath, "index.html"));
+  });
+  console.log("[prod] Serving static files from", clientDistPath);
 }
 
 // Error handler MUST be last
