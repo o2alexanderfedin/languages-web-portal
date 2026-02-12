@@ -1,16 +1,2 @@
-/**
- * Shared type definitions barrel export
- */
-export type {
-  ToolStatus,
-  ToolCategory,
-  ToolLanguage,
-  Tool,
-} from "./tool.js";
-
-export type {
-  ApiErrorType,
-  ApiError,
-  ApiResponse,
-  HealthResponse,
-} from "./api.js";
+export * from "./tool.js";
+export * from "./api.js";
