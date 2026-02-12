@@ -1,6 +1,6 @@
-import { Router } from "express";
-import type { HealthResponse } from "@repo/shared";
-import { config } from "../config/env.js";
+import { Router } from 'express';
+import type { HealthResponse } from '@repo/shared';
+import { config } from '../config/env.js';
 
 const router = Router();
 
@@ -8,9 +8,9 @@ const router = Router();
  * Health check endpoint
  * GET /api/health
  */
-router.get("/health", (req, res) => {
+router.get('/health', (req, res) => {
   const healthResponse: HealthResponse = {
-    status: "ok",
+    status: 'ok',
     timestamp: Date.now(),
     uptime: process.uptime(),
     environment: config.nodeEnv,

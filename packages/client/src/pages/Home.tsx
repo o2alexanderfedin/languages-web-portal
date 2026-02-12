@@ -1,36 +1,34 @@
-import { useGetHealthQuery } from "@/features/health/api";
-import { useTheme } from "@/components/ThemeProvider";
-import { Button } from "@/components/ui/button";
+import { useGetHealthQuery } from '@/features/health/api';
+import { useTheme } from '@/components/ThemeProvider';
+import { Button } from '@/components/ui/button';
 
 export function Home() {
   const { data: health, isLoading, error } = useGetHealthQuery();
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else if (theme === "dark") {
-      setTheme("system");
+    if (theme === 'light') {
+      setTheme('dark');
+    } else if (theme === 'dark') {
+      setTheme('system');
     } else {
-      setTheme("light");
+      setTheme('light');
     }
   };
 
   const getThemeLabel = () => {
-    if (theme === "system") return "System";
+    if (theme === 'system') return 'System';
     return theme.charAt(0).toUpperCase() + theme.slice(1);
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="max-w-2xl w-full space-y-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">
-          Hapyy Languages Web Portal
-        </h1>
+        <h1 className="text-4xl font-bold tracking-tight">Hapyy Languages Web Portal</h1>
 
         <p className="text-lg text-muted-foreground">
-          Try formal verification and transpiler tools directly in your browser
-          with zero local setup.
+          Try formal verification and transpiler tools directly in your browser with zero local
+          setup.
         </p>
 
         <div className="flex items-center justify-center gap-4 pt-4">
@@ -38,22 +36,22 @@ export function Home() {
             <div
               className={`h-3 w-3 rounded-full ${
                 isLoading
-                  ? "bg-yellow-500"
+                  ? 'bg-yellow-500'
                   : error
-                  ? "bg-red-500"
-                  : health?.status === "ok"
-                  ? "bg-green-500"
-                  : "bg-gray-500"
+                    ? 'bg-red-500'
+                    : health?.status === 'ok'
+                      ? 'bg-green-500'
+                      : 'bg-gray-500'
               }`}
             />
             <span className="text-sm font-medium">
               {isLoading
-                ? "Connecting..."
+                ? 'Connecting...'
                 : error
-                ? "Disconnected"
-                : health?.status === "ok"
-                ? "Connected"
-                : "Unknown"}
+                  ? 'Disconnected'
+                  : health?.status === 'ok'
+                    ? 'Connected'
+                    : 'Unknown'}
             </span>
           </div>
 
@@ -64,8 +62,7 @@ export function Home() {
 
         {health && !isLoading && (
           <div className="text-xs text-muted-foreground">
-            Environment: {health.environment} | Uptime:{" "}
-            {Math.floor(health.uptime)}s
+            Environment: {health.environment} | Uptime: {Math.floor(health.uptime)}s
           </div>
         )}
       </div>

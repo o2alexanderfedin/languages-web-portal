@@ -10,7 +10,7 @@ export class AppError extends Error {
     statusCode: number,
     message: string,
     isOperational: boolean = true,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ) {
     super(message);
     this.statusCode = statusCode;
@@ -19,7 +19,7 @@ export class AppError extends Error {
 
     // Maintain proper prototype chain for instanceof checks
     Object.setPrototypeOf(this, AppError.prototype);
-    
+
     // Capture stack trace
     Error.captureStackTrace(this, this.constructor);
   }

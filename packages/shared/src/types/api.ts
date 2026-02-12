@@ -1,4 +1,4 @@
-export type ApiErrorType = "user_error" | "system_error";
+export type ApiErrorType = 'user_error' | 'system_error';
 
 export interface ApiError {
   type: ApiErrorType;
@@ -6,12 +6,10 @@ export interface ApiError {
   details?: Record<string, unknown>;
 }
 
-export type ApiResponse<T> = 
-  | { data: T }
-  | { error: ApiError };
+export type ApiResponse<T> = { data: T } | { error: ApiError };
 
 export interface HealthResponse {
-  status: "ok";
+  status: 'ok';
   timestamp: number;
   uptime: number;
   environment: string;
