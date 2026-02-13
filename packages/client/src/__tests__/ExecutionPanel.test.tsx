@@ -1,9 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { ExecutionPanel } from '@/features/execution/ExecutionPanel';
 import { executionApi } from '@/features/execution/executionApi';
+
+// Mock useSSE hook
+vi.mock('@/hooks/useSSE', () => ({
+  useSSE: vi.fn(() => ({
+    connectionState: 'idle',
+  })),
+}));
 
 // Create a test store
 function createTestStore() {
@@ -14,6 +21,10 @@ function createTestStore() {
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(executionApi.middleware),
   });
 }
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 describe('ExecutionPanel', () => {
   it('should render Run button disabled when no projectId', () => {
