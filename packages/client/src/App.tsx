@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { store } from "@/store";
 import { Home } from "@/pages/Home";
+import { Landing } from "@/pages/Landing";
 
 function App() {
   return (
@@ -10,7 +11,8 @@ function App() {
       <ThemeProvider defaultTheme="system" storageKey="hapyy-theme">
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/demo" element={<Home />} />
             <Route path="*" element={<div className="min-h-screen flex items-center justify-center text-xl">404 - Page Not Found</div>} />
           </Routes>
         </BrowserRouter>

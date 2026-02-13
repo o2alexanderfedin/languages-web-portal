@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 import { useGetHealthQuery } from '@/features/health/api';
 import { useTheme } from '@/components/ThemeProvider';
 import { Button } from '@/components/ui/button';
@@ -28,12 +29,11 @@ export function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="max-w-5xl w-full space-y-8 text-center lg:text-left">
-        <h1 className="text-4xl font-bold tracking-tight">Hapyy Languages Web Portal</h1>
-
-        <p className="text-lg text-muted-foreground">
-          Try formal verification and transpiler tools directly in your browser with zero local
-          setup.
-        </p>
+        <div className="flex items-center justify-between">
+          <Link to="/" className="text-primary hover:underline text-sm">
+            ← Back to Home
+          </Link>
+        </div>
 
         <div className="flex items-center justify-center gap-4 pt-4">
           <div className="flex items-center gap-2">
