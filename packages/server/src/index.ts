@@ -10,6 +10,7 @@ import { config } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import healthRouter from "./routes/health.js";
 import uploadRouter from "./routes/upload.js";
+import examplesRouter from "./routes/examples.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -33,6 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 // API routes (MUST be before Vite middleware and static files)
 app.use("/api", healthRouter);
 app.use("/api", uploadRouter);
+app.use("/api", examplesRouter);
 
 // Development mode: Vite middleware
 if (config.nodeEnv === "development") {

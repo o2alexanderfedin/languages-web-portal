@@ -28,3 +28,22 @@ export interface UploadConfig {
   maxSize: number;
   allowedTypes: readonly string[];
 }
+
+/**
+ * Example project information
+ */
+export interface ExampleInfo {
+  name: string;
+  description: string;
+}
+
+/**
+ * Example load response
+ */
+export interface ExampleLoadResponse {
+  projectId: string;
+  message: string;
+  fileCount: number;
+  toolId: string;
+  exampleName: string;
+}
