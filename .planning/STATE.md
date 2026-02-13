@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 3 of 6 (Process Execution & Sandboxing)
-Plan: 1 of 3 in current phase - COMPLETE
-Status: Phase 3 in progress (1 of 3 plans complete)
-Last activity: 2026-02-13 — Completed Plan 03-01: Execution infrastructure with queue service and rate limiting
+Plan: 2 of 3 in current phase - COMPLETE
+Status: Phase 3 in progress (2 of 3 plans complete)
+Last activity: 2026-02-13 — Completed Plan 03-02: Execution service and route with execa and Docker security
 
-Progress: [████████░░] 33% (2/6 phases complete, 1/3 plans complete in phase 3)
+Progress: [████████░░] 40% (2/6 phases complete, 2/3 plans complete in phase 3)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 6.7 minutes
-- Total execution time: 0.70 hours
+- Total plans completed: 7
+- Average duration: 6.4 minutes
+- Total execution time: 0.75 hours
 
 **By Phase:**
 
@@ -29,7 +29,7 @@ Progress: [████████░░] 33% (2/6 phases complete, 1/3 plans c
 |-------|-------|-------|----------|
 | 01 | 3 | 1606s | 535s |
 | 02 | 2 | 913s | 457s |
-| 03 | 1 | 218s | 218s |
+| 03 | 2 | 557s | 279s |
 
 **Recent Execution Details:**
 
@@ -41,6 +41,7 @@ Progress: [████████░░] 33% (2/6 phases complete, 1/3 plans c
 | Phase 02 P01 | 460s (7.7m) | 2 tasks | 13 files | 2026-02-13 |
 | Phase 02 P02 | 453s (7.5m) | 2 tasks | 26 files | 2026-02-13 |
 | Phase 03 P01 | 218s (3.6m) | 2 tasks | 9 files | 2026-02-13 |
+| Phase 03 P02 | 339s (5.6m) | 2 tasks | 8 files | 2026-02-13 |
 
 ## Accumulated Context
 
@@ -100,6 +101,17 @@ Recent decisions affecting current work:
 - Mark only cpp-to-c and cpp-to-rust transpilers as available (others are placeholders)
 - Place command paths in /usr/local/bin (deployment configuration, not build-time dependency)
 
+**Phase 03 Plan 02 decisions:**
+- Use execa v9 for subprocess execution (ESM-native, mature, secure)
+- Use isCanceled/isTerminated instead of 'killed' property (execa v9 API)
+- Synchronous request-response for Phase 3 (Phase 4 adds SSE streaming)
+- Lazy ProjectService initialization pattern for test environment variables
+- Use Node.js setTimeout for timeout tests (cross-platform compatibility)
+- Docker security: no-new-privileges, cap_drop ALL, read_only root, tmpfs for writable dirs
+- Resource limits: 4 CPU cores, 1G memory max, 1 CPU/256M reserved
+- Copy examples directory to production image for /api/examples endpoint
+- Create uploads directory with nodejs user ownership before USER switch
+
 ### Pending Todos
 
 None yet.
@@ -119,10 +131,10 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-13 (plan execution)
-Stopped at: Completed 03-01-PLAN.md - Execution infrastructure with queue service and rate limiting
+Stopped at: Completed 03-02-PLAN.md - Execution service and route with execa and Docker security
 Resume file: None
-Next: Execute Phase 03 Plan 02 (Execution service and route) or continue verification
+Next: Execute Phase 03 Plan 03 (Real-time output streaming via SSE) or continue verification
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-13 after completing Phase 03 Plan 01 (Execution infrastructure) - Phase 3 in progress*
+*Last updated: 2026-02-13 after completing Phase 03 Plan 02 (Execution service and route) - Phase 3 in progress*
