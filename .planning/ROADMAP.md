@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Process Execution & Sandboxing** - CLI tool spawning with resource limits and concurrency control
 - [x] **Phase 4: Real-Time Output Streaming** - SSE-based stdout/stderr streaming to browser console
 - [x] **Phase 5: Output Preview & Download** - Result visualization, file tree, and downloadable outputs
-- [ ] **Phase 6: Landing Page & Examples** - Marketing content, tool comparison, and example gallery
+- [x] **Phase 6: Landing Page & Examples** - Marketing content, tool comparison, and example gallery
 
 ## Phase Details
 
@@ -125,8 +125,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01-PLAN.md -- Landing page components (HeroSection, ToolComparisonGrid, QuickStartCTA), routing update (/ -> Landing, /demo -> Home)
-- [ ] 06-02-PLAN.md -- Shareable demo links (ShareableLink component, URL param wiring), comprehensive landing page tests
+- [x] 06-01-PLAN.md -- Landing page components (HeroSection, ToolComparisonGrid, QuickStartCTA), routing update (/ -> Landing, /demo -> Home)
+- [x] 06-02-PLAN.md -- Shareable demo links (ShareableLink component, URL param wiring), comprehensive landing page tests
 
 ## Progress
 
@@ -140,8 +140,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 3. Process Execution & Sandboxing | 3/3 | Complete | 2026-02-13 |
 | 4. Real-Time Output Streaming | 2/2 | Complete | 2026-02-12 |
 | 5. Output Preview & Download | 3/3 | Complete | 2026-02-13 |
-| 6. Landing Page & Examples | 0/2 | Not started | - |
+| 6. Landing Page & Examples | 2/2 | Complete | 2026-02-13 |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-13 after Phase 6 planning complete*
+*Last updated: 2026-02-13 after Phase 6 execution complete*
