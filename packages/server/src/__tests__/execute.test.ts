@@ -8,6 +8,7 @@ import 'express-async-errors';
 import { errorHandler } from '../middleware/errorHandler.js';
 import executeRouter from '../routes/execute.js';
 import * as executionService from '../services/executionService.js';
+import * as streamServiceModule from '../services/streamService.js';
 import type { ExecutionResponse } from '@repo/shared';
 
 describe('Execute API', () => {
@@ -44,6 +45,11 @@ describe('Execute API', () => {
       completedAt: new Date().toISOString(),
       durationMs: 1234,
     } as ExecutionResponse);
+
+    // Mock streamService methods to avoid actual SSE operations
+    vi.spyOn(streamServiceModule.streamService, 'sendOutput').mockResolvedValue();
+    vi.spyOn(streamServiceModule.streamService, 'sendComplete').mockResolvedValue();
+    vi.spyOn(streamServiceModule.streamService, 'sendError').mockResolvedValue();
   });
 
   afterEach(async () => {
@@ -54,7 +60,7 @@ describe('Execute API', () => {
   });
 
   describe('POST /api/execute', () => {
-    it('should accept valid execution request and return ExecutionResponse', async () => {
+    it('should return jobId immediately without blocking', async () => {
       const response = await request(app)
         .post('/api/execute')
         .send({
@@ -63,19 +69,45 @@ describe('Execute API', () => {
         })
         .expect(200);
 
+      // Response should contain ONLY jobId (non-blocking)
       expect(response.body).toHaveProperty('data');
       expect(response.body.data).toHaveProperty('jobId');
-      expect(response.body.data).toHaveProperty('status');
-      expect(response.body.data).toHaveProperty('exitCode');
-      expect(response.body.data).toHaveProperty('output');
-      expect(response.body.data.status).toBe('completed');
-      expect(response.body.data.exitCode).toBe(0);
+      expect(typeof response.body.data.jobId).toBe('string');
+      expect(response.body.data.jobId).toMatch(/^[0-9a-f-]{36}$/); // UUID format
 
-      // Verify executionService.executeJob was called
-      expect(executionService.executionService.executeJob).toHaveBeenCalledWith(
-        expect.objectContaining({
+      // Should NOT contain execution result fields (those come via SSE)
+      expect(response.body.data).not.toHaveProperty('status');
+      expect(response.body.data).not.toHaveProperty('exitCode');
+      expect(response.body.data).not.toHaveProperty('output');
+    });
+
+    it('should trigger background execution with streamService callbacks', async () => {
+      await request(app)
+        .post('/api/execute')
+        .send({
           toolId: 'cpp-to-c-transpiler',
-          projectPath: join(testUploadDir, testProjectId),
+          projectId: testProjectId,
+        })
+        .expect(200);
+
+      // Give background job a moment to execute (fire-and-forget pattern)
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Verify executionService.executeJob was called with onOutput callback
+      const executeJobCall = executionService.executionService.executeJob.mock.calls[0][0];
+      expect(executeJobCall).toBeDefined();
+      expect(executeJobCall.toolId).toBe('cpp-to-c-transpiler');
+      expect(executeJobCall.projectPath).toContain('execute-test-');
+      expect(executeJobCall.projectPath).toContain('test-project-123');
+      expect(typeof executeJobCall.jobId).toBe('string');
+      expect(typeof executeJobCall.onOutput).toBe('function');
+
+      // Verify streamService.sendComplete was called with result
+      expect(streamServiceModule.streamService.sendComplete).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          status: 'completed',
+          exitCode: 0,
         })
       );
     });
