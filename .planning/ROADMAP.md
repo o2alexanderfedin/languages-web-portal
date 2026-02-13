@@ -50,10 +50,11 @@ Plans:
   5. Server rejects malicious archives (zip bombs, path traversal, symlinks) with clear error messages
   6. User can load pre-built example projects (3-5 per tool) with one click
   7. Each client session gets isolated project directory that prevents cross-contamination
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] (Plans will be created during /gsd:plan-phase 2)
+- [ ] 02-01-PLAN.md -- Server upload infrastructure: project isolation service, path security, MIME validation, multer + ZIP security middleware, upload route
+- [ ] 02-02-PLAN.md -- Client upload UI with react-dropzone, RTK Query integration, example projects service, and pre-built example data
 
 ### Phase 3: Process Execution & Sandboxing
 **Goal**: CLI tools execute in sandboxed environments with resource limits and concurrency control
@@ -129,7 +130,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Setup & Foundation | 3/3 | Complete | 2026-02-12 |
-| 2. File Upload & Validation | 0/TBD | Not started | - |
+| 2. File Upload & Validation | 0/2 | Planned | - |
 | 3. Process Execution & Sandboxing | 0/TBD | Not started | - |
 | 4. Real-Time Output Streaming | 0/TBD | Not started | - |
 | 5. Output Preview & Download | 0/TBD | Not started | - |
@@ -137,4 +138,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-12 after Phase 1 execution complete*
+*Last updated: 2026-02-12 after Phase 2 planning complete*
