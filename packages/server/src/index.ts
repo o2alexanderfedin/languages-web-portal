@@ -15,7 +15,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 // Security and parsing middleware
-app.use(helmet());
+if (config.nodeEnv === "production") {
+  app.use(helmet());
+} else {
+  // In dev mode, disable CSP so Vite's inline scripts and HMR WebSocket work
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+    }),
+  );
+}
 app.use(cors());
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true }));
