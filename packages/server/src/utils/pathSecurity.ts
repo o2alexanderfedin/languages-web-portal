@@ -1,4 +1,3 @@
-import { realpath } from 'fs/promises';
 import { lstat } from 'fs/promises';
 import { resolve, sep } from 'path';
 import { UserError } from '../types/errors.js';

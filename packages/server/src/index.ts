@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 import { config } from "./config/env.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import healthRouter from "./routes/health.js";
+import uploadRouter from "./routes/upload.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -31,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // API routes (MUST be before Vite middleware and static files)
 app.use("/api", healthRouter);
+app.use("/api", uploadRouter);
 
 // Development mode: Vite middleware
 if (config.nodeEnv === "development") {
@@ -61,7 +63,7 @@ if (config.nodeEnv === "production") {
 app.use(errorHandler);
 
 // Start server
-const server = app.listen(config.port, () => {
+app.listen(config.port, () => {
   console.log(`Server running on port ${config.port}`);
   console.log(`Environment: ${config.nodeEnv}`);
   console.log(`Version: ${config.version}`);
