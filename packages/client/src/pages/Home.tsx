@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { useGetHealthQuery } from '@/features/health/api';
 import { useTheme } from '@/components/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import { UploadZone } from '@/features/upload/UploadZone';
+import { ExecutionPanel } from '@/features/execution/ExecutionPanel';
 
 export function Home() {
+  const [projectId, setProjectId] = useState<string | null>(null);
   const { data: health, isLoading, error } = useGetHealthQuery();
   const { theme, setTheme } = useTheme();
 
@@ -69,7 +72,12 @@ export function Home() {
 
         <div className="pt-8 space-y-4">
           <h2 className="text-2xl font-semibold">Upload Your Code</h2>
-          <UploadZone />
+          <UploadZone onUploadSuccess={setProjectId} />
+        </div>
+
+        <div className="pt-8 space-y-4">
+          <h2 className="text-2xl font-semibold">Run a Tool</h2>
+          <ExecutionPanel projectId={projectId} />
         </div>
       </div>
     </div>
