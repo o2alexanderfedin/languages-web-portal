@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Users can try any Hapyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Phase 2 - File Upload & Validation
+**Current focus:** Phase 3 - Process Execution & Sandboxing
 
 ## Current Position
 
-Phase: 2 of 6 (File Upload & Validation)
-Plan: 2 of 2 in current phase - COMPLETE
-Status: Phase 2 complete (both plans complete)
-Last activity: 2026-02-13 — Completed Plan 02-02: Client-side upload UI with drag-and-drop and pre-built examples
+Phase: 3 of 6 (Process Execution & Sandboxing)
+Plan: 1 of 3 in current phase - COMPLETE
+Status: Phase 3 in progress (1 of 3 plans complete)
+Last activity: 2026-02-13 — Completed Plan 03-01: Execution infrastructure with queue service and rate limiting
 
-Progress: [████████░░] 100% (2/6 phases complete, 2/2 plans complete in phase 2)
+Progress: [████████░░] 33% (2/6 phases complete, 1/3 plans complete in phase 3)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 7.6 minutes
-- Total execution time: 0.63 hours
+- Total plans completed: 6
+- Average duration: 6.7 minutes
+- Total execution time: 0.70 hours
 
 **By Phase:**
 
@@ -29,6 +29,7 @@ Progress: [████████░░] 100% (2/6 phases complete, 2/2 plans 
 |-------|-------|-------|----------|
 | 01 | 3 | 1606s | 535s |
 | 02 | 2 | 913s | 457s |
+| 03 | 1 | 218s | 218s |
 
 **Recent Execution Details:**
 
@@ -39,6 +40,7 @@ Progress: [████████░░] 100% (2/6 phases complete, 2/2 plans 
 | Phase 01 P03 | 840s (14.0m) | 2 tasks | 45 files | 2026-02-12 |
 | Phase 02 P01 | 460s (7.7m) | 2 tasks | 13 files | 2026-02-13 |
 | Phase 02 P02 | 453s (7.5m) | 2 tasks | 26 files | 2026-02-13 |
+| Phase 03 P01 | 218s (3.6m) | 2 tasks | 9 files | 2026-02-13 |
 
 ## Accumulated Context
 
@@ -90,6 +92,14 @@ Recent decisions affecting current work:
 - Resolve example directory path via ../../examples from dist/ (TypeScript compiles to dist/)
 - Client-side validation before server upload for immediate feedback and reduced server load
 
+**Phase 03 Plan 01 decisions:**
+- Use p-queue v9 for concurrency control (ESM-native, mature library)
+- Set concurrency to os.cpus().length for optimal resource utilization
+- Track last 100 job durations for rolling average wait estimation
+- Separate hourly (20/hour) and concurrent (5 active) rate limits per IP
+- Mark only cpp-to-c and cpp-to-rust transpilers as available (others are placeholders)
+- Place command paths in /usr/local/bin (deployment configuration, not build-time dependency)
+
 ### Pending Todos
 
 None yet.
@@ -109,10 +119,10 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-13 (plan execution)
-Stopped at: Completed 02-02-PLAN.md - Client-side upload UI with drag-and-drop and pre-built examples
+Stopped at: Completed 03-01-PLAN.md - Execution infrastructure with queue service and rate limiting
 Resume file: None
-Next: Plan Phase 03 (Process Execution & Sandboxing) or continue with verification
+Next: Execute Phase 03 Plan 02 (Execution service and route) or continue verification
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-13 after completing Phase 02 Plan 02 (Client upload UI) - Phase 2 complete*
+*Last updated: 2026-02-13 after completing Phase 03 Plan 01 (Execution infrastructure) - Phase 3 in progress*
