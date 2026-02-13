@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 
 ## Current Position
 
-Phase: 4 of 6 (Real-time Output Streaming)
-Plan: 2 of 2 in current phase - COMPLETE
-Status: Phase 4 COMPLETE (client-side SSE streaming UI)
-Last activity: 2026-02-13 — Completed Plan 04-02: Client-side SSE streaming UI
+Phase: 5 of 6 (Output Preview & Download)
+Plan: 1 of 3 in current phase - COMPLETE
+Status: Phase 5 IN PROGRESS (output infrastructure backend)
+Last activity: 2026-02-13 — Completed Plan 05-01: Output infrastructure backend
 
-Progress: [████████░░] 67% (4 phases started, 4 complete, 10 of 15 plans complete)
+Progress: [████████░░] 73% (5 phases started, 4 complete, 11 of 15 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 5.9 minutes
-- Total execution time: 1.09 hours
+- Total plans completed: 11
+- Average duration: 5.8 minutes
+- Total execution time: 1.19 hours
 
 **By Phase:**
 
@@ -31,6 +31,7 @@ Progress: [████████░░] 67% (4 phases started, 4 complete, 10
 | 02 | 2 | 913s | 457s |
 | 03 | 3 | 872s | 291s |
 | 04 | 2 | 746s | 373s |
+| 05 | 1 | 362s | 362s |
 
 **Recent Execution Details:**
 
@@ -46,6 +47,7 @@ Progress: [████████░░] 67% (4 phases started, 4 complete, 10
 | Phase 03 P03 | 315s (5.2m) | 2 tasks | 8 files | 2026-02-13 |
 | Phase 04 P01 | 293s (4.9m) | 2 tasks | 13 files | 2026-02-13 |
 | Phase 04 P02 | 453s (7.6m) | 2 tasks | 9 files | 2026-02-13 |
+| Phase 05 P01 | 362s (6.0m) | 2 tasks | 10 files | 2026-02-13 |
 
 ## Accumulated Context
 
@@ -143,6 +145,18 @@ Recent decisions affecting current work:
 - Mock useSSE at module level in ExecutionPanel tests (simpler than mocking global EventSource)
 - Use singleton AnsiUp instance at module level for ConsoleView (performance optimization)
 
+**Phase 05 Plan 01 decisions:**
+- Use archiver library (already installed) for streaming ZIP creation with compression level 6
+- Truncate file previews at 500KB to prevent memory issues with large output files
+- Detect binary files via null byte check in first 8KB, return empty content with language='binary'
+- Normalize file tree paths to forward slashes for web compatibility across platforms
+- Use lazy projectService initialization pattern for test environment variable support
+- Sort file tree children: directories first, then alphabetically by name
+- CleanupService defaults to 10-minute TTL for automatic directory cleanup
+- Signal handlers (SIGTERM/SIGINT) excluded in test environment to avoid test runner interference
+- Verify directory exists before streaming ZIP to return proper 404 for missing projects
+- Use encoded path traversal in tests (..%2F..%2F) to avoid Express normalization
+
 ### Pending Todos
 
 None yet.
@@ -162,10 +176,10 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-13 (plan execution)
-Stopped at: Completed 04-02-PLAN.md - Client-side SSE streaming UI
+Stopped at: Completed 05-01-PLAN.md - Output infrastructure backend
 Resume file: None
-Next: Phase 5 (Backend Tool Integration)
+Next: Phase 5 Plan 2 (Client file browser UI)
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-13 after completing Phase 04 Plan 02 (Client-side SSE streaming UI)*
+*Last updated: 2026-02-13 after completing Phase 05 Plan 01 (Output infrastructure backend)*
