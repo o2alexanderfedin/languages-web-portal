@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 5 of 6 (Output Preview & Download)
-Plan: 1 of 3 in current phase - COMPLETE
-Status: Phase 5 IN PROGRESS (output infrastructure backend)
-Last activity: 2026-02-13 — Completed Plan 05-01: Output infrastructure backend
+Plan: 2 of 3 in current phase - COMPLETE
+Status: Phase 5 IN PROGRESS (client file browser UI)
+Last activity: 2026-02-13 — Completed Plan 05-02: Client file browser UI
 
-Progress: [████████░░] 73% (5 phases started, 4 complete, 11 of 15 plans complete)
+Progress: [████████░░] 80% (5 phases started, 4 complete, 12 of 15 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 5.8 minutes
-- Total execution time: 1.19 hours
+- Total plans completed: 12
+- Average duration: 5.4 minutes
+- Total execution time: 1.22 hours
 
 **By Phase:**
 
@@ -31,7 +31,7 @@ Progress: [████████░░] 73% (5 phases started, 4 complete, 11
 | 02 | 2 | 913s | 457s |
 | 03 | 3 | 872s | 291s |
 | 04 | 2 | 746s | 373s |
-| 05 | 1 | 362s | 362s |
+| 05 | 2 | 541s | 271s |
 
 **Recent Execution Details:**
 
@@ -48,6 +48,7 @@ Progress: [████████░░] 73% (5 phases started, 4 complete, 11
 | Phase 04 P01 | 293s (4.9m) | 2 tasks | 13 files | 2026-02-13 |
 | Phase 04 P02 | 453s (7.6m) | 2 tasks | 9 files | 2026-02-13 |
 | Phase 05 P01 | 362s (6.0m) | 2 tasks | 10 files | 2026-02-13 |
+| Phase 05 P02 | 179s (3.0m) | 2 tasks | 4 files | 2026-02-13 |
 
 ## Accumulated Context
 
@@ -157,6 +158,15 @@ Recent decisions affecting current work:
 - Verify directory exists before streaming ZIP to return proper 404 for missing projects
 - Use encoded path traversal in tests (..%2F..%2F) to avoid Express normalization
 
+**Phase 05 Plan 02 decisions:**
+- Use react-syntax-highlighter light build with manual language registration to minimize bundle size (~50KB vs 500KB+)
+- Use StaticTreeDataProvider from react-complex-tree for read-only file tree (simpler than custom provider)
+- Direct anchor link for download instead of RTK Query endpoint (simpler, no blob handling needed)
+- Output type badges use color coding: blue for transpiled source, green for verification reports, gray for logs
+- Binary files show download-to-view message instead of attempting to render garbled content
+- Truncation indicator shows as yellow banner for files over 500KB preview limit
+- Two-column responsive layout: tree + download on left (1/3), preview on right (2/3), stacked on mobile
+
 ### Pending Todos
 
 None yet.
@@ -176,10 +186,10 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-13 (plan execution)
-Stopped at: Completed 05-01-PLAN.md - Output infrastructure backend
+Stopped at: Completed 05-02-PLAN.md - Client file browser UI
 Resume file: None
-Next: Phase 5 Plan 2 (Client file browser UI)
+Next: Phase 5 Plan 3 (Integration testing and Home page connection)
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-13 after completing Phase 05 Plan 01 (Output infrastructure backend)*
+*Last updated: 2026-02-13 after completing Phase 05 Plan 02 (Client file browser UI)*
