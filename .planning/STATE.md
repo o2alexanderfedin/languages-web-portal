@@ -5,29 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Users can try any Hapyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Phase 1 - Project Setup & Foundation
+**Current focus:** Phase 2 - File Upload & Validation
 
 ## Current Position
 
-Phase: 1 of 6 (Project Setup & Foundation) - COMPLETE
-Plan: 3 of 3 in current phase
-Status: Phase complete, ready for Phase 2
-Last activity: 2026-02-12 — Completed Plan 01-03: Docker containerization, ESLint, Prettier, and Phase 1 verification
+Phase: 2 of 6 (File Upload & Validation)
+Plan: 1 of 2 in current phase - COMPLETE
+Status: Phase 2 in progress (Plan 01 complete, Plan 02 remaining)
+Last activity: 2026-02-13 — Completed Plan 02-01: Server-side upload infrastructure with defense-in-depth security
 
-Progress: [████░░░░░░] 50% (1/6 phases complete, 3/3 plans in phase 1)
+Progress: [████░░░░░░] 50% (1/6 phases complete, 1/2 plans complete in phase 2)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 8.9 minutes
-- Total execution time: 0.45 hours
+- Total plans completed: 4
+- Average duration: 7.7 minutes
+- Total execution time: 0.51 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 3 | 1606s | 535s |
+| 02 | 1 | 460s | 460s |
 
 **Recent Execution Details:**
 
@@ -36,6 +37,7 @@ Progress: [████░░░░░░] 50% (1/6 phases complete, 3/3 plans i
 | Phase 01 P01 | 258s (4.3m) | 2 tasks | 24 files | 2026-02-12 |
 | Phase 01 P02 | 508s (8.5m) | 2 tasks | 47 files | 2026-02-12 |
 | Phase 01 P03 | 840s (14.0m) | 2 tasks | 45 files | 2026-02-12 |
+| Phase 02 P01 | 460s (7.7m) | 2 tasks | 13 files | 2026-02-13 |
 
 ## Accumulated Context
 
@@ -74,6 +76,13 @@ Recent decisions affecting current work:
 - Add Docker HEALTHCHECK using wget for container orchestration
 - Disable helmet CSP in dev mode to allow Vite HMR (keep enabled in production)
 
+**Phase 02 Plan 01 decisions:**
+- Use multer memoryStorage instead of diskStorage for validation before disk write
+- Use yauzl for ZIP parsing (pompelmi doesn't exist as npm package)
+- Lazy ProjectService initialization to support test environment variables
+- Defense-in-depth security: multer MIME filter -> magic bytes -> ZIP security -> path validation
+- Archiver normalizes path traversal in test ZIPs (library safety feature)
+
 ### Pending Todos
 
 None yet.
@@ -92,11 +101,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-12 (plan execution)
-Stopped at: Completed 01-03-PLAN.md - Docker containerization, ESLint v9, Prettier, human verification checkpoint. Phase 1 (Project Setup & Foundation) COMPLETE.
+Last session: 2026-02-13 (plan execution)
+Stopped at: Completed 02-01-PLAN.md - Server-side upload infrastructure with defense-in-depth security validation
 Resume file: None
-Next: Plan Phase 2 (File Upload & Validation) or proceed to execute Phase 2 plans
+Next: Execute Phase 02 Plan 02 (client-side upload UI) or plan next phase
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-12 after completing Phase 01 Plan 03 (Phase 1 complete)*
+*Last updated: 2026-02-13 after completing Phase 02 Plan 01 (File upload backend)*
