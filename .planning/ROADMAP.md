@@ -122,10 +122,11 @@ Plans:
   3. User can generate shareable link to specific tool demo with their configuration
   4. Landing page provides quick-start flow to try a tool immediately (one-click to demo)
   5. Sales narrative clearly positions tools in autonomous software development context
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] (Plans will be created during /gsd:plan-phase 6)
+- [ ] 06-01-PLAN.md -- Landing page components (HeroSection, ToolComparisonGrid, QuickStartCTA), routing update (/ -> Landing, /demo -> Home)
+- [ ] 06-02-PLAN.md -- Shareable demo links (ShareableLink component, URL param wiring), comprehensive landing page tests
 
 ## Progress
 
@@ -139,8 +140,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 3. Process Execution & Sandboxing | 3/3 | Complete | 2026-02-13 |
 | 4. Real-Time Output Streaming | 2/2 | Complete | 2026-02-12 |
 | 5. Output Preview & Download | 3/3 | Complete | 2026-02-13 |
-| 6. Landing Page & Examples | 0/TBD | Not started | - |
+| 6. Landing Page & Examples | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-13 after Phase 5 execution complete*
+*Last updated: 2026-02-13 after Phase 6 planning complete*
