@@ -5,6 +5,7 @@ import { ValidationError } from '../types/errors.js';
 import { executionService } from '../services/executionService.js';
 import { queueService } from '../services/queueService.js';
 import { streamService } from '../services/streamService.js';
+import { cleanupService } from '../services/cleanupService.js';
 import { hourlyRateLimit, concurrentExecutionLimit } from '../middleware/rateLimiter.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectService } from '../services/projectService.js';
@@ -88,12 +89,20 @@ router.post(
         // Send completion event to SSE client
         await streamService.sendComplete(jobId, result);
 
+        // Schedule cleanup after successful execution
+        cleanupService.scheduleCleanup(projectId, projectPath);
+        console.log(`[execute] Scheduled cleanup for project ${projectId}`);
+
         // Return result from queued job (for queueService duration tracking)
         return result;
       } catch (error) {
         // Send error event to SSE client
         const errorMessage = error instanceof Error ? error.message : 'Unknown execution error';
         await streamService.sendError(jobId, errorMessage);
+
+        // Schedule cleanup after failed execution
+        cleanupService.scheduleCleanup(projectId, projectPath);
+        console.log(`[execute] Scheduled cleanup for project ${projectId} (failed execution)`);
 
         // Re-throw so queueService can track failed jobs
         throw error;

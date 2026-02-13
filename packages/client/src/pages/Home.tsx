@@ -27,7 +27,7 @@ export function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
-      <div className="max-w-2xl w-full space-y-8 text-center">
+      <div className="max-w-5xl w-full space-y-8 text-center lg:text-left">
         <h1 className="text-4xl font-bold tracking-tight">Hapyy Languages Web Portal</h1>
 
         <p className="text-lg text-muted-foreground">

@@ -4,6 +4,7 @@ import { useSSE } from '../../hooks/useSSE';
 import { ToolPicker } from './ToolPicker';
 import { QueueStatus } from './QueueStatus';
 import { ConsoleView } from './ConsoleView';
+import { OutputPanel } from '@/features/output/OutputPanel';
 import { Button } from '@/components/ui/button';
 import { clsx } from 'clsx';
 import type { ExecutionResponse } from '@repo/shared';
@@ -244,6 +245,14 @@ export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
           {outputLines.length === 0 && !executionError && (
             <div className="text-sm text-muted-foreground italic">No output generated</div>
           )}
+        </div>
+      )}
+
+      {/* Output Files Section */}
+      {executionState === 'complete' && executionResult?.status === 'completed' && projectId && (
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold">Output Files</h3>
+          <OutputPanel projectId={projectId} toolCategory={selectedTool?.category} />
         </div>
       )}
     </div>
