@@ -1,5 +1,6 @@
 import archiver from 'archiver';
 import type { Response } from 'express';
+import { stat } from 'fs/promises';
 
 /**
  * Service for creating and streaming ZIP downloads of project directories
@@ -11,8 +12,12 @@ export class DownloadService {
    * @param projectPath - Absolute path to the project directory
    * @param projectId - Project identifier for the ZIP filename
    * @param res - Express response object
+   * @throws {Error} If project directory doesn't exist (ENOENT)
    */
   async streamZipDownload(projectPath: string, projectId: string, res: Response): Promise<void> {
+    // Verify directory exists before attempting to stream
+    await stat(projectPath);
+
     // Create archiver instance with compression level 6 (balanced)
     const archive = archiver('zip', {
       zlib: { level: 6 },
