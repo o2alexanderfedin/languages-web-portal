@@ -22,6 +22,7 @@
     "typecheck": "tsc --build --noEmit"
   },
   "devDependencies": {
+    "@testing-library/user-event": "^14.6.1",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
     "eslint": "^9.39.2",
