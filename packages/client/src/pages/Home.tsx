@@ -1,15 +1,47 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useSearchParams } from 'react-router';
 import { useGetHealthQuery } from '@/features/health/api';
 import { useTheme } from '@/components/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import { UploadZone } from '@/features/upload/UploadZone';
 import { ExecutionPanel } from '@/features/execution/ExecutionPanel';
+import { ShareableLink } from '@/features/landing/ShareableLink';
 
 export function Home() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [projectId, setProjectId] = useState<string | null>(null);
+  const [currentToolId, setCurrentToolId] = useState<string | null>(null);
   const { data: health, isLoading, error } = useGetHealthQuery();
   const { theme, setTheme } = useTheme();
+  const executionSectionRef = useRef<HTMLDivElement>(null);
+  const isInitialMount = useRef(true);
+
+  // Read URL params on mount to pre-select tool
+  useEffect(() => {
+    const toolParam = searchParams.get('tool');
+    const quickstartParam = searchParams.get('quickstart');
+
+    if (toolParam) {
+      setCurrentToolId(toolParam);
+    }
+
+    // Auto-scroll to execution section if quickstart param is present
+    if (quickstartParam && executionSectionRef.current) {
+      executionSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Mark initial mount complete after processing URL params
+    isInitialMount.current = false;
+  }, [searchParams]);
+
+  const handleToolChange = (toolId: string) => {
+    setCurrentToolId(toolId);
+
+    // Update URL params only when user explicitly changes tool (not on initial load)
+    if (!isInitialMount.current) {
+      setSearchParams({ tool: toolId });
+    }
+  };
 
   const toggleTheme = () => {
     if (theme === 'light') {
@@ -75,9 +107,19 @@ export function Home() {
           <UploadZone onUploadSuccess={setProjectId} />
         </div>
 
-        <div className="pt-8 space-y-4">
+        <div className="pt-8 space-y-4" ref={executionSectionRef}>
           <h2 className="text-2xl font-semibold">Run a Tool</h2>
-          <ExecutionPanel projectId={projectId} />
+          <ExecutionPanel
+            projectId={projectId}
+            initialToolId={currentToolId}
+            onToolChange={handleToolChange}
+          />
+        </div>
+
+        {/* Shareable Link Section */}
+        <div className="pt-8 space-y-4">
+          <h2 className="text-2xl font-semibold">Share This Demo</h2>
+          <ShareableLink toolId={currentToolId} />
         </div>
       </div>
     </div>

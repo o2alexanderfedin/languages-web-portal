@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useExecuteToolMutation, useGetToolsQuery } from './executionApi';
 import { useSSE } from '../../hooks/useSSE';
 import { ToolPicker } from './ToolPicker';
@@ -11,12 +11,14 @@ import type { ExecutionResponse } from '@repo/shared';
 
 interface ExecutionPanelProps {
   projectId: string | null;
+  initialToolId?: string | null;
+  onToolChange?: (toolId: string) => void;
 }
 
 type ExecutionState = 'idle' | 'streaming' | 'complete';
 
-export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
-  const [selectedToolId, setSelectedToolId] = useState<string | null>(null);
+export function ExecutionPanel({ projectId, initialToolId, onToolChange }: ExecutionPanelProps) {
+  const [selectedToolId, setSelectedToolId] = useState<string | null>(initialToolId || null);
   const [executionState, setExecutionState] = useState<ExecutionState>('idle');
   const [executionResult, setExecutionResult] = useState<ExecutionResponse | null>(null);
   const [executionError, setExecutionError] = useState<string | null>(null);
@@ -25,6 +27,19 @@ export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
 
   const [executeTool, { isLoading }] = useExecuteToolMutation();
   const { data: tools = [] } = useGetToolsQuery();
+
+  // Update selected tool when initialToolId changes (e.g., from URL params)
+  useEffect(() => {
+    if (initialToolId && initialToolId !== selectedToolId) {
+      setSelectedToolId(initialToolId);
+    }
+  }, [initialToolId]);
+
+  // Custom setSelectedToolId wrapper to notify parent of changes
+  const handleToolSelect = (toolId: string) => {
+    setSelectedToolId(toolId);
+    onToolChange?.(toolId);
+  };
 
   // Wire SSE hook for streaming output
   const { connectionState } = useSSE(jobId, {
@@ -122,7 +137,7 @@ export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
         <h3 className="text-lg font-semibold">Select a Tool</h3>
         <ToolPicker
           selectedToolId={selectedToolId}
-          onSelectTool={setSelectedToolId}
+          onSelectTool={handleToolSelect}
           disabled={executionState === 'streaming'}
         />
       </div>
