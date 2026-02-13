@@ -1,6 +1,7 @@
 import { useGetHealthQuery } from '@/features/health/api';
 import { useTheme } from '@/components/ThemeProvider';
 import { Button } from '@/components/ui/button';
+import { UploadZone } from '@/features/upload/UploadZone';
 
 export function Home() {
   const { data: health, isLoading, error } = useGetHealthQuery();
@@ -65,6 +66,11 @@ export function Home() {
             Environment: {health.environment} | Uptime: {Math.floor(health.uptime)}s
           </div>
         )}
+
+        <div className="pt-8 space-y-4">
+          <h2 className="text-2xl font-semibold">Upload Your Code</h2>
+          <UploadZone />
+        </div>
       </div>
     </div>
   );
