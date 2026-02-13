@@ -6,7 +6,13 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 export default tseslint.config(
   // Global ignores
   {
-    ignores: ['**/dist/**', '**/node_modules/**', '**/coverage/**', '**/*.d.ts'],
+    ignores: [
+      '**/dist/**',
+      '**/node_modules/**',
+      '**/coverage/**',
+      '**/*.d.ts',
+      'packages/*/src/**/*.js', // Ignore TypeScript-generated JS files (composite: true)
+    ],
   },
 
   // Base config for all TypeScript files

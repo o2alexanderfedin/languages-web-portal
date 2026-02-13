@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useExecuteToolMutation, useGetToolsQuery } from './executionApi';
+import { useSSE } from '../../hooks/useSSE';
 import { ToolPicker } from './ToolPicker';
 import { QueueStatus } from './QueueStatus';
+import { ConsoleView } from './ConsoleView';
 import { Button } from '@/components/ui/button';
 import { clsx } from 'clsx';
 import type { ExecutionResponse } from '@repo/shared';
@@ -10,30 +12,49 @@ interface ExecutionPanelProps {
   projectId: string | null;
 }
 
-type ExecutionState = 'idle' | 'executing' | 'complete';
+type ExecutionState = 'idle' | 'streaming' | 'complete';
 
 export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
   const [selectedToolId, setSelectedToolId] = useState<string | null>(null);
   const [executionState, setExecutionState] = useState<ExecutionState>('idle');
   const [executionResult, setExecutionResult] = useState<ExecutionResponse | null>(null);
   const [executionError, setExecutionError] = useState<string | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [outputLines, setOutputLines] = useState<string[]>([]);
 
   const [executeTool, { isLoading }] = useExecuteToolMutation();
   const { data: tools = [] } = useGetToolsQuery();
+
+  // Wire SSE hook for streaming output
+  const { connectionState } = useSSE(jobId, {
+    onOutput: (line) => setOutputLines((prev) => [...prev, line]),
+    onComplete: (result) => {
+      setExecutionResult(result);
+      setExecutionState('complete');
+      setJobId(null);
+    },
+    onError: () => {
+      setExecutionError('Connection to execution stream lost. The tool may still be running.');
+      setExecutionState('complete');
+      setJobId(null);
+    },
+  });
 
   const selectedTool = tools.find((tool) => tool.id === selectedToolId);
 
   const handleRun = async () => {
     if (!projectId || !selectedToolId) return;
 
-    setExecutionState('executing');
-    setExecutionError(null);
+    // Reset state for new execution
+    setOutputLines([]);
     setExecutionResult(null);
+    setExecutionError(null);
+    setExecutionState('streaming');
 
     try {
       const response = await executeTool({ toolId: selectedToolId, projectId }).unwrap();
-      setExecutionResult(response.data);
-      setExecutionState('complete');
+      const { jobId: newJobId } = response.data;
+      setJobId(newJobId); // This triggers useSSE to connect
     } catch (error: unknown) {
       setExecutionState('complete');
 
@@ -60,6 +81,8 @@ export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
     setExecutionState('idle');
     setExecutionResult(null);
     setExecutionError(null);
+    setJobId(null);
+    setOutputLines([]);
   };
 
   const getRunButtonDisabledReason = (): string | null => {
@@ -99,7 +122,7 @@ export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
         <ToolPicker
           selectedToolId={selectedToolId}
           onSelectTool={setSelectedToolId}
-          disabled={executionState === 'executing'}
+          disabled={executionState === 'streaming'}
         />
       </div>
 
@@ -111,7 +134,7 @@ export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
           size="lg"
           className="min-w-[200px]"
         >
-          {isLoading ? (
+          {executionState === 'streaming' ? (
             <>
               <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
               Running...
@@ -127,17 +150,37 @@ export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
       </div>
 
       {/* Queue Status Section */}
-      {executionState === 'executing' && <QueueStatus />}
+      {executionState === 'streaming' && <QueueStatus />}
 
-      {/* Execution Status Message */}
-      {executionState === 'executing' && selectedTool && (
-        <div className="text-sm text-muted-foreground">
-          Running {selectedTool.name}...
+      {/* Streaming Status with Connection State */}
+      {executionState === 'streaming' && selectedTool && (
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="animate-spin h-4 w-4 border-2 border-zinc-400 border-t-transparent rounded-full"></div>
+            <span>Streaming output...</span>
+          </div>
+          <span
+            className={clsx('text-xs px-2 py-1 rounded-full font-medium', {
+              'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200':
+                connectionState === 'connecting',
+              'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
+                connectionState === 'connected',
+              'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
+                connectionState === 'error',
+            })}
+          >
+            {connectionState.toUpperCase()}
+          </span>
         </div>
       )}
 
+      {/* Streaming Console View */}
+      {executionState === 'streaming' && outputLines.length > 0 && (
+        <ConsoleView lines={outputLines} isStreaming={true} />
+      )}
+
       {/* Execution Results Section */}
-      {executionState === 'complete' && (executionResult || executionError) && (
+      {executionState === 'complete' && (executionResult || executionError || outputLines.length > 0) && (
         <div className="space-y-4 border rounded-lg p-6 bg-card">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Execution Results</h3>
@@ -156,7 +199,7 @@ export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
           {/* Results Display */}
           {executionResult && (
             <div className="space-y-3">
-              {/* Status Badge */}
+              {/* Status Badge and Metrics */}
               <div className="flex items-center gap-3">
                 <span
                   className={clsx(
@@ -186,22 +229,20 @@ export function ExecutionPanel({ projectId }: ExecutionPanelProps) {
                   {executionResult.error}
                 </div>
               )}
-
-              {/* Console Output */}
-              {executionResult.output && executionResult.output.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-sm font-semibold">Output:</h4>
-                  <pre className="bg-zinc-900 text-zinc-100 p-4 rounded-lg overflow-y-auto max-h-[400px] text-xs font-mono">
-                    {executionResult.output.join('\n')}
-                  </pre>
-                </div>
-              )}
-
-              {/* No Output Message */}
-              {(!executionResult.output || executionResult.output.length === 0) && (
-                <div className="text-sm text-muted-foreground italic">No output generated</div>
-              )}
             </div>
+          )}
+
+          {/* Console Output via ConsoleView */}
+          {outputLines.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold">Output:</h4>
+              <ConsoleView lines={outputLines} isStreaming={false} />
+            </div>
+          )}
+
+          {/* No Output Message */}
+          {outputLines.length === 0 && !executionError && (
+            <div className="text-sm text-muted-foreground italic">No output generated</div>
           )}
         </div>
       )}
