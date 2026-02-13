@@ -4,6 +4,7 @@ import type { ExecutionRequest } from '@repo/shared';
 import { ValidationError } from '../types/errors.js';
 import { executionService } from '../services/executionService.js';
 import { queueService } from '../services/queueService.js';
+import { streamService } from '../services/streamService.js';
 import { hourlyRateLimit, concurrentExecutionLimit } from '../middleware/rateLimiter.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectService } from '../services/projectService.js';
@@ -23,7 +24,7 @@ function getProjectService(): ProjectService {
 /**
  * POST /api/execute
  *
- * Execute a CLI tool on a project.
+ * Execute a CLI tool on a project with real-time SSE streaming.
  * Request body: { toolId: string, projectId: string }
  *
  * Rate limited: 20/hour per IP, max 5 concurrent per IP
@@ -31,11 +32,13 @@ function getProjectService(): ProjectService {
  * Flow:
  * 1. Validate request body
  * 2. Resolve project path via projectService
- * 3. Queue job via queueService (blocks during execution)
- * 4. Return ExecutionResponse
+ * 3. Generate jobId and return immediately (non-blocking)
+ * 4. Queue execution job in background (fire-and-forget)
+ * 5. Stream output to SSE client via streamService callbacks
+ * 6. Send complete/error event when job finishes
  *
- * Phase 4 will add SSE streaming for real-time output.
- * This phase uses synchronous request-response (client blocks until completion).
+ * IMPORTANT: Client should establish SSE connection at GET /api/stream/:jobId
+ * BEFORE calling this endpoint to ensure no output is missed.
  */
 router.post(
   '/execute',
@@ -62,14 +65,43 @@ router.post(
     // Generate job ID
     const jobId = uuidv4();
 
-    // Execute via queue (synchronous request-response)
-    // Client request blocks here until execution completes (up to 60s)
-    const result = await queueService.addJob(() =>
-      executionService.executeJob({ toolId, projectPath, jobId })
-    );
+    // Return jobId immediately (non-blocking response)
+    res.json({ data: { jobId } });
 
-    // Return execution result
-    res.json({ data: result });
+    // Queue execution job in background (fire-and-forget)
+    // Do NOT await - client response already sent
+    queueService.addJob(async () => {
+      try {
+        // Execute job with streaming callback
+        const result = await executionService.executeJob({
+          toolId,
+          projectPath,
+          jobId,
+          onOutput: (line) => {
+            // Stream output to SSE client in real-time
+            streamService.sendOutput(jobId, line).catch((err) => {
+              console.error(`[stream] Failed to send output for job ${jobId}:`, err);
+            });
+          },
+        });
+
+        // Send completion event to SSE client
+        await streamService.sendComplete(jobId, result);
+
+        // Return result from queued job (for queueService duration tracking)
+        return result;
+      } catch (error) {
+        // Send error event to SSE client
+        const errorMessage = error instanceof Error ? error.message : 'Unknown execution error';
+        await streamService.sendError(jobId, errorMessage);
+
+        // Re-throw so queueService can track failed jobs
+        throw error;
+      }
+    }).catch((err) => {
+      // Log errors from background job (already sent to SSE client)
+      console.error(`[execute] Background job ${jobId} failed:`, err);
+    });
   }
 );
 
