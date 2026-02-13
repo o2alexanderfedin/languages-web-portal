@@ -105,10 +105,12 @@ Plans:
   4. Output preview distinguishes transpiler results (source code) from verification results (reports/logs)
   5. Project directories are automatically cleaned up 5-15 minutes after output is available
   6. Cleanup runs reliably even if user closes browser before completion
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] (Plans will be created during /gsd:plan-phase 5)
+- [ ] 05-01-PLAN.md -- Server output infrastructure: shared types, output/download/cleanup services, API routes for file tree, preview, and ZIP download
+- [ ] 05-02-PLAN.md -- Client output UI: language map, RTK Query output API, FileTree, FilePreview with syntax highlighting, DownloadButton, OutputPanel
+- [ ] 05-03-PLAN.md -- Integration and tests: wire OutputPanel into ExecutionPanel, trigger cleanup from execute route, comprehensive component tests
 
 ### Phase 6: Landing Page & Examples
 **Goal**: Landing page showcases all tools with comparison grid, mission statement, and quick-start flow
@@ -136,9 +138,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 2. File Upload & Validation | 2/2 | Complete | 2026-02-13 |
 | 3. Process Execution & Sandboxing | 3/3 | Complete | 2026-02-13 |
 | 4. Real-Time Output Streaming | 2/2 | Complete | 2026-02-12 |
-| 5. Output Preview & Download | 0/TBD | Not started | - |
+| 5. Output Preview & Download | 0/3 | In Progress | - |
 | 6. Landing Page & Examples | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-12 after Phase 4 execution complete*
+*Last updated: 2026-02-13 after Phase 5 planning complete*
