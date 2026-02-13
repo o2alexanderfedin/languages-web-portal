@@ -10,7 +10,7 @@ export const hourlyRateLimit = rateLimit({
   max: RATE_LIMITS.maxPerHour,
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.ip || 'unknown',
+  validate: { xForwardedForHeader: false },
   skip: (req) => req.path === '/health',
   handler: (_req, res) => {
     res.status(429).json({
