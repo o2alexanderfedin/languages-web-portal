@@ -70,10 +70,12 @@ Plans:
   7. Server handles 5-20 simultaneous users without degradation
   8. Server gracefully degrades under load (queues requests instead of crashing)
   9. CLI tools run in strict sandboxes with no network access and read-only filesystems
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] (Plans will be created during /gsd:plan-phase 3)
+- [ ] 03-01-PLAN.md -- Shared execution types, resource limits config, tool registry, queue service (p-queue), and rate limiter middleware (express-rate-limit)
+- [ ] 03-02-PLAN.md -- Execution service (execa with timeout/cleanup), execute route (POST /api/execute, GET /api/queue/status), Docker security hardening
+- [ ] 03-03-PLAN.md -- Client tool picker with status badges, execution panel with result display, queue status UI, Home page integration
 
 ### Phase 4: Real-Time Output Streaming
 **Goal**: Users see real-time stdout/stderr output from running tools streamed to browser console
@@ -131,11 +133,11 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 |-------|----------------|--------|-----------|
 | 1. Project Setup & Foundation | 3/3 | Complete | 2026-02-12 |
 | 2. File Upload & Validation | 2/2 | Complete | 2026-02-13 |
-| 3. Process Execution & Sandboxing | 0/TBD | Not started | - |
+| 3. Process Execution & Sandboxing | 0/3 | Planning complete | - |
 | 4. Real-Time Output Streaming | 0/TBD | Not started | - |
 | 5. Output Preview & Download | 0/TBD | Not started | - |
 | 6. Landing Page & Examples | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-13 after Phase 2 execution complete*
+*Last updated: 2026-02-13 after Phase 3 planning complete*
