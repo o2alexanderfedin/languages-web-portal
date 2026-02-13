@@ -38,8 +38,15 @@ COPY --from=builder /app/packages/server/dist ./packages/server/dist
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/packages/client/dist ./packages/client/dist
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
+# Copy examples directory for example projects endpoint
+COPY --from=builder /app/packages/server/examples ./packages/server/examples
+
+# Create uploads directory before switching to non-root user
+RUN mkdir -p /app/uploads && \
+    addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown nodejs:nodejs /app/uploads
+
 USER nodejs
 
 # Expose port
