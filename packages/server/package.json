@@ -12,19 +12,28 @@
   },
   "dependencies": {
     "@repo/shared": "*",
-    "express": "^4.21.2",
+    "archiver": "^7.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-async-errors": "^3.1.1",
+    "file-type": "^21.3.0",
     "helmet": "^8.0.0",
-    "express-async-errors": "^3.1.1"
+    "multer": "^2.0.2",
+    "uuid": "^13.0.0",
+    "yauzl": "^3.2.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
+    "@types/archiver": "^7.0.0",
     "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/multer": "^2.0.0",
     "@types/supertest": "^6.0.2",
-    "tsx": "^4.19.2",
-    "vitest": "^3.0.5",
+    "@types/uuid": "^10.0.0",
+    "@types/yauzl": "^2.10.3",
     "supertest": "^7.0.0",
-    "vite": "^6.0.11"
+    "tsx": "^4.19.2",
+    "vite": "^6.0.11",
+    "vitest": "^3.0.5"
   }
 }

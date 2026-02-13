@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { MAX_UPLOAD_SIZE } from '@repo/shared';
 
 // Load .env from package/server directory
 const __filename = fileURLToPath(import.meta.url);
@@ -14,6 +15,8 @@ export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   logLevel: process.env.LOG_LEVEL || 'info',
   version: process.env.VERSION || '0.0.0',
+  uploadDir: process.env.UPLOAD_DIR || './uploads',
+  maxUploadSize: parseInt(process.env.MAX_UPLOAD_SIZE || String(MAX_UPLOAD_SIZE), 10),
 } as const;
 
 // Validate required environment variables
