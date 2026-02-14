@@ -13,6 +13,7 @@ import uploadRouter from "./routes/upload.js";
 import examplesRouter from "./routes/examples.js";
 import executeRouter from "./routes/execute.js";
 import streamRouter from "./routes/stream.js";
+import outputRouter from "./routes/output.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -39,6 +40,7 @@ app.use("/api", uploadRouter);
 app.use("/api", examplesRouter);
 app.use("/api", executeRouter);
 app.use("/api", streamRouter);
+app.use("/api", outputRouter);
 
 // Development mode: Vite middleware
 if (config.nodeEnv === "development") {

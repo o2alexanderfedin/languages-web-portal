@@ -10,20 +10,17 @@ import { ShareableLink } from '@/features/landing/ShareableLink';
 export function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [projectId, setProjectId] = useState<string | null>(null);
-  const [currentToolId, setCurrentToolId] = useState<string | null>(null);
+  const [currentToolId, setCurrentToolId] = useState<string | null>(
+    () => searchParams.get('tool')
+  );
   const { data: health, isLoading, error } = useGetHealthQuery();
   const { theme, setTheme } = useTheme();
   const executionSectionRef = useRef<HTMLDivElement>(null);
   const isInitialMount = useRef(true);
 
-  // Read URL params on mount to pre-select tool
+  // Handle URL param changes after initial mount and auto-scroll for quickstart
   useEffect(() => {
-    const toolParam = searchParams.get('tool');
     const quickstartParam = searchParams.get('quickstart');
-
-    if (toolParam) {
-      setCurrentToolId(toolParam);
-    }
 
     // Auto-scroll to execution section if quickstart param is present
     if (quickstartParam && executionSectionRef.current) {
