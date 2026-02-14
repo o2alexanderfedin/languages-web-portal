@@ -18,7 +18,7 @@ const ThemeContext = createContext<ThemeProviderState | undefined>(undefined);
 export function ThemeProvider({
   children,
   defaultTheme = 'system',
-  storageKey = 'hapyy-theme',
+  storageKey = 'hupyy-theme',
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,

@@ -4,7 +4,7 @@
 
 See: .planning/PROJECT.md (updated 2026-02-14)
 
-**Core value:** Users can try any Hapyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
+**Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
 **Current focus:** v1.0 shipped — planning next milestone
 
 ## Current Position

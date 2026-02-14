@@ -27,7 +27,7 @@ export function Landing() {
       {/* Top bar with theme toggle */}
       <div className="w-full border-b">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="text-lg font-semibold">Hapyy</div>
+          <div className="text-lg font-semibold">Hupyy</div>
           <Button onClick={toggleTheme} variant="outline" size="sm">
             Theme: {getThemeLabel()}
           </Button>
@@ -46,7 +46,7 @@ export function Landing() {
       {/* Footer */}
       <footer className="mt-auto border-t py-8 px-4">
         <div className="max-w-6xl mx-auto text-center text-sm text-muted-foreground">
-          <p className="mb-2">Built by Hapyy</p>
+          <p className="mb-2">Built by Hupyy</p>
           <Link to="/demo" className="text-primary hover:underline" data-testid="landing-footer-demo-link">
             Try the Demo
           </Link>

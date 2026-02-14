@@ -11,7 +11,7 @@ describe('App', () => {
   it('renders landing page at / route', () => {
     render(
       <Provider store={store}>
-        <ThemeProvider defaultTheme="system" storageKey="hapyy-theme">
+        <ThemeProvider defaultTheme="system" storageKey="hupyy-theme">
           <MemoryRouter initialEntries={['/']}>
             <Routes>
               <Route path="/" element={<Landing />} />
@@ -27,7 +27,7 @@ describe('App', () => {
   it('renders demo page at /demo route', () => {
     render(
       <Provider store={store}>
-        <ThemeProvider defaultTheme="system" storageKey="hapyy-theme">
+        <ThemeProvider defaultTheme="system" storageKey="hupyy-theme">
           <MemoryRouter initialEntries={['/demo']}>
             <Routes>
               <Route path="/demo" element={<Home />} />

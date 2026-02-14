@@ -18,7 +18,7 @@ export function HeroSection() {
 
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           In autonomous software development, AI agents generate code at scale. But 96% of developers
-          don't fully trust AI-generated code. Hapyy tools bring mathematical precision to AI workflows,
+          don't fully trust AI-generated code. Hupyy tools bring mathematical precision to AI workflows,
           transforming probabilistic outputs into provably correct software through formal verification
           and verified transpilation — the foundation of <em>vericoding</em>, where every transformation
           is guaranteed correct.

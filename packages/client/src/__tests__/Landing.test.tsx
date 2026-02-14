@@ -24,7 +24,7 @@ vi.mock('react-router', async () => {
 const renderWithProviders = (ui: React.ReactElement) => {
   return render(
     <Provider store={store}>
-      <ThemeProvider defaultTheme="system" storageKey="hapyy-theme-test">
+      <ThemeProvider defaultTheme="system" storageKey="hupyy-theme-test">
         <MemoryRouter>
           {ui}
         </MemoryRouter>
@@ -167,6 +167,6 @@ describe('Landing Page', () => {
     expect(screen.getByText(/Available Tools/i)).toBeDefined();
 
     // Check footer
-    expect(screen.getByText(/Built by Hapyy/i)).toBeDefined();
+    expect(screen.getByText(/Built by Hupyy/i)).toBeDefined();
   });
 });

@@ -8,7 +8,7 @@ import { Landing } from "@/pages/Landing";
 function App() {
   return (
     <Provider store={store}>
-      <ThemeProvider defaultTheme="system" storageKey="hapyy-theme">
+      <ThemeProvider defaultTheme="system" storageKey="hupyy-theme">
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Landing />} />

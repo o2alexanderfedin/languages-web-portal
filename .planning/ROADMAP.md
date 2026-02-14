@@ -1,4 +1,4 @@
-# Roadmap: Hapyy Languages Web Portal
+# Roadmap: Hupyy Languages Web Portal
 
 ## Milestones
 

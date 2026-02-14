@@ -1,12 +1,12 @@
-# Hapyy Languages Web Portal
+# Hupyy Languages Web Portal
 
 ## What This Is
 
-A public demo web portal for Hapyy's formal verification tools and transpilers. Users upload source code (as zip files), run CLI-based analysis/transpilation tools, watch execution in a real-time streaming console, preview key results inline with syntax highlighting, and download full output as a zip. The portal showcases how these tools fit into the bigger picture of autonomous software development — providing comprehensive AI-generated code verification.
+A public demo web portal for Hupyy's formal verification tools and transpilers. Users upload source code (as zip files), run CLI-based analysis/transpilation tools, watch execution in a real-time streaming console, preview key results inline with syntax highlighting, and download full output as a zip. The portal showcases how these tools fit into the bigger picture of autonomous software development — providing comprehensive AI-generated code verification.
 
 ## Core Value
 
-Users can try any Hapyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
+Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
 
 ## Current State
 
@@ -47,7 +47,7 @@ Users can try any Hapyy formal verification or transpiler tool directly in the b
 
 ## Context
 
-**Tools in the Hapyy ecosystem:**
+**Tools in the Hupyy ecosystem:**
 
 | Tool | Type | Language | Status |
 |------|------|----------|--------|
