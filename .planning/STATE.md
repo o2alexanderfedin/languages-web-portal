@@ -185,7 +185,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+1. **Add end-to-end UI tests with Playwright** (area: testing) — E2E browser tests for critical user flows (landing → demo, upload → execute → results, shareable links)
 
 ### Blockers/Concerns
 
