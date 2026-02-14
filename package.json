@@ -15,6 +15,9 @@
     "dev": "npm run dev -w @repo/server",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
     "lint": "eslint packages/*/src/**/*.{ts,tsx}",
     "lint:fix": "eslint packages/*/src/**/*.{ts,tsx} --fix",
     "format": "prettier --write packages/*/src/**/*.{ts,tsx,css}",
@@ -22,6 +25,7 @@
     "typecheck": "tsc --build --noEmit"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@testing-library/user-event": "^14.6.1",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",

@@ -131,7 +131,7 @@ export function ExecutionPanel({ projectId, initialToolId, onToolChange }: Execu
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="execution-panel">
       {/* Tool Selection Section */}
       <div className="space-y-3">
         <h3 className="text-lg font-semibold">Select a Tool</h3>
@@ -149,6 +149,7 @@ export function ExecutionPanel({ projectId, initialToolId, onToolChange }: Execu
           disabled={isRunButtonDisabled}
           size="lg"
           className="min-w-[200px]"
+          data-testid="execute-button"
         >
           {executionState === 'streaming' ? (
             <>

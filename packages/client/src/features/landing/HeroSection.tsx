@@ -10,7 +10,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="w-full py-20 px-4 text-center">
+    <section className="w-full py-20 px-4 text-center" data-testid="hero-section">
       <div className="max-w-4xl mx-auto space-y-6">
         <h1 className="text-5xl font-bold tracking-tight">
           Formal Verification for AI-Generated Code
@@ -25,8 +25,10 @@ export function HeroSection() {
         </p>
 
         <div className="flex gap-4 justify-center pt-6">
-          <QuickStartCTA size="lg" />
-          <Button variant="outline" size="lg" onClick={scrollToComparison}>
+          <div data-testid="hero-quickstart-cta">
+            <QuickStartCTA size="lg" />
+          </div>
+          <Button variant="outline" size="lg" onClick={scrollToComparison} data-testid="hero-explore-tools">
             Explore Tools
           </Button>
         </div>

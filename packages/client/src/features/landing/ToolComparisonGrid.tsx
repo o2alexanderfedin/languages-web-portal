@@ -44,12 +44,12 @@ export function ToolComparisonGrid() {
   };
 
   return (
-    <section id="comparison" className="w-full py-12 px-4">
+    <section id="comparison" className="w-full py-12 px-4" data-testid="tool-comparison-grid">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold text-center mb-8">Available Tools</h2>
 
         {/* Desktop table view */}
-        <div className="hidden md:block overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto" data-testid="tool-comparison-table">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b">
@@ -62,7 +62,7 @@ export function ToolComparisonGrid() {
             </thead>
             <tbody>
               {TOOLS.map((tool) => (
-                <tr key={tool.id} className="border-b hover:bg-muted/50 transition-colors">
+                <tr key={tool.id} className="border-b hover:bg-muted/50 transition-colors" data-testid={`tool-row-${tool.id}`}>
                   <td className="p-3 font-medium">{tool.name}</td>
                   <td className="p-3 capitalize">{tool.category}</td>
                   <td className="p-3">{getLanguageDisplay(tool)}</td>
@@ -82,6 +82,7 @@ export function ToolComparisonGrid() {
                       variant={tool.status === 'coming-soon' ? 'outline' : 'default'}
                       disabled={tool.status === 'coming-soon'}
                       onClick={() => handleTryNow(tool.id)}
+                      data-testid={`tool-try-now-${tool.id}`}
                     >
                       Try Now
                     </Button>
@@ -93,9 +94,9 @@ export function ToolComparisonGrid() {
         </div>
 
         {/* Mobile card view */}
-        <div className="md:hidden space-y-4">
+        <div className="md:hidden space-y-4" data-testid="tool-comparison-cards">
           {TOOLS.map((tool) => (
-            <div key={tool.id} className="border rounded-lg p-4 space-y-3">
+            <div key={tool.id} className="border rounded-lg p-4 space-y-3" data-testid={`tool-card-${tool.id}`}>
               <div className="flex items-start justify-between">
                 <h3 className="font-bold text-lg">{tool.name}</h3>
                 <span
@@ -119,6 +120,7 @@ export function ToolComparisonGrid() {
                   variant={tool.status === 'coming-soon' ? 'outline' : 'default'}
                   disabled={tool.status === 'coming-soon'}
                   onClick={() => handleTryNow(tool.id)}
+                  data-testid={`tool-try-now-${tool.id}`}
                 >
                   Try Now
                 </Button>

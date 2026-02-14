@@ -74,6 +74,7 @@ export function UploadZone({ onUploadSuccess }: UploadZoneProps) {
     <div className="w-full max-w-2xl mx-auto">
       <div
         {...getRootProps()}
+        data-testid="upload-zone"
         className={`
           border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer
           ${
@@ -91,7 +92,7 @@ export function UploadZone({ onUploadSuccess }: UploadZoneProps) {
 
         {/* Idle state */}
         {displayState === 'idle' && (
-          <div className="space-y-3">
+          <div className="space-y-3" data-testid="upload-status">
             <div className="text-lg font-medium">
               Drag and drop a ZIP file here, or click to browse
             </div>
@@ -104,12 +105,12 @@ export function UploadZone({ onUploadSuccess }: UploadZoneProps) {
 
         {/* Drag active state */}
         {displayState === 'drag-active' && (
-          <div className="text-lg font-medium text-primary">Drop your ZIP file here...</div>
+          <div className="text-lg font-medium text-primary" data-testid="upload-status">Drop your ZIP file here...</div>
         )}
 
         {/* Uploading state */}
         {displayState === 'uploading' && (
-          <div className="space-y-3">
+          <div className="space-y-3" data-testid="upload-status">
             <div className="flex items-center justify-center">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
             </div>
@@ -119,7 +120,7 @@ export function UploadZone({ onUploadSuccess }: UploadZoneProps) {
 
         {/* Success state */}
         {displayState === 'success' && data && (
-          <div className="space-y-3">
+          <div className="space-y-3" data-testid="upload-success">
             <div className="flex items-center justify-center">
               <div className="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center">
                 <svg
@@ -149,7 +150,7 @@ export function UploadZone({ onUploadSuccess }: UploadZoneProps) {
 
         {/* Error state */}
         {displayState === 'error' && (
-          <div className="space-y-3">
+          <div className="space-y-3" data-testid="upload-error">
             <div className="text-lg font-medium text-destructive">Upload Failed</div>
             <div className="text-sm text-muted-foreground">
               {rejectionError ||

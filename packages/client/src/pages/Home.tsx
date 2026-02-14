@@ -59,10 +59,10 @@ export function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6" data-testid="demo-page">
       <div className="max-w-5xl w-full space-y-8 text-center lg:text-left">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-primary hover:underline text-sm">
+          <Link to="/" className="text-primary hover:underline text-sm" data-testid="back-to-home">
             ← Back to Home
           </Link>
         </div>
@@ -102,12 +102,12 @@ export function Home() {
           </div>
         )}
 
-        <div className="pt-8 space-y-4">
+        <div className="pt-8 space-y-4" data-testid="upload-section">
           <h2 className="text-2xl font-semibold">Upload Your Code</h2>
           <UploadZone onUploadSuccess={setProjectId} />
         </div>
 
-        <div className="pt-8 space-y-4" ref={executionSectionRef}>
+        <div className="pt-8 space-y-4" ref={executionSectionRef} data-testid="execution-section">
           <h2 className="text-2xl font-semibold">Run a Tool</h2>
           <ExecutionPanel
             projectId={projectId}
@@ -117,7 +117,7 @@ export function Home() {
         </div>
 
         {/* Shareable Link Section */}
-        <div className="pt-8 space-y-4">
+        <div className="pt-8 space-y-4" data-testid="share-section">
           <h2 className="text-2xl font-semibold">Share This Demo</h2>
           <ShareableLink toolId={currentToolId} />
         </div>

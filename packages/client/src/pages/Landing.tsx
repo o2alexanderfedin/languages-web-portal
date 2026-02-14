@@ -23,7 +23,7 @@ export function Landing() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" data-testid="landing-page">
       {/* Top bar with theme toggle */}
       <div className="w-full border-b">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -47,7 +47,7 @@ export function Landing() {
       <footer className="mt-auto border-t py-8 px-4">
         <div className="max-w-6xl mx-auto text-center text-sm text-muted-foreground">
           <p className="mb-2">Built by Hapyy</p>
-          <Link to="/demo" className="text-primary hover:underline">
+          <Link to="/demo" className="text-primary hover:underline" data-testid="landing-footer-demo-link">
             Try the Demo
           </Link>
         </div>

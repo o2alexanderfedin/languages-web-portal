@@ -24,7 +24,7 @@ export function QuickStartCTA({ variant = 'default', size = 'default', className
   }
 
   return (
-    <Button variant={variant} size={size} className={className} onClick={handleClick}>
+    <Button variant={variant} size={size} className={className} onClick={handleClick} data-testid="quickstart-cta">
       Try {firstAvailableTool.name} Now
     </Button>
   );

@@ -34,6 +34,7 @@ export function ConsoleView({ lines, isStreaming }: ConsoleViewProps) {
       {/* Console Output */}
       <div
         ref={containerRef}
+        data-testid="console-output"
         className="bg-zinc-900 text-zinc-100 p-4 rounded-lg overflow-y-auto max-h-[400px] text-xs font-mono leading-relaxed"
       >
         {lines.length === 0 ? (

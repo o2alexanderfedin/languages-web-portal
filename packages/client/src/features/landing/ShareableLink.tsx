@@ -53,6 +53,7 @@ export function ShareableLink({ toolId }: ShareableLinkProps) {
 
   return (
     <div
+      data-testid="shareable-link"
       className={clsx(
         'flex flex-row items-center gap-3 border rounded-lg p-3',
         isDisabled

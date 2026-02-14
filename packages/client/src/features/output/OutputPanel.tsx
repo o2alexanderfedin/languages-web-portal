@@ -50,7 +50,7 @@ export function OutputPanel({ projectId, toolCategory }: OutputPanelProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="output-panel">
       {/* Info bar */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
         <svg

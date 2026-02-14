@@ -48,7 +48,7 @@ export function ToolPicker({ selectedToolId, onSelectTool, disabled }: ToolPicke
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="tool-picker">
       {tools.map((tool) => {
         const isSelected = selectedToolId === tool.id;
         const isSelectable = isToolSelectable(tool);
@@ -57,6 +57,7 @@ export function ToolPicker({ selectedToolId, onSelectTool, disabled }: ToolPicke
           <div
             key={tool.id}
             onClick={() => handleToolClick(tool)}
+            data-testid={`tool-option-${tool.id}`}
             className={clsx(
               'border-2 rounded-lg p-4 transition-all',
               isSelected && 'border-primary bg-primary/5',
