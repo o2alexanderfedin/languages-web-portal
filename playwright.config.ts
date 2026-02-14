@@ -42,6 +42,8 @@ export default defineConfig({
       name: 'mobile',
       use: {
         ...devices['iPhone 13 Pro'],
+        // Override to use Chromium instead of WebKit for faster CI
+        browserName: 'chromium',
       },
     },
   ],
