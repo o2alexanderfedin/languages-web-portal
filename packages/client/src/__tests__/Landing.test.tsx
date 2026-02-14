@@ -8,7 +8,6 @@ import { store } from '@/store';
 import { Landing } from '@/pages/Landing';
 import { HeroSection } from '@/features/landing/HeroSection';
 import { ToolComparisonGrid } from '@/features/landing/ToolComparisonGrid';
-import { QuickStartCTA } from '@/features/landing/QuickStartCTA';
 import { TOOLS } from '@repo/shared';
 
 // Mock useNavigate
@@ -44,22 +43,6 @@ describe('HeroSection', () => {
     expect(screen.getByText(/In autonomous software development/i)).toBeDefined();
     expect(screen.getByText(/96% of developers/i)).toBeDefined();
     expect(screen.getByText(/vericoding/i)).toBeDefined();
-  });
-
-  it('renders Explore Tools button', () => {
-    renderWithProviders(<HeroSection />);
-    expect(screen.getByRole('button', { name: /Explore Tools/i })).toBeDefined();
-  });
-
-  it('renders QuickStartCTA component', () => {
-    renderWithProviders(<HeroSection />);
-    // QuickStartCTA renders "Try {firstAvailableTool.name} Now"
-    const firstAvailable = TOOLS.find(t => t.status !== 'coming-soon');
-    if (firstAvailable) {
-      // Escape special regex characters in tool name
-      const escapedName = firstAvailable.name.replace(/[+]/g, '\\+');
-      expect(screen.getByRole('button', { name: new RegExp(escapedName, 'i') })).toBeDefined();
-    }
   });
 });
 
@@ -126,38 +109,8 @@ describe('ToolComparisonGrid', () => {
   });
 });
 
-describe('QuickStartCTA', () => {
-  it('renders button with first available tool name', () => {
-    renderWithProviders(<QuickStartCTA />);
-
-    const firstAvailable = TOOLS.find(t => t.status !== 'coming-soon');
-    if (firstAvailable) {
-      // Escape special regex characters in tool name
-      const escapedName = firstAvailable.name.replace(/[+]/g, '\\+');
-      expect(screen.getByRole('button', { name: new RegExp(escapedName, 'i') })).toBeDefined();
-    }
-  });
-
-  it('navigates to /demo?tool=cpp-to-c-transpiler&quickstart=true on click', async () => {
-    const user = userEvent.setup();
-    mockNavigate.mockClear();
-
-    renderWithProviders(<QuickStartCTA />);
-
-    const firstAvailable = TOOLS.find(t => t.status !== 'coming-soon');
-    if (firstAvailable) {
-      // Escape special regex characters in tool name
-      const escapedName = firstAvailable.name.replace(/[+]/g, '\\+');
-      const button = screen.getByRole('button', { name: new RegExp(escapedName, 'i') });
-      await user.click(button);
-
-      expect(mockNavigate).toHaveBeenCalledWith(`/demo?tool=${firstAvailable.id}&quickstart=true`);
-    }
-  });
-});
-
 describe('Landing Page', () => {
-  it('composes all three sections', () => {
+  it('composes all sections', () => {
     renderWithProviders(<Landing />);
 
     // Check hero section

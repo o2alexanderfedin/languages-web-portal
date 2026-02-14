@@ -1,4 +1,3 @@
-import { Link } from 'react-router';
 import { useTheme } from '@/components/ThemeProvider';
 import { Button } from '@/components/ui/button';
 import { HeroSection } from '@/features/landing/HeroSection';
@@ -46,10 +45,7 @@ export function Landing() {
       {/* Footer */}
       <footer className="mt-auto border-t py-8 px-4">
         <div className="max-w-6xl mx-auto text-center text-sm text-muted-foreground">
-          <p className="mb-2">Built by Hupyy</p>
-          <Link to="/demo" className="text-primary hover:underline" data-testid="landing-footer-demo-link">
-            Try the Demo
-          </Link>
+          <p>Built by Hupyy</p>
         </div>
       </footer>
     </div>

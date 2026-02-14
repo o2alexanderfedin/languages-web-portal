@@ -75,26 +75,6 @@ test.describe('Landing Page Navigation', () => {
     await expect(selectedTool).toHaveClass(/border-primary/);
   });
 
-  test('landing page Quick Start CTA navigates to demo with quickstart param', async ({
-    page,
-  }) => {
-    const landing = new LandingPage(page);
-    await landing.clickQuickStart();
-
-    // Verify URL contains tool and quickstart parameters
-    await expect(page).toHaveURL(
-      /\/demo\?tool=cpp-to-c-transpiler&quickstart=true/,
-    );
-  });
-
-  test('landing page footer link navigates to demo', async ({ page }) => {
-    const landing = new LandingPage(page);
-    await landing.navigateToDemo();
-
-    // Verify URL is /demo without params
-    expect(page.url()).toContain('/demo');
-  });
-
   test('demo page Back to Home link returns to landing', async ({ page }) => {
     // Start at demo page
     await page.goto('/demo');

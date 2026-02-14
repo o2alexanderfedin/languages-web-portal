@@ -1,14 +1,4 @@
-import { Button } from '@/components/ui/button';
-import { QuickStartCTA } from './QuickStartCTA';
-
 export function HeroSection() {
-  const scrollToComparison = () => {
-    const element = document.getElementById('comparison');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <section className="w-full py-20 px-4 text-center" data-testid="hero-section">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -23,15 +13,6 @@ export function HeroSection() {
           and verified transpilation — the foundation of <em>vericoding</em>, where every transformation
           is guaranteed correct.
         </p>
-
-        <div className="flex gap-4 justify-center pt-6">
-          <div data-testid="hero-quickstart-cta">
-            <QuickStartCTA size="lg" />
-          </div>
-          <Button variant="outline" size="lg" onClick={scrollToComparison} data-testid="hero-explore-tools">
-            Explore Tools
-          </Button>
-        </div>
       </div>
     </section>
   );
