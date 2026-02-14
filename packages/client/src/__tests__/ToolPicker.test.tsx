@@ -57,13 +57,13 @@ describe('ToolPicker', () => {
     });
 
     // Check status badges exist with correct text
-    const availableBadges = screen.getAllByText('Available');
     const inDevBadges = screen.getAllByText('In Development');
     const comingSoonBadges = screen.getAllByText('Coming Soon');
 
-    expect(availableBadges.length).toBe(2); // cpp-to-c and cpp-to-rust
-    expect(inDevBadges.length).toBe(3); // csharp, java, rust verification
+    expect(inDevBadges.length).toBe(5); // cpp-to-c, cpp-to-rust, csharp, java, rust
     expect(comingSoonBadges.length).toBe(3); // python, typescript, bash
+    // No tools have 'Available' status — none are production-ready yet
+    expect(screen.queryAllByText('Available').length).toBe(0);
   });
 
   it('should call onSelectTool when clicking an available tool', async () => {

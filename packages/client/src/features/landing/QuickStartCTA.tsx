@@ -11,21 +11,21 @@ interface QuickStartCTAProps {
 export function QuickStartCTA({ variant = 'default', size = 'default', className }: QuickStartCTAProps) {
   const navigate = useNavigate();
 
-  const firstAvailableTool = TOOLS.find((tool) => tool.status === 'available');
+  const firstTryableTool = TOOLS.find((tool) => tool.status !== 'coming-soon');
 
   const handleClick = () => {
-    if (firstAvailableTool) {
-      navigate(`/demo?tool=${firstAvailableTool.id}&quickstart=true`);
+    if (firstTryableTool) {
+      navigate(`/demo?tool=${firstTryableTool.id}&quickstart=true`);
     }
   };
 
-  if (!firstAvailableTool) {
+  if (!firstTryableTool) {
     return null;
   }
 
   return (
     <Button variant={variant} size={size} className={className} onClick={handleClick} data-testid="quickstart-cta">
-      Try {firstAvailableTool.name} Now
+      Try {firstTryableTool.name} Now
     </Button>
   );
 }

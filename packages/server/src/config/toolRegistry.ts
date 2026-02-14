@@ -8,14 +8,14 @@ const toolExecutionConfigs: ToolExecutionConfig[] = [
     command: '/usr/local/bin/hupyy-cpp2c',
     defaultArgs: ['--input'],
     maxExecutionTimeMs: 60000,
-    available: true,
+    available: false,
   },
   {
     id: 'cpp-to-rust-transpiler',
     command: '/usr/local/bin/hupyy-cpp2rust',
     defaultArgs: ['--input'],
     maxExecutionTimeMs: 60000,
-    available: true,
+    available: false,
   },
   {
     id: 'csharp-verification',

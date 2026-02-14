@@ -54,7 +54,7 @@ describe('HeroSection', () => {
   it('renders QuickStartCTA component', () => {
     renderWithProviders(<HeroSection />);
     // QuickStartCTA renders "Try {firstAvailableTool.name} Now"
-    const firstAvailable = TOOLS.find(t => t.status === 'available');
+    const firstAvailable = TOOLS.find(t => t.status !== 'coming-soon');
     if (firstAvailable) {
       // Escape special regex characters in tool name
       const escapedName = firstAvailable.name.replace(/[+]/g, '\\+');
@@ -77,7 +77,7 @@ describe('ToolComparisonGrid', () => {
   it('shows correct status badges (Available, In Development, Coming Soon)', () => {
     renderWithProviders(<ToolComparisonGrid />);
 
-    // Check that each status type appears
+    // Check that each status type appears based on actual tool data
     const availableTools = TOOLS.filter(t => t.status === 'available');
     const inDevTools = TOOLS.filter(t => t.status === 'in-development');
     const comingSoonTools = TOOLS.filter(t => t.status === 'coming-soon');
@@ -112,7 +112,7 @@ describe('ToolComparisonGrid', () => {
 
     renderWithProviders(<ToolComparisonGrid />);
 
-    const availableTool = TOOLS.find(t => t.status === 'available');
+    const availableTool = TOOLS.find(t => t.status !== 'coming-soon');
     if (availableTool) {
       const buttons = screen.getAllByRole('button', { name: /Try Now/i });
       // Find first enabled button (should be for available tool)
@@ -130,7 +130,7 @@ describe('QuickStartCTA', () => {
   it('renders button with first available tool name', () => {
     renderWithProviders(<QuickStartCTA />);
 
-    const firstAvailable = TOOLS.find(t => t.status === 'available');
+    const firstAvailable = TOOLS.find(t => t.status !== 'coming-soon');
     if (firstAvailable) {
       // Escape special regex characters in tool name
       const escapedName = firstAvailable.name.replace(/[+]/g, '\\+');
@@ -144,7 +144,7 @@ describe('QuickStartCTA', () => {
 
     renderWithProviders(<QuickStartCTA />);
 
-    const firstAvailable = TOOLS.find(t => t.status === 'available');
+    const firstAvailable = TOOLS.find(t => t.status !== 'coming-soon');
     if (firstAvailable) {
       // Escape special regex characters in tool name
       const escapedName = firstAvailable.name.replace(/[+]/g, '\\+');
