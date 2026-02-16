@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { UploadZone } from '@/features/upload/UploadZone';
 import { ExecutionPanel } from '@/features/execution/ExecutionPanel';
 import { ShareableLink } from '@/features/landing/ShareableLink';
+import { ExampleSelector } from '@/features/execution/ExampleSelector';
 
 export function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -102,6 +103,19 @@ export function Home() {
         <div className="pt-8 space-y-4" data-testid="upload-section">
           <h2 className="text-2xl font-semibold">Upload Your Code</h2>
           <UploadZone onUploadSuccess={setProjectId} />
+        </div>
+
+        {/* OR Divider */}
+        <div className="flex items-center gap-4 pt-4">
+          <div className="flex-1 border-t border-muted-foreground/25" />
+          <span className="text-sm text-muted-foreground font-medium">OR</span>
+          <div className="flex-1 border-t border-muted-foreground/25" />
+        </div>
+
+        {/* Example Selector Section */}
+        <div className="pt-8 space-y-4" data-testid="example-section">
+          <h2 className="text-2xl font-semibold">Or Try an Example</h2>
+          <ExampleSelector toolId={currentToolId} onExampleLoaded={setProjectId} />
         </div>
 
         <div className="pt-8 space-y-4" ref={executionSectionRef} data-testid="execution-section">

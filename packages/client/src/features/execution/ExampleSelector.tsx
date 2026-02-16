@@ -35,9 +35,8 @@ export function ExampleSelector({ toolId, onExampleLoaded, disabled = false }: E
       onExampleLoaded(response.projectId);
       // Reset selection after successful load
       setSelectedExampleName('');
-    } catch (error) {
-      // Error is handled by RTK Query and displayed below
-      console.error('Failed to load example:', error);
+    } catch {
+      // Error is handled by RTK Query and displayed below via loadError
     }
   };
 
