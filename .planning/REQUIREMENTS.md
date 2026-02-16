@@ -73,32 +73,32 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DOCK-01 | — | Pending |
-| DOCK-02 | — | Pending |
-| DOCK-03 | — | Pending |
-| DOCK-04 | — | Pending |
-| TOOL-01 | — | Pending |
-| TOOL-02 | — | Pending |
-| TOOL-03 | — | Pending |
-| TOOL-04 | — | Pending |
-| WRAP-01 | — | Pending |
-| WRAP-02 | — | Pending |
-| WRAP-03 | — | Pending |
-| WRAP-04 | — | Pending |
-| EXAM-01 | — | Pending |
-| EXAM-02 | — | Pending |
-| EXAM-03 | — | Pending |
-| EXAM-04 | — | Pending |
-| E2E-01 | — | Pending |
-| E2E-02 | — | Pending |
-| E2E-03 | — | Pending |
-| E2E-04 | — | Pending |
+| DOCK-01 | Phase 8 | Pending |
+| DOCK-02 | Phase 8 | Pending |
+| DOCK-03 | Phase 8 | Pending |
+| DOCK-04 | Phase 8 | Pending |
+| WRAP-01 | Phase 8 | Pending |
+| WRAP-02 | Phase 8 | Pending |
+| WRAP-03 | Phase 8 | Pending |
+| WRAP-04 | Phase 8 | Pending |
+| TOOL-01 | Phase 9 | Pending |
+| TOOL-02 | Phase 9 | Pending |
+| TOOL-03 | Phase 9 | Pending |
+| TOOL-04 | Phase 9 | Pending |
+| EXAM-01 | Phase 9 | Pending |
+| EXAM-02 | Phase 9 | Pending |
+| EXAM-03 | Phase 9 | Pending |
+| EXAM-04 | Phase 9 | Pending |
+| E2E-01 | Phase 10 | Pending |
+| E2E-02 | Phase 10 | Pending |
+| E2E-03 | Phase 10 | Pending |
+| E2E-04 | Phase 10 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 20 total
-- Mapped to phases: 0
-- Unmapped: 20
+- Mapped to phases: 20/20 (100%)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-15*
-*Last updated: 2026-02-15 after initial definition*
+*Last updated: 2026-02-15 after v1.1 roadmap creation*
