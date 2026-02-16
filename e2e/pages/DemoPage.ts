@@ -1,4 +1,4 @@
-import { type Page, type Locator } from '@playwright/test';
+import { type Page, type Locator, expect } from '@playwright/test';
 
 /**
  * Page Object Model for Demo page
@@ -17,6 +17,9 @@ export class DemoPage {
   readonly shareableLink: Locator;
   readonly backToHome: Locator;
   readonly toolPicker: Locator;
+  readonly exampleSelector: Locator;
+  readonly exampleDropdown: Locator;
+  readonly loadExampleButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -31,6 +34,9 @@ export class DemoPage {
     this.shareableLink = page.getByTestId('shareable-link');
     this.backToHome = page.getByTestId('back-to-home');
     this.toolPicker = page.getByTestId('tool-picker');
+    this.exampleSelector = page.getByTestId('example-selector');
+    this.exampleDropdown = page.getByTestId('example-dropdown');
+    this.loadExampleButton = page.getByTestId('load-example-button');
   }
 
   /**
@@ -90,5 +96,31 @@ export class DemoPage {
    */
   getToolOption(toolId: string): Locator {
     return this.page.getByTestId(`tool-option-${toolId}`);
+  }
+
+  /**
+   * Select an example from the dropdown by its option label
+   */
+  async selectExample(exampleName: string) {
+    await this.exampleDropdown.selectOption({ label: exampleName });
+  }
+
+  /**
+   * Load an example by selecting it and clicking the load button
+   * Waits for execute button to become enabled (max 10s)
+   */
+  async loadExample(exampleName: string) {
+    await this.selectExample(exampleName);
+    await this.loadExampleButton.click();
+    await this.executeButton.waitFor({ state: 'visible', timeout: 10_000 });
+    await expect(this.executeButton).toBeEnabled({ timeout: 10_000 });
+  }
+
+  /**
+   * Get the example description text below the dropdown
+   */
+  async getExampleDescription(): Promise<string> {
+    const description = this.page.locator('[data-testid="example-selector"] p');
+    return (await description.textContent()) ?? '';
   }
 }
