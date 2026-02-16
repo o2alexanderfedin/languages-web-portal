@@ -77,6 +77,28 @@ describe('Examples API', () => {
       expect(exampleNames).toContain('division-safety');
     });
 
+    it('should return list of examples for java-verification', async () => {
+      const response = await request(app).get('/api/examples/java-verification');
+
+      expect(response.status).toBe(200);
+      expect(response.body.examples.length).toBe(3);
+
+      const exampleNames = response.body.examples.map(
+        (ex: { name: string }) => ex.name,
+      );
+      expect(exampleNames).toContain('bank-account-records');
+      expect(exampleNames).toContain('shape-matching');
+      expect(exampleNames).toContain('payment-types');
+
+      // Verify each example has name and description
+      for (const example of response.body.examples) {
+        expect(example).toHaveProperty('name');
+        expect(example).toHaveProperty('description');
+        expect(typeof example.name).toBe('string');
+        expect(typeof example.description).toBe('string');
+      }
+    });
+
     it('should return 404 for non-existent tool', async () => {
       const response = await request(app).get('/api/examples/nonexistent-tool');
 
@@ -149,6 +171,39 @@ describe('Examples API', () => {
       const projectPath = join(testUploadDir, response.body.projectId);
       const files = await readdir(projectPath);
       expect(files).toContain('Program.cs');
+    });
+
+    it('should load bank-account-records Java example successfully', async () => {
+      const response = await request(app).post(
+        '/api/examples/java-verification/bank-account-records',
+      );
+
+      expect(response.status).toBe(201);
+      expect(response.body.toolId).toBe('java-verification');
+      expect(response.body.exampleName).toBe('bank-account-records');
+      expect(response.body.fileCount).toBeGreaterThanOrEqual(2);
+
+      const projectPath = join(testUploadDir, response.body.projectId);
+      const files = await readdir(projectPath);
+      expect(files).toContain('Account.java');
+      expect(files).toContain('README.md');
+    });
+
+    it('should load payment-types Java example with multiple files', async () => {
+      const response = await request(app).post(
+        '/api/examples/java-verification/payment-types',
+      );
+
+      expect(response.status).toBe(201);
+      expect(response.body.toolId).toBe('java-verification');
+      expect(response.body.exampleName).toBe('payment-types');
+      expect(response.body.fileCount).toBeGreaterThanOrEqual(3);
+
+      const projectPath = join(testUploadDir, response.body.projectId);
+      const files = await readdir(projectPath);
+      expect(files).toContain('UnsafeRefund.java');
+      expect(files).toContain('PaymentMethod.java');
+      expect(files).toContain('README.md');
     });
 
     it('should return 404 for non-existent tool', async () => {
