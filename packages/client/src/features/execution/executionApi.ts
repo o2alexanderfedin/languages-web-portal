@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { ExecutionRequest, QueueStatus, Tool } from '@repo/shared';
+import type { ExecutionRequest, QueueStatus, Tool, ExampleInfo, ExampleLoadResponse } from '@repo/shared';
 import { TOOLS } from '@repo/shared';
 
 export const executionApi = createApi({
@@ -21,6 +21,17 @@ export const executionApi = createApi({
     getTools: builder.query<Tool[], void>({
       queryFn: () => ({ data: TOOLS }),
     }),
+
+    getExamples: builder.query<{ examples: ExampleInfo[] }, string>({
+      query: (toolId) => `/examples/${toolId}`,
+    }),
+
+    loadExample: builder.mutation<ExampleLoadResponse, { toolId: string; exampleName: string }>({
+      query: ({ toolId, exampleName }) => ({
+        url: `/examples/${toolId}/${exampleName}`,
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -28,4 +39,6 @@ export const {
   useExecuteToolMutation,
   useGetQueueStatusQuery,
   useGetToolsQuery,
+  useGetExamplesQuery,
+  useLoadExampleMutation,
 } = executionApi;
