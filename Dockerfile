@@ -58,6 +58,10 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install Java FV wrapper script
+COPY languages-web-portal/scripts/hupyy-java-verify.sh /usr/local/bin/hupyy-java-verify
+RUN chmod +x /usr/local/bin/hupyy-java-verify
+
 # Copy Java FV CLI jar from java-builder stage
 COPY --from=java-builder /build/compiler-plugin/cli/target/cli-1.1.0-jar-with-dependencies.jar /usr/local/lib/java-fv-cli.jar
 
