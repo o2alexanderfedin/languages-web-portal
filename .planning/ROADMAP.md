@@ -22,7 +22,7 @@
 
 ### v1.1 Java FV Integration (Phases 8-10)
 
-- [ ] **Phase 8: Docker Infrastructure & Wrapper** - Build Docker image with JDK 25, Java FV CLI jar, and wrapper script
+- [x] **Phase 8: Docker Infrastructure & Wrapper** (2/2 plans) — completed 2026-02-16
 - [ ] **Phase 9: Tool Activation & Examples** - Enable Java verification tool and add example projects
 - [ ] **Phase 10: E2E Testing** - Verify Java verification workflow end-to-end
 
@@ -37,7 +37,7 @@
 | 5. Output Preview & Download | v1.0 | 3/3 | Complete | 2026-02-13 |
 | 6. Landing Page & Examples | v1.0 | 2/2 | Complete | 2026-02-13 |
 | 7. E2E Testing with Playwright | v1.0 | 2/2 | Complete | 2026-02-14 |
-| 8. Docker Infrastructure & Wrapper | v1.1 | 0/2 | Not started | - |
+| 8. Docker Infrastructure & Wrapper | v1.1 | 2/2 | Complete | 2026-02-16 |
 | 9. Tool Activation & Examples | v1.1 | 0/0 | Not started | - |
 | 10. E2E Testing | v1.1 | 0/0 | Not started | - |
 
@@ -67,8 +67,8 @@ Shipped 2026-02-14. Details archived in milestones/v1.0-ROADMAP.md.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Update Dockerfile to 3-stage build with JDK 25 and Java FV CLI jar compilation
-- [ ] 08-02-PLAN.md — Create wrapper script and install into Docker image
+- [x] 08-01-PLAN.md — Update Dockerfile to 3-stage build with JDK 25 and Java FV CLI jar compilation
+- [x] 08-02-PLAN.md — Create wrapper script and install into Docker image
 
 ---
 
@@ -109,4 +109,4 @@ Plans:
 ---
 
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-15 after Phase 8 planning*
+*Last updated: 2026-02-16 after Phase 8 completion*

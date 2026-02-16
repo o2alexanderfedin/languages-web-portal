@@ -10,10 +10,10 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 **Milestone:** v1.1 Java FV Integration
-**Phase:** 8 - Docker Infrastructure & Wrapper
-**Plan:** 2/2 complete
-**Status:** Phase 8 complete — ready for Phase 9
-**Last activity:** 2026-02-16 — Completed 08-02 wrapper script
+**Phase:** 9 - Tool Activation & Examples
+**Plan:** Not started (awaiting `/gsd:plan-phase 9`)
+**Status:** Ready for planning
+**Last activity:** 2026-02-16 — Phase 8 verified and complete
 
 **Progress:**
 [██████████] 100%
@@ -86,22 +86,19 @@ None. Awaiting phase planning.
 - Wrapper script design: Simple shell script invoking `java -jar` with args passthrough
 
 **Active:**
-- None. Ready to proceed with Phase 8.
+- Java FV CLI `verify` command expects individual file paths, not directories (wrapper handles this)
+- CVC5/Yices/Bitwuzla not available on linux-aarch64 in Docker — Z3 only for v1.1 (acceptable)
 
 ## Session Continuity
 
-**Last session:** 2026-02-16 (Phase 8 execution)
-**Stopped at:** Phase 8 complete (08-02-PLAN.md), checkpoint reached for human verification
-**Resume file:** .planning/phases/08-docker-infrastructure-wrapper/08-02-SUMMARY.md
+**Last session:** 2026-02-16 (Phase 8 verified complete)
+**Stopped at:** Phase 8 complete, verified, ready for Phase 9 planning
+**Resume file:** None
 
 **Next steps:**
-1. **Verify wrapper functionality** (checkpoint task 3 from 08-02):
-   - Test wrapper with example Java file in Docker
-   - Verify real-time output streaming
-   - Test error handling scenarios
-2. Plan Phase 9 (tool activation + examples)
-3. Execute Phase 9 plans
-4. Plan and execute Phase 10 (E2E tests)
+1. Run `/gsd:plan-phase 9` to create execution plans for tool activation + examples
+2. Execute Phase 9 plans
+3. Plan and execute Phase 10 (E2E tests)
 
 ---
 *State initialized: 2026-02-12*
