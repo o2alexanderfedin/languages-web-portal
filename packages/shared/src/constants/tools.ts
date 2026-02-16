@@ -30,8 +30,8 @@ export const TOOLS: Tool[] = [
   {
     id: 'java-verification',
     name: 'Java Verification',
-    description: 'Formal verification for Java code',
-    status: 'in-development',
+    description: 'Prove your Java code is correct — automated formal verification for modern Java',
+    status: 'available',
     category: 'verification',
     sourceLanguage: 'java',
   },

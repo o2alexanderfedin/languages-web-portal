@@ -28,8 +28,8 @@ const toolExecutionConfigs: ToolExecutionConfig[] = [
     id: 'java-verification',
     command: '/usr/local/bin/hupyy-java-verify',
     defaultArgs: ['--input'],
-    maxExecutionTimeMs: 60000,
-    available: false,
+    maxExecutionTimeMs: 120000,
+    available: true,
   },
   {
     id: 'rust-verification',
