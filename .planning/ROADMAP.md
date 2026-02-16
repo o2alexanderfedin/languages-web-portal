@@ -37,7 +37,7 @@
 | 5. Output Preview & Download | v1.0 | 3/3 | Complete | 2026-02-13 |
 | 6. Landing Page & Examples | v1.0 | 2/2 | Complete | 2026-02-13 |
 | 7. E2E Testing with Playwright | v1.0 | 2/2 | Complete | 2026-02-14 |
-| 8. Docker Infrastructure & Wrapper | v1.1 | 0/0 | Not started | - |
+| 8. Docker Infrastructure & Wrapper | v1.1 | 0/2 | Not started | - |
 | 9. Tool Activation & Examples | v1.1 | 0/0 | Not started | - |
 | 10. E2E Testing | v1.1 | 0/0 | Not started | - |
 
@@ -64,7 +64,11 @@ Shipped 2026-02-14. Details archived in milestones/v1.0-ROADMAP.md.
 3. Wrapper script streams stdout/stderr in real-time and returns appropriate exit codes
 4. User can run `docker run <image> hupyy-java-verify --input /path/to/java/src` and see verification output
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Update Dockerfile to 3-stage build with JDK 25 and Java FV CLI jar compilation
+- [ ] 08-02-PLAN.md — Create wrapper script and install into Docker image
 
 ---
 
@@ -105,4 +109,4 @@ Shipped 2026-02-14. Details archived in milestones/v1.0-ROADMAP.md.
 ---
 
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-15 after v1.1 roadmap creation*
+*Last updated: 2026-02-15 after Phase 8 planning*
