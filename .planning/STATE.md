@@ -11,15 +11,15 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Milestone:** v1.1 Java FV Integration
 **Phase:** 9 - Tool Activation & Examples
-**Plan:** Not started (awaiting `/gsd:plan-phase 9`)
-**Status:** Ready for planning
-**Last activity:** 2026-02-16 — Phase 8 verified and complete
+**Plan:** 09-01 complete, 09-02 pending
+**Status:** In progress
+**Last activity:** 2026-02-16 — Plan 09-01 (Tool Activation) complete
 
 **Progress:**
-[██████████] 100%
-v1.1 Milestone Progress: [███████            ] 1/3 phases (33%)
+[██████████] 95%
+v1.1 Milestone Progress: [████████           ] 1.5/3 phases (50%)
   Phase 8: Docker Infrastructure & Wrapper   [██████████] Complete (2/2 plans)
-  Phase 9: Tool Activation & Examples        [          ] Not started
+  Phase 9: Tool Activation & Examples        [█████     ] In progress (1/2 plans)
   Phase 10: E2E Testing                      [          ] Not started
 ```
 
@@ -43,6 +43,10 @@ v1.1 Milestone Progress: [███████            ] 1/3 phases (33%)
 - Docker 3-stage build with JDK 25 + wrapper script integration
 - 4 requirements satisfied (DOCK-01 through DOCK-04, WRAP-01 through WRAP-03)
 
+**v1.1 Phase 9 Progress (1/2 plans):**
+- Plan 09-01: Tool Activation - Complete (66 seconds, 1 task, 2 files, commit: 9a682ed)
+- Java Verification tool activated with 'available' status and 120s timeout
+
 ## Accumulated Context
 
 ### Decisions
@@ -53,6 +57,7 @@ All v1.0 decisions documented in PROJECT.md Key Decisions table.
 - **Wrapper script process handling**: Use `exec` instead of direct invocation to replace shell process with Java process (cleaner process tree, direct signal handling)
 - **Input validation strategy**: Validate .java file presence in wrapper before invoking CLI (fail fast with clear error instead of Java FV generic error)
 - **Wrapper PATH naming**: Install at `/usr/local/bin/hupyy-java-verify` without .sh extension for cleaner toolRegistry interface
+- [Phase 09]: 120-second timeout for Java FV (vs default 60s) to accommodate complex verification tasks
 
 ### v1.1 Java FV Integration Notes
 
@@ -67,8 +72,9 @@ All v1.0 decisions documented in PROJECT.md Key Decisions table.
 - 6 example files in examples/modern-java/
 
 **Tool registry status:**
-- Tool already listed as `java-verification` in portal (status: in-development)
-- Phase 9 will flip to 'available' status
+- Java Verification tool now ACTIVATED (status: 'available')
+- Execution timeout: 120 seconds (120000ms)
+- Available for landing page display and demo execution
 
 **Example projects planned:**
 1. Records with compact constructor invariants (Age, Range, Person)
@@ -91,13 +97,13 @@ None. Awaiting phase planning.
 
 ## Session Continuity
 
-**Last session:** 2026-02-16T07:45:07.442Z
-**Stopped at:** Phase 9 context gathered
-**Resume file:** .planning/phases/09-tool-activation-examples/09-CONTEXT.md
+**Last session:** 2026-02-16T08:02:28.684Z
+**Stopped at:** Completed 09-01-PLAN.md
+**Resume file:** None
 
 **Next steps:**
-1. Run `/gsd:plan-phase 9` to create execution plans for tool activation + examples
-2. Execute Phase 9 plans
+1. Execute Plan 09-02 (Example Projects)
+2. Complete Phase 9 verification
 3. Plan and execute Phase 10 (E2E tests)
 
 ---
