@@ -23,8 +23,8 @@
 ### v1.1 Java FV Integration (Phases 8-10)
 
 - [x] **Phase 8: Docker Infrastructure & Wrapper** (2/2 plans) — completed 2026-02-16
-- [ ] **Phase 9: Tool Activation & Examples** (3 plans) - Enable Java verification tool and add example projects
-- [ ] **Phase 10: E2E Testing** - Verify Java verification workflow end-to-end
+- [x] **Phase 9: Tool Activation & Examples** (3/3 plans) — completed 2026-02-16
+- [ ] **Phase 10: E2E Testing** (2 plans) — Verify Java verification workflow end-to-end
 
 ## Progress
 
@@ -38,8 +38,8 @@
 | 6. Landing Page & Examples | v1.0 | 2/2 | Complete | 2026-02-13 |
 | 7. E2E Testing with Playwright | v1.0 | 2/2 | Complete | 2026-02-14 |
 | 8. Docker Infrastructure & Wrapper | v1.1 | 2/2 | Complete | 2026-02-16 |
-| 9. Tool Activation & Examples | v1.1 | 2/3 | In Progress | - |
-| 10. E2E Testing | v1.1 | 0/0 | Not started | - |
+| 9. Tool Activation & Examples | v1.1 | 3/3 | Complete | 2026-02-16 |
+| 10. E2E Testing | v1.1 | 0/2 | Planned | - |
 
 ## Phase Details
 
@@ -109,7 +109,11 @@ Plans:
 3. Automated test captures real-time console output showing ACSL contracts and Z3 results
 4. Automated test verifies output file tree displays generated verification artifacts
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 10-01-PLAN.md — Extend E2E infrastructure, landing page Java FV tests, example loading tests
+- [ ] 10-02-PLAN.md — Execution tests with real Docker, streaming validation, output verification, full user journey
 
 ---
 
