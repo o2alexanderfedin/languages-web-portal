@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 ## Current Position
 
 **Milestone:** v1.1 Java FV Integration
-**Phase:** 9 - Tool Activation & Examples
-**Plan:** Complete (3/3 plans)
-**Status:** Milestone complete
-**Last activity:** 2026-02-16 — Phase 9 complete (Tool Activation + Examples + UI)
+**Phase:** 10 - E2E Testing
+**Plan:** 01 of 02
+**Status:** In progress
+**Last activity:** 2026-02-16 — Plan 10-01 complete (Java FV E2E tests)
 
 **Progress:**
-[██████████] 100%
-v1.1 Milestone Progress: [█████████████      ] 2/3 phases (67%)
+[██████████] 96%
+v1.1 Milestone Progress: [████████████████   ] 2.5/3 phases (83%)
   Phase 8: Docker Infrastructure & Wrapper   [██████████] Complete (2/2 plans)
   Phase 9: Tool Activation & Examples        [██████████] Complete (3/3 plans)
-  Phase 10: E2E Testing                      [          ] Not started
+  Phase 10: E2E Testing                      [█████     ] In progress (1/2 plans)
 ```
 
 ## Performance Metrics
@@ -53,6 +53,13 @@ v1.1 Milestone Progress: [█████████████      ] 2/3 pha
 - 11 Java files demonstrating modern Java features with formal verification
 - 3 new integration tests for Java examples API + 3 unit tests for ExampleSelector
 
+**v1.1 Phase 10 In Progress (1/2 plans):**
+- Plan 10-01: Java FV E2E Tests - Complete (244 seconds, 2 tasks, 3 files, commits: 16a6735, 3f00f34)
+- Extended DemoPage POM with ExampleSelector locators and helpers
+- 4 landing page test scenarios (8 tests with desktop+mobile) verify Java FV availability
+- 7 example loading test scenarios verify all 3 examples can be loaded
+- Total 15 new E2E tests added (47 passed, 7 skipped on mobile)
+
 ## Accumulated Context
 
 ### Decisions
@@ -73,6 +80,11 @@ All v1.0 decisions documented in PROJECT.md Key Decisions table.
 - **Simple dropdown UI**: Native select element for example picker (no complex dropdown library needed)
 - **Description display**: Show example description below dropdown when selected (not in option text)
 - **Reset on load**: Clear dropdown selection after successful load (better UX for trying multiple examples)
+
+**v1.1 Phase 10 Decisions:**
+- **Skip mobile tests for example loading**: ExampleSelector UI identical on mobile and desktop - no responsive behavior differences to test (saves ~7 test executions)
+- **Desktop/mobile branching in landing page tests**: ToolComparisonGrid has different DOM structure (table vs cards) requiring different locators for comprehensive responsive coverage
+- **loadExample helper in DemoPage POM**: DRY principle for common pattern across 4 tests - encapsulates async wait logic for execute button to enable after example load
 
 ### v1.1 Java FV Integration Notes
 
@@ -103,6 +115,13 @@ All v1.0 decisions documented in PROJECT.md Key Decisions table.
 - User clicks "Load Example" → projectId is set → "Run" button enables
 - Full integration between backend API and frontend UI complete
 
+**E2E test coverage:**
+- Landing page: Java FV shows "Available" badge (verified desktop table + mobile card)
+- Navigation: Try Now button navigates to /demo?tool=java-verification with tool pre-selected
+- Example loading: All 3 examples (bank-account-records, shape-matching, payment-types) load successfully
+- UI state: Description appears on selection, button disabled without selection, dropdown resets after load
+- Total: 15 new E2E tests (8 landing page, 7 example loading)
+
 ### Pending Todos
 
 None. Awaiting phase planning.
@@ -119,15 +138,15 @@ None. Awaiting phase planning.
 
 ## Session Continuity
 
-**Last session:** 2026-02-16T21:11:32.431Z
-**Stopped at:** Phase 10 context gathered
-**Resume file:** .planning/phases/10-e2e-testing/10-CONTEXT.md
+**Last session:** 2026-02-16T21:50:35Z
+**Stopped at:** Completed 10-01-PLAN.md
+**Resume file:** .planning/phases/10-e2e-testing/10-01-SUMMARY.md
 
 **Next steps:**
-1. Plan Phase 10 (E2E Testing)
-2. Execute Phase 10 plans
-3. Complete v1.1 Java FV Integration milestone
+1. Execute Plan 10-02 (Java example execution E2E tests)
+2. Complete Phase 10 and v1.1 Java FV Integration milestone
+3. Deliver v1.1 milestone
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-16 after Phase 9 completion*
+*Last updated: 2026-02-16 after Phase 10 Plan 01 completion*
