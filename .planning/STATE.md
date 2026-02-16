@@ -11,14 +11,14 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Milestone:** v1.1 Java FV Integration
 **Phase:** 8 - Docker Infrastructure & Wrapper
-**Plan:** Not started (awaiting `/gsd:plan-phase 8`)
-**Status:** Ready for planning
-**Last activity:** 2026-02-15 — v1.1 roadmap created
+**Plan:** 2/2 complete
+**Status:** Phase 8 complete — ready for Phase 9
+**Last activity:** 2026-02-16 — Completed 08-02 wrapper script
 
 **Progress:**
-```
-v1.1 Milestone Progress: [                    ] 0/3 phases (0%)
-  Phase 8: Docker Infrastructure & Wrapper   [          ] Not started
+[██████████] 100%
+v1.1 Milestone Progress: [███████            ] 1/3 phases (33%)
+  Phase 8: Docker Infrastructure & Wrapper   [██████████] Complete (2/2 plans)
   Phase 9: Tool Activation & Examples        [          ] Not started
   Phase 10: E2E Testing                      [          ] Not started
 ```
@@ -36,11 +36,23 @@ v1.1 Milestone Progress: [                    ] 0/3 phases (0%)
 - 20 requirements (DOCK: 4, TOOL: 4, WRAP: 4, EXAM: 4, E2E: 4)
 - First live tool integration (Java FV)
 
+**v1.1 Phase 8 Delivered:**
+- 2 plans completed (08-01: Dockerfile, 08-02: Wrapper script)
+- Duration: ~6 minutes (374 seconds for 08-02)
+- 3 commits, 2 files modified/created
+- Docker 3-stage build with JDK 25 + wrapper script integration
+- 4 requirements satisfied (DOCK-01 through DOCK-04, WRAP-01 through WRAP-03)
+
 ## Accumulated Context
 
 ### Decisions
 
 All v1.0 decisions documented in PROJECT.md Key Decisions table.
+
+**v1.1 Phase 8 Decisions:**
+- **Wrapper script process handling**: Use `exec` instead of direct invocation to replace shell process with Java process (cleaner process tree, direct signal handling)
+- **Input validation strategy**: Validate .java file presence in wrapper before invoking CLI (fail fast with clear error instead of Java FV generic error)
+- **Wrapper PATH naming**: Install at `/usr/local/bin/hupyy-java-verify` without .sh extension for cleaner toolRegistry interface
 
 ### v1.1 Java FV Integration Notes
 
@@ -78,16 +90,19 @@ None. Awaiting phase planning.
 
 ## Session Continuity
 
-**Last session:** 2026-02-15 (v1.1 roadmap creation)
-**Stopped at:** Roadmap complete, ready for `/gsd:plan-phase 8`
-**Resume file:** None
+**Last session:** 2026-02-16 (Phase 8 execution)
+**Stopped at:** Phase 8 complete (08-02-PLAN.md), checkpoint reached for human verification
+**Resume file:** .planning/phases/08-docker-infrastructure-wrapper/08-02-SUMMARY.md
 
 **Next steps:**
-1. Run `/gsd:plan-phase 8` to create execution plans for Docker infrastructure
-2. Execute Phase 8 plans (Docker multi-stage build + wrapper script)
-3. Plan and execute Phase 9 (tool activation + examples)
+1. **Verify wrapper functionality** (checkpoint task 3 from 08-02):
+   - Test wrapper with example Java file in Docker
+   - Verify real-time output streaming
+   - Test error handling scenarios
+2. Plan Phase 9 (tool activation + examples)
+3. Execute Phase 9 plans
 4. Plan and execute Phase 10 (E2E tests)
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-15 after v1.1 roadmap creation*
+*Last updated: 2026-02-16 after Phase 8 completion*
