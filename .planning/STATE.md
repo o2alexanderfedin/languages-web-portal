@@ -11,15 +11,15 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Milestone:** v1.1 Java FV Integration
 **Phase:** 9 - Tool Activation & Examples
-**Plan:** 09-01 complete, 09-02 pending
-**Status:** In progress
-**Last activity:** 2026-02-16 — Plan 09-01 (Tool Activation) complete
+**Plan:** Complete (2/2 plans)
+**Status:** Phase complete
+**Last activity:** 2026-02-16 — Phase 9 complete (Tool Activation + Examples)
 
 **Progress:**
-[██████████] 95%
-v1.1 Milestone Progress: [████████           ] 1.5/3 phases (50%)
+[██████████] 100%
+v1.1 Milestone Progress: [█████████████      ] 2/3 phases (67%)
   Phase 8: Docker Infrastructure & Wrapper   [██████████] Complete (2/2 plans)
-  Phase 9: Tool Activation & Examples        [█████     ] In progress (1/2 plans)
+  Phase 9: Tool Activation & Examples        [██████████] Complete (2/2 plans)
   Phase 10: E2E Testing                      [          ] Not started
 ```
 
@@ -43,9 +43,13 @@ v1.1 Milestone Progress: [████████           ] 1.5/3 phases (50%
 - Docker 3-stage build with JDK 25 + wrapper script integration
 - 4 requirements satisfied (DOCK-01 through DOCK-04, WRAP-01 through WRAP-03)
 
-**v1.1 Phase 9 Progress (1/2 plans):**
+**v1.1 Phase 9 Delivered (2/2 plans):**
 - Plan 09-01: Tool Activation - Complete (66 seconds, 1 task, 2 files, commit: 9a682ed)
+- Plan 09-02: Example Projects - Complete (156 seconds, 2 tasks, 12 files, commits: e78793c, aaad911)
 - Java Verification tool activated with 'available' status and 120s timeout
+- 3 Java verification example projects created (bank-account-records, shape-matching, payment-types)
+- 11 Java files demonstrating modern Java features with formal verification
+- 3 new integration tests for Java examples API
 
 ## Accumulated Context
 
@@ -57,7 +61,13 @@ All v1.0 decisions documented in PROJECT.md Key Decisions table.
 - **Wrapper script process handling**: Use `exec` instead of direct invocation to replace shell process with Java process (cleaner process tree, direct signal handling)
 - **Input validation strategy**: Validate .java file presence in wrapper before invoking CLI (fail fast with clear error instead of Java FV generic error)
 - **Wrapper PATH naming**: Install at `/usr/local/bin/hupyy-java-verify` without .sh extension for cleaner toolRegistry interface
-- [Phase 09]: 120-second timeout for Java FV (vs default 60s) to accommodate complex verification tasks
+
+**v1.1 Phase 9 Decisions:**
+- **Tool timeout**: 120-second timeout for Java FV (vs default 60s) to accommodate complex verification tasks
+- **Example complexity progression**: Progressive ordering from simple (bank-account-records) to medium (shape-matching) to complex (payment-types)
+- **Intentional failure demonstration**: UnsafeRefund.java includes 5 different verification failure modes (missing validation, unsafe array access, division by zero, null dereference, integer overflow)
+- **No package declarations**: Flat file structure in examples for portal demo simplicity (users don't need to understand package hierarchies)
+- **README.md pattern**: First non-heading line serves as example description extracted by ExampleService for dropdown display
 
 ### v1.1 Java FV Integration Notes
 
@@ -76,10 +86,10 @@ All v1.0 decisions documented in PROJECT.md Key Decisions table.
 - Execution timeout: 120 seconds (120000ms)
 - Available for landing page display and demo execution
 
-**Example projects planned:**
-1. Records with compact constructor invariants (Age, Range, Person)
-2. Pattern matching with type patterns, guards, null handling
-3. Sealed types with exhaustiveness checking
+**Example projects created:**
+1. **bank-account-records**: Records with compact constructor invariants (Account.java, Transaction.java)
+2. **shape-matching**: Pattern matching with type patterns, guards, null handling (Shape.java, ShapeCalculator.java, NullableShape.java)
+3. **payment-types**: Sealed types with exhaustiveness checking + intentional failures (PaymentMethod.java, PaymentProcessor.java, UnsafeRefund.java)
 
 ### Pending Todos
 
@@ -97,14 +107,14 @@ None. Awaiting phase planning.
 
 ## Session Continuity
 
-**Last session:** 2026-02-16T08:02:28.684Z
-**Stopped at:** Completed 09-01-PLAN.md
+**Last session:** 2026-02-16T08:03:02Z
+**Stopped at:** Completed Phase 9 (09-02-PLAN.md)
 **Resume file:** None
 
 **Next steps:**
-1. Execute Plan 09-02 (Example Projects)
-2. Complete Phase 9 verification
-3. Plan and execute Phase 10 (E2E tests)
+1. Plan Phase 10 (E2E Testing)
+2. Execute Phase 10 plans
+3. Complete v1.1 Java FV Integration milestone
 
 ---
 *State initialized: 2026-02-12*
