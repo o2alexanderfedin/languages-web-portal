@@ -11,15 +11,15 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 
 **Milestone:** v1.1 Java FV Integration
 **Phase:** 9 - Tool Activation & Examples
-**Plan:** Complete (2/2 plans)
+**Plan:** Complete (3/3 plans)
 **Status:** Phase complete
-**Last activity:** 2026-02-16 — Phase 9 complete (Tool Activation + Examples)
+**Last activity:** 2026-02-16 — Phase 9 complete (Tool Activation + Examples + UI)
 
 **Progress:**
 [██████████] 100%
 v1.1 Milestone Progress: [█████████████      ] 2/3 phases (67%)
   Phase 8: Docker Infrastructure & Wrapper   [██████████] Complete (2/2 plans)
-  Phase 9: Tool Activation & Examples        [██████████] Complete (2/2 plans)
+  Phase 9: Tool Activation & Examples        [██████████] Complete (3/3 plans)
   Phase 10: E2E Testing                      [          ] Not started
 ```
 
@@ -43,13 +43,15 @@ v1.1 Milestone Progress: [█████████████      ] 2/3 pha
 - Docker 3-stage build with JDK 25 + wrapper script integration
 - 4 requirements satisfied (DOCK-01 through DOCK-04, WRAP-01 through WRAP-03)
 
-**v1.1 Phase 9 Delivered (2/2 plans):**
+**v1.1 Phase 9 Delivered (3/3 plans):**
 - Plan 09-01: Tool Activation - Complete (66 seconds, 1 task, 2 files, commit: 9a682ed)
 - Plan 09-02: Example Projects - Complete (156 seconds, 2 tasks, 12 files, commits: e78793c, aaad911)
+- Plan 09-03: Example Selector UI - Complete (305 seconds, 2 tasks, 5 files, commits: b930da4, 6c25ef3)
 - Java Verification tool activated with 'available' status and 120s timeout
 - 3 Java verification example projects created (bank-account-records, shape-matching, payment-types)
+- Frontend UI for loading examples via dropdown (ExampleSelector component)
 - 11 Java files demonstrating modern Java features with formal verification
-- 3 new integration tests for Java examples API
+- 3 new integration tests for Java examples API + 3 unit tests for ExampleSelector
 
 ## Accumulated Context
 
@@ -68,6 +70,9 @@ All v1.0 decisions documented in PROJECT.md Key Decisions table.
 - **Intentional failure demonstration**: UnsafeRefund.java includes 5 different verification failure modes (missing validation, unsafe array access, division by zero, null dereference, integer overflow)
 - **No package declarations**: Flat file structure in examples for portal demo simplicity (users don't need to understand package hierarchies)
 - **README.md pattern**: First non-heading line serves as example description extracted by ExampleService for dropdown display
+- **Simple dropdown UI**: Native select element for example picker (no complex dropdown library needed)
+- **Description display**: Show example description below dropdown when selected (not in option text)
+- **Reset on load**: Clear dropdown selection after successful load (better UX for trying multiple examples)
 
 ### v1.1 Java FV Integration Notes
 
@@ -91,6 +96,13 @@ All v1.0 decisions documented in PROJECT.md Key Decisions table.
 2. **shape-matching**: Pattern matching with type patterns, guards, null handling (Shape.java, ShapeCalculator.java, NullableShape.java)
 3. **payment-types**: Sealed types with exhaustiveness checking + intentional failures (PaymentMethod.java, PaymentProcessor.java, UnsafeRefund.java)
 
+**Example loading flow:**
+- User visits /demo?tool=java-verification
+- ExampleSelector dropdown appears with 3 examples
+- User selects example → description appears below dropdown
+- User clicks "Load Example" → projectId is set → "Run" button enables
+- Full integration between backend API and frontend UI complete
+
 ### Pending Todos
 
 None. Awaiting phase planning.
@@ -107,8 +119,8 @@ None. Awaiting phase planning.
 
 ## Session Continuity
 
-**Last session:** 2026-02-16T08:03:02Z
-**Stopped at:** Completed Phase 9 (09-02-PLAN.md)
+**Last session:** 2026-02-16T19:09:07Z
+**Stopped at:** Completed Phase 9 (09-03-PLAN.md)
 **Resume file:** None
 
 **Next steps:**
@@ -118,4 +130,4 @@ None. Awaiting phase planning.
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-16 after Phase 8 completion*
+*Last updated: 2026-02-16 after Phase 9 completion*
