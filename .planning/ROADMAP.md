@@ -23,7 +23,7 @@
 ### v1.1 Java FV Integration (Phases 8-10)
 
 - [x] **Phase 8: Docker Infrastructure & Wrapper** (2/2 plans) — completed 2026-02-16
-- [ ] **Phase 9: Tool Activation & Examples** - Enable Java verification tool and add example projects
+- [ ] **Phase 9: Tool Activation & Examples** (2 plans) - Enable Java verification tool and add example projects
 - [ ] **Phase 10: E2E Testing** - Verify Java verification workflow end-to-end
 
 ## Progress
@@ -38,7 +38,7 @@
 | 6. Landing Page & Examples | v1.0 | 2/2 | Complete | 2026-02-13 |
 | 7. E2E Testing with Playwright | v1.0 | 2/2 | Complete | 2026-02-14 |
 | 8. Docker Infrastructure & Wrapper | v1.1 | 2/2 | Complete | 2026-02-16 |
-| 9. Tool Activation & Examples | v1.1 | 0/0 | Not started | - |
+| 9. Tool Activation & Examples | v1.1 | 0/2 | Planned | - |
 | 10. E2E Testing | v1.1 | 0/0 | Not started | - |
 
 ## Phase Details
@@ -86,7 +86,11 @@ Plans:
 3. User can load one of three example projects (records, pattern matching, sealed types) via example dropdown
 4. User can execute Java verification on uploaded or example Java files and see real-time output
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Activate Java Verification tool (status, description, availability, timeout)
+- [ ] 09-02-PLAN.md — Create three Java example projects with tests
 
 ---
 
@@ -109,4 +113,4 @@ Plans:
 ---
 
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-16 after Phase 8 completion*
+*Last updated: 2026-02-15 after Phase 9 planning*
