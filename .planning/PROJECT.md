@@ -8,6 +8,18 @@ A public demo web portal for Hupyy's formal verification tools and transpilers. 
 
 Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
 
+## Current Milestone: v1.1 Java FV Integration
+
+**Goal:** Make Java Formal Verification the first live tool in the portal — users can upload Java source files, run verification, and see ACSL contracts + Z3 results in real-time.
+
+**Target features:**
+- Java FV tool fully available (status: available, executable)
+- Wrapper script bridging Java FV CLI to portal's `--input` interface
+- Docker image with JDK 25 + built Java FV jars
+- Example Java projects for one-click demos
+- Updated tool status and description in UI
+- E2E tests for Java verification workflow
+
 ## Current State
 
 **Shipped:** v1.0 MVP (2026-02-14)
@@ -34,7 +46,12 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 
 ### Active
 
-(None — start next milestone to define)
+- [ ] Java FV tool available and executable in the portal
+- [ ] Wrapper script for Java FV CLI → portal interface bridge
+- [ ] Docker image includes JDK 25 + Java FV CLI jar
+- [ ] Example Java projects for demo (records, pattern matching, sealed types)
+- [ ] Updated tool metadata (status, description) in UI
+- [ ] E2E tests covering Java verification user flow
 
 ### Out of Scope
 
@@ -54,7 +71,7 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 | C++ to C Transpiler | Transpiler (with ACSL inference, Frama-C verification) | C++ → C | In Development |
 | C++ to Rust Transpiler | Transpiler (idiomatic) | C++ → Rust | In Development |
 | C# Formal Verification Plugin | Verification | C# | Finishing Up |
-| Java Formal Verification Plugin | Verification | Java | Finishing Up |
+| Java Formal Verification Plugin | Verification | Java | Available (v1.1.0) |
 | Rust Formal Verification Plugin | Verification | Rust | Very Beginning |
 | Python Formal Verification Linter | Linter/Verification | Python | Planning |
 | TypeScript Formal Verification Linter | Linter/Verification | TypeScript | Planning |
@@ -92,5 +109,8 @@ All tools are CLI-based: take input directory/files, produce output directory/fi
 | Docker multi-stage build | Minimal production image with non-root user | ✓ Good |
 | Playwright for E2E | Desktop + mobile browser testing with POM pattern | ✓ Good |
 
+| Java FV CLI wrapper | Adapts java-fv-cli.jar to portal's --input interface | — Pending |
+| Docker JDK 25 layer | Multi-stage build adds JDK 25 for Java FV execution | — Pending |
+
 ---
-*Last updated: 2026-02-14 after v1.0 milestone*
+*Last updated: 2026-02-15 after v1.1 milestone start*
