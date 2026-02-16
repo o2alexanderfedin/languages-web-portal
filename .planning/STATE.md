@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-15)
 **Milestone:** v1.1 Java FV Integration
 **Phase:** 9 - Tool Activation & Examples
 **Plan:** Complete (3/3 plans)
-**Status:** Phase complete
+**Status:** Milestone complete
 **Last activity:** 2026-02-16 — Phase 9 complete (Tool Activation + Examples + UI)
 
 **Progress:**
