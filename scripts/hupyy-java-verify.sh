@@ -28,7 +28,13 @@ if ! find "$PROJECT_PATH" -name "*.java" -type f | grep -q .; then
   exit 1
 fi
 
-# Execute Java FV CLI with verify command
+# Collect all .java files in project path
+JAVA_FILES=()
+while IFS= read -r -d '' file; do
+  JAVA_FILES+=("$file")
+done < <(find "$PROJECT_PATH" -name "*.java" -type f -print0)
+
+# Execute Java FV CLI with verify command, passing individual files
 # Output streams to stdout/stderr automatically (real-time for executionService)
 # Exit code propagates naturally
-exec java -jar "$JAR_PATH" verify "$PROJECT_PATH"
+exec java -jar "$JAR_PATH" verify "${JAVA_FILES[@]}"
