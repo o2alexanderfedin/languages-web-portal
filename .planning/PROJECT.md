@@ -8,25 +8,14 @@ A public demo web portal for Hupyy's formal verification tools and transpilers. 
 
 Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
 
-## Current Milestone: v1.1 Java FV Integration
-
-**Goal:** Make Java Formal Verification the first live tool in the portal — users can upload Java source files, run verification, and see ACSL contracts + Z3 results in real-time.
-
-**Target features:**
-- Java FV tool fully available (status: available, executable)
-- Wrapper script bridging Java FV CLI to portal's `--input` interface
-- Docker image with JDK 25 + built Java FV jars
-- Example Java projects for one-click demos
-- Updated tool status and description in UI
-- E2E tests for Java verification workflow
-
 ## Current State
 
-**Shipped:** v1.0 MVP (2026-02-14)
-**Codebase:** 8,239 LOC TypeScript/React across 198 files
+**Shipped:** v1.1 Java FV Integration (2026-02-16)
+**Codebase:** ~9,000 LOC TypeScript/React across 235 files
 **Tech stack:** TypeScript, Node.js 22, Express, React 18.3, Vite, Tailwind CSS v4, shadcn/ui, Redux Toolkit, RTK Query, Playwright
-**Tests:** 187 unit tests (Vitest) + 36 E2E tests (Playwright)
-**Deployment:** Docker multi-stage build, ready for Digital Ocean
+**Tests:** 190+ unit tests (Vitest) + 60 E2E tests (Playwright)
+**Deployment:** Docker multi-stage build (JDK 25 + Node.js 22), ready for Digital Ocean
+**Live tools:** Java Formal Verification (available, 120s timeout)
 
 ## Requirements
 
@@ -43,15 +32,16 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 - ✓ Shareable demo links with URL parameter tool pre-selection — v1.0
 - ✓ Sales narrative about AI-generated code verification — v1.0
 - ✓ E2E browser tests for critical user flows — v1.0
+- ✓ Java FV tool available and executable in the portal — v1.1
+- ✓ Wrapper script for Java FV CLI → portal interface bridge — v1.1
+- ✓ Docker image includes JDK 25 + Java FV CLI jar — v1.1
+- ✓ Example Java projects for demo (records, pattern matching, sealed types) — v1.1
+- ✓ Updated tool metadata (status, description) in UI — v1.1
+- ✓ E2E tests covering Java verification user flow — v1.1
 
 ### Active
 
-- [ ] Java FV tool available and executable in the portal
-- [ ] Wrapper script for Java FV CLI → portal interface bridge
-- [ ] Docker image includes JDK 25 + Java FV CLI jar
-- [ ] Example Java projects for demo (records, pattern matching, sealed types)
-- [ ] Updated tool metadata (status, description) in UI
-- [ ] E2E tests covering Java verification user flow
+(None — awaiting next milestone planning)
 
 ### Out of Scope
 
@@ -61,6 +51,10 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 - Persistent project storage — ephemeral by design
 - Tool installation management — tools are pre-installed on the server
 - Offline mode — real-time streaming is core value
+- Maven project build — portal runs pre-built CLI, users don't need Maven
+- javac plugin mode — CLI jar mode is simpler and doesn't require project structure
+- Custom solver configuration — Z3 bundled is sufficient for demo; multi-solver is v2
+- Java source code editing in browser — upload-only approach, consistent with v1.0 pattern
 
 ## Context
 
@@ -108,9 +102,11 @@ All tools are CLI-based: take input directory/files, produce output directory/fi
 | Defense-in-depth upload security | Multer MIME → magic bytes → ZIP security → path validation | ✓ Good |
 | Docker multi-stage build | Minimal production image with non-root user | ✓ Good |
 | Playwright for E2E | Desktop + mobile browser testing with POM pattern | ✓ Good |
-
-| Java FV CLI wrapper | Adapts java-fv-cli.jar to portal's --input interface | — Pending |
-| Docker JDK 25 layer | Multi-stage build adds JDK 25 for Java FV execution | — Pending |
+| Java FV CLI wrapper with exec | Adapts java-fv-cli.jar to portal's --input interface, exec replaces shell process for clean signal handling | ✓ Good |
+| Docker 3-stage build with JDK 25 | Maven build → JDK runtime → Node.js production, Z3 bundled via z3-turnkey | ✓ Good |
+| 120s timeout for Java FV | Complex verification needs more time than default 60s | ✓ Good |
+| Native select for example picker | Simple dropdown UI, no complex library needed | ✓ Good |
+| Progressive example complexity | bank-account-records → shape-matching → payment-types | ✓ Good |
 
 ---
-*Last updated: 2026-02-15 after v1.1 milestone start*
+*Last updated: 2026-02-16 after v1.1 milestone completion*

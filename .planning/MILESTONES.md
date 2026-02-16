@@ -19,3 +19,22 @@
 
 ---
 
+
+## v1.1 Java FV Integration (Shipped: 2026-02-16)
+
+**Phases completed:** 3 phases (8-10), 7 plans
+**Timeline:** 1 day (2026-02-15 → 2026-02-16)
+**Stats:** 20 commits, 37 files, 20/20 requirements satisfied
+
+**Key accomplishments:**
+1. Docker 3-stage build with JDK 25 and Java FV CLI jar compiled from source via Maven
+2. Wrapper script (`hupyy-java-verify`) bridging Java FV CLI to portal's `--input` interface with `exec` for streaming
+3. Java Verification activated as the first live tool (status: available, 120s timeout)
+4. Three Java example projects demonstrating modern Java features (records, pattern matching, sealed types) with intentional failure modes
+5. ExampleSelector UI component with dropdown, description display, and load-to-execute flow integrated into Home page
+6. 24 E2E Playwright tests covering landing page availability, example loading, Docker execution with streaming, output file tree, and full user journey
+
+**Archives:** [Roadmap](milestones/v1.1-ROADMAP.md) | [Requirements](milestones/v1.1-REQUIREMENTS.md) | [Audit](milestones/v1.1-MILESTONE-AUDIT.md)
+
+---
+
