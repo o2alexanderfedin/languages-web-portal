@@ -102,8 +102,7 @@ export default defineConfig({
       use: {
         browserName: 'firefox',
         viewport: { width: 375, height: 812 },
-        isMobile: true,
-        hasTouch: true,
+        // Note: Firefox doesn't support isMobile option, using viewport-only emulation
       },
     },
     {
