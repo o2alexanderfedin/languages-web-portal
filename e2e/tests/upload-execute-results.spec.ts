@@ -1,24 +1,19 @@
 import { test, expect } from '@playwright/test';
 import { DemoPage } from '../pages/DemoPage';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import {
+  SAMPLE_ZIP_PATH,
+  createTempFile,
+  cleanupTempFile,
+} from '../fixtures/helpers';
 
 test.describe('Upload, Execute, and Results', () => {
-  const sampleZipPath = path.resolve(
-    __dirname,
-    '../fixtures/test-files/sample.zip',
-  );
 
   test('user can upload a ZIP file and see success', async ({ page }) => {
     const demo = new DemoPage(page);
     await demo.goto();
 
     // Upload sample.zip
-    await demo.uploadFile(sampleZipPath);
+    await demo.uploadFile(SAMPLE_ZIP_PATH);
 
     // Wait for upload success
     await expect(demo.uploadSuccess).toBeVisible({ timeout: 10000 });
@@ -33,7 +28,7 @@ test.describe('Upload, Execute, and Results', () => {
     await demo.goto();
 
     // Upload sample.zip
-    await demo.uploadFile(sampleZipPath);
+    await demo.uploadFile(SAMPLE_ZIP_PATH);
     await demo.waitForUploadSuccess();
 
     // Select a tool
@@ -65,7 +60,7 @@ test.describe('Upload, Execute, and Results', () => {
     await demo.goto();
 
     // 1. Upload sample.zip
-    await demo.uploadFile(sampleZipPath);
+    await demo.uploadFile(SAMPLE_ZIP_PATH);
     await demo.waitForUploadSuccess();
 
     // 2. Select tool
@@ -92,12 +87,10 @@ test.describe('Upload, Execute, and Results', () => {
     await demo.goto();
 
     // Create a temporary .txt file
-    const tmpDir = path.resolve(__dirname, '../../test-results/temp');
-    if (!fs.existsSync(tmpDir)) {
-      fs.mkdirSync(tmpDir, { recursive: true });
-    }
-    const invalidFilePath = path.join(tmpDir, 'test-invalid.txt');
-    fs.writeFileSync(invalidFilePath, 'This is not a ZIP file');
+    const invalidFilePath = createTempFile(
+      'test-invalid.txt',
+      'This is not a ZIP file',
+    );
 
     // Try to upload the .txt file
     await demo.fileInput.setInputFiles(invalidFilePath);
@@ -107,6 +100,6 @@ test.describe('Upload, Execute, and Results', () => {
     await expect(demo.uploadSuccess).not.toBeVisible({ timeout: 3000 });
 
     // Cleanup
-    fs.unlinkSync(invalidFilePath);
+    cleanupTempFile(invalidFilePath);
   });
 });

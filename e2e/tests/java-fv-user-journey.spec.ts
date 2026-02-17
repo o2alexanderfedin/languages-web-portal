@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { LandingPage } from '../pages/LandingPage';
 import { DemoPage } from '../pages/DemoPage';
+import { waitForExecutionComplete } from '../fixtures/helpers';
 
 test.describe('Java FV Full User Journey', () => {
   // Set higher timeout for full journey including Docker execution (180 seconds)
@@ -83,15 +84,7 @@ test.describe('Java FV Full User Journey', () => {
     );
 
     // Wait for execution to complete (console contains 'completed' or 'exit code', 180s timeout)
-    await page.waitForFunction(
-      () => {
-        const consoleElement = document.querySelector('[data-testid="console-output"]');
-        if (!consoleElement) return false;
-        const text = consoleElement.textContent || '';
-        return /completed|exit code/i.test(text);
-      },
-      { timeout: 180_000 },
-    );
+    await waitForExecutionComplete(page);
 
     // ========== Step 6: Verify Results ==========
     // Assert console output contains verification-related keywords

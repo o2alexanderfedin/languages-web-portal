@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { DemoPage } from '../pages/DemoPage';
+import {
+  loadExampleAndExecute,
+  waitForExecutionComplete,
+} from '../fixtures/helpers';
 
 test.describe('Java FV Execution', () => {
   // Set higher timeout for Docker execution tests (180 seconds)
@@ -10,44 +13,6 @@ test.describe('Java FV Execution', () => {
 
   // Run tests sequentially since they're expensive Docker operations
   test.describe.configure({ mode: 'serial' });
-
-  /**
-   * Helper function to load an example and click execute
-   * Returns DemoPage instance for subsequent assertions
-   */
-  async function loadExampleAndRun(page: any, exampleName: string): Promise<DemoPage> {
-    // Navigate to demo with java-verification pre-selected
-    await page.goto('/demo?tool=java-verification');
-
-    const demo = new DemoPage(page);
-
-    // Wait for example selector to be visible
-    await demo.exampleSelector.waitFor({ state: 'visible', timeout: 10_000 });
-
-    // Load the example (waits for execute button to enable)
-    await demo.loadExample(exampleName);
-
-    // Click execute button
-    await demo.execute();
-
-    return demo;
-  }
-
-  /**
-   * Wait for execution to complete (console contains completion indicator)
-   * Uses 180s timeout since Docker execution can be slow
-   */
-  async function waitForExecutionComplete(page: any): Promise<void> {
-    await page.waitForFunction(
-      () => {
-        const consoleElement = document.querySelector('[data-testid="console-output"]');
-        if (!consoleElement) return false;
-        const text = consoleElement.textContent || '';
-        return /completed|exit code/i.test(text);
-      },
-      { timeout: 180_000 },
-    );
-  }
 
   // Check Docker availability before running tests
   test.beforeAll(async () => {
@@ -60,7 +25,7 @@ test.describe('Java FV Execution', () => {
 
   test.slow(); // Mark as slow since all tests involve Docker
   test('bank-account-records example executes and shows VERIFIED', async ({ page }) => {
-    const demo = await loadExampleAndRun(page, 'bank-account-records');
+    const demo = await loadExampleAndExecute(page, 'bank-account-records');
 
     // Wait for streaming to start - check button shows "Running..."
     await expect(demo.executeButton).toContainText(/Running/i, { timeout: 10_000 });
@@ -89,7 +54,7 @@ test.describe('Java FV Execution', () => {
 
   test.slow();
   test('shape-matching example executes successfully', async ({ page }) => {
-    const demo = await loadExampleAndRun(page, 'shape-matching');
+    const demo = await loadExampleAndExecute(page, 'shape-matching');
 
     // Wait for execution to complete
     await waitForExecutionComplete(page);
@@ -104,7 +69,7 @@ test.describe('Java FV Execution', () => {
 
   test.slow();
   test('payment-types example shows verification failures for UnsafeRefund.java', async ({ page }) => {
-    const demo = await loadExampleAndRun(page, 'payment-types');
+    const demo = await loadExampleAndExecute(page, 'payment-types');
 
     // Wait for execution to complete
     await waitForExecutionComplete(page);
@@ -135,7 +100,7 @@ test.describe('Java FV Execution', () => {
 
   test.slow();
   test('streaming output shows early markers before final result', async ({ page }) => {
-    const demo = await loadExampleAndRun(page, 'bank-account-records');
+    const demo = await loadExampleAndExecute(page, 'bank-account-records');
 
     // Wait for console output to have ANY text content (early marker)
     await page.waitForFunction(
@@ -166,7 +131,7 @@ test.describe('Java FV Execution', () => {
 
   test.slow();
   test('auto-scroll behavior during streaming', async ({ page }) => {
-    const demo = await loadExampleAndRun(page, 'bank-account-records');
+    const demo = await loadExampleAndExecute(page, 'bank-account-records');
 
     // Wait for console output to have some content
     await page.waitForFunction(
@@ -203,7 +168,7 @@ test.describe('Java FV Execution', () => {
 
   test.slow();
   test('loading indicator visible during execution', async ({ page }) => {
-    const demo = await loadExampleAndRun(page, 'bank-account-records');
+    const demo = await loadExampleAndExecute(page, 'bank-account-records');
 
     // Assert execute button contains text matching /Running/i
     await expect(demo.executeButton).toContainText(/Running/i, { timeout: 5_000 });
@@ -228,7 +193,7 @@ test.describe('Java FV Execution', () => {
 
   test.slow();
   test('output file tree appears after successful execution', async ({ page }) => {
-    const demo = await loadExampleAndRun(page, 'bank-account-records');
+    const demo = await loadExampleAndExecute(page, 'bank-account-records');
 
     // Wait for execution complete
     await waitForExecutionComplete(page);
@@ -259,7 +224,7 @@ test.describe('Java FV Execution', () => {
 
   test.slow();
   test('output file tree contains verification artifacts', async ({ page }) => {
-    const demo = await loadExampleAndRun(page, 'bank-account-records');
+    const demo = await loadExampleAndExecute(page, 'bank-account-records');
 
     // Wait for execution complete
     await waitForExecutionComplete(page);
