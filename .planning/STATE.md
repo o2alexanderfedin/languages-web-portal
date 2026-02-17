@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Phase 12 - Landing Page E2E Tests (v1.2 Comprehensive E2E Testing)
+**Current focus:** Phase 13 - Upload Flow E2E Tests (v1.2 Comprehensive E2E Testing)
 
 ## Current Position
 
-Phase: 12 of 17 (Landing Page E2E Tests) -- COMPLETE
-Plan: 2 of 2 in current phase
-Status: Complete
-Last activity: 2026-02-17 — Completed 12-02-PLAN.md
+Phase: 13 of 17 (Upload Flow E2E Tests) -- IN PROGRESS
+Plan: 1 of 2 in current phase
+Status: In Progress
+Last activity: 2026-02-17 — Completed 13-01-PLAN.md
 
-Progress: [███████████░░░░░░░░░] 65% (11/17 phases complete)
+Progress: [███████████░░░░░░░░░] 65% (11/17 phases complete, 13 in progress)
 
 ## Performance Metrics
 
@@ -39,6 +39,7 @@ Progress: [███████████░░░░░░░░░] 65% (11
 | 10. E2E v1.1 | 2 | ~1h | ~30min |
 | 11. Test Infra | 2/2 | ~24min | ~12min |
 | 12. Landing E2E | 2/2 | ~24min | ~12min |
+| 13. Upload E2E | 1/? | ~8min | ~8min |
 
 **Recent Trend:**
 - Last 5 plans: 10-14min range
@@ -60,6 +61,7 @@ Recent decisions affecting current work:
 - Phase 11-02: Shared test helpers in e2e/fixtures/helpers.ts for DRY test code across suites
 - Phase 12-01: Use viewport-based layout detection as fallback for Firefox mobile emulation
 - Phase 12-02: Force-click disabled buttons to verify navigation prevention behavior
+- Phase 13-01: Use DataTransfer+dispatchEvent('drop') for drag-and-drop simulation in react-dropzone tests; viewport threshold 1024px separates desktop (drag-drop) from tablet/mobile (click-upload)
 
 ### Pending Todos
 
@@ -73,9 +75,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 12-02-PLAN.md (Phase 12 complete)
+Stopped at: Completed 13-01-PLAN.md (Phase 13, Plan 1 complete)
 Resume file: None
-Next step: Continue to Phase 13
+Next step: Continue to Phase 13, Plan 2
 
 ---
 *State initialized: 2026-02-12*
