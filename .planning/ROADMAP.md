@@ -37,7 +37,7 @@
 - [x] **Phase 11: Test Infrastructure & Configuration** - Cross-browser and cross-device Playwright setup
 - [x] **Phase 12: Landing Page E2E Tests** - Hero, tool grid, responsive layout, navigation (completed 2026-02-17)
 - [x] **Phase 13: Upload Flow E2E Tests** - Drag-drop, validation, error handling (completed 2026-02-17)
-- [ ] **Phase 14: Execution Flow E2E Tests** - Streaming, progress, error states
+- [x] **Phase 14: Execution Flow E2E Tests** - Streaming, progress, error states (completed 2026-02-17)
 - [ ] **Phase 15: Output Flow E2E Tests** - File tree, preview, download
 - [ ] **Phase 16: Examples & Shareable Links E2E Tests** - Example loading, URL parameters
 - [ ] **Phase 17: Edge Cases & Polish** - Theme toggle, 404, browser navigation, tool switching
@@ -95,7 +95,7 @@ Plans:
   2. Execution progress indicators work (button state changes, loading spinner, connection badge)
   3. Execution errors (timeout, server error) display user-visible messages
   4. Execute button remains disabled until both file uploaded and tool selected
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 14-01-PLAN.md — ExecutionPage POM and migration of happy-path/streaming/progress tests (Chromium desktop, Docker)
 - [ ] 14-02-PLAN.md — Execution error tests (network interception) and button disabled state tests (3 desktop browsers)
@@ -150,7 +150,7 @@ Plans:
 | 11. Test Infrastructure & Configuration | v1.2 | 2/2 | Complete | 2026-02-16 |
 | 12. Landing Page E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 13. Upload Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
-| 14. Execution Flow E2E Tests | v1.2 | 0/2 | In planning | - |
+| 14. Execution Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 15. Output Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 16. Examples & Shareable Links E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 17. Edge Cases & Polish | v1.2 | 0/TBD | Not started | - |
