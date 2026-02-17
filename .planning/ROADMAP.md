@@ -36,7 +36,7 @@
 
 - [x] **Phase 11: Test Infrastructure & Configuration** - Cross-browser and cross-device Playwright setup
 - [x] **Phase 12: Landing Page E2E Tests** - Hero, tool grid, responsive layout, navigation (completed 2026-02-17)
-- [ ] **Phase 13: Upload Flow E2E Tests** - Drag-drop, validation, error handling
+- [x] **Phase 13: Upload Flow E2E Tests** - Drag-drop, validation, error handling (completed 2026-02-17)
 - [ ] **Phase 14: Execution Flow E2E Tests** - Streaming, progress, error states
 - [ ] **Phase 15: Output Flow E2E Tests** - File tree, preview, download
 - [ ] **Phase 16: Examples & Shareable Links E2E Tests** - Example loading, URL parameters
@@ -81,7 +81,7 @@ Plans:
   2. Invalid file types are rejected with user-visible error messages
   3. Upload success displays indicator and assigns project ID
   4. Oversized files are rejected with appropriate error message
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 13-01-PLAN.md — UploadPage POM, fixture files, and upload success E2E tests (drag-drop, click-upload, network interception, file replacement)
 - [ ] 13-02-PLAN.md — Upload validation E2E tests (invalid types, oversized, error recovery)
@@ -146,7 +146,7 @@ Plans:
 | 10. E2E Testing | v1.1 | 2/2 | Complete | 2026-02-16 |
 | 11. Test Infrastructure & Configuration | v1.2 | 2/2 | Complete | 2026-02-16 |
 | 12. Landing Page E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
-| 13. Upload Flow E2E Tests | v1.2 | 0/2 | Planning complete | - |
+| 13. Upload Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 14. Execution Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 15. Output Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 16. Examples & Shareable Links E2E Tests | v1.2 | 0/TBD | Not started | - |
