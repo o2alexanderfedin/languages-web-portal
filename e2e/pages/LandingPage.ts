@@ -8,6 +8,7 @@ export class LandingPage {
   readonly page: Page;
   readonly heroSection: Locator;
   readonly heroTitle: Locator;
+  readonly missionStatement: Locator;
   readonly toolComparisonGrid: Locator;
   readonly toolTable: Locator;
   readonly toolCards: Locator;
@@ -16,6 +17,7 @@ export class LandingPage {
     this.page = page;
     this.heroSection = page.getByTestId('hero-section');
     this.heroTitle = page.getByRole('heading', { name: /Formal Verification/i });
+    this.missionStatement = this.heroSection.locator('p');
     this.toolComparisonGrid = page.getByTestId('tool-comparison-grid');
     this.toolTable = page.getByTestId('tool-comparison-table');
     this.toolCards = page.getByTestId('tool-comparison-cards');
@@ -48,5 +50,29 @@ export class LandingPage {
    */
   getToolCard(toolId: string): Locator {
     return this.page.getByTestId(`tool-card-${toolId}`);
+  }
+
+  /**
+   * Get all tool rows (desktop table)
+   */
+  getToolRows(): Locator {
+    return this.toolTable.locator('tbody tr');
+  }
+
+  /**
+   * Get all tool cards list (mobile cards)
+   */
+  getToolCardsList(): Locator {
+    return this.toolCards.locator('[data-testid^="tool-card-"]');
+  }
+
+  /**
+   * Get tool status badge locator
+   */
+  getToolStatusBadge(toolId: string, isMobile: boolean): Locator {
+    if (isMobile) {
+      return this.getToolCard(toolId).locator('span.rounded-full');
+    }
+    return this.getToolRow(toolId).locator('span.rounded-full');
   }
 }
