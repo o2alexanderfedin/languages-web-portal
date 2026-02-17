@@ -1,6 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
+ * Playwright configuration with cross-browser, cross-device testing.
+ *
+ * Project naming convention: {viewport}-{browser}
+ *   - viewport: desktop (1280x720), tablet (768x1024), mobile (375x812)
+ *   - browser: chromium, firefox, webkit
+ *
+ * Docker targeting:
+ *   Set E2E_BASE_URL to test against a running Docker container.
+ *   When E2E_BASE_URL is set, the dev server is NOT started automatically.
+ *
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
@@ -19,7 +29,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.E2E_BASE_URL || 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -28,28 +38,84 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
 
-  /* Configure projects for major browsers */
+  /* Configure projects for major browsers across desktop, tablet, and mobile viewports */
   projects: [
+    // --- Desktop (1280x720) ---
     {
-      name: 'desktop',
+      name: 'desktop-chromium',
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 720 },
       },
     },
-
     {
-      name: 'mobile',
+      name: 'desktop-firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+        viewport: { width: 1280, height: 720 },
+      },
+    },
+    {
+      name: 'desktop-webkit',
+      use: {
+        ...devices['Desktop Safari'],
+        viewport: { width: 1280, height: 720 },
+      },
+    },
+
+    // --- Tablet (768x1024) ---
+    {
+      name: 'tablet-chromium',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 768, height: 1024 },
+        isMobile: false,
+      },
+    },
+    {
+      name: 'tablet-firefox',
+      use: {
+        browserName: 'firefox',
+        viewport: { width: 768, height: 1024 },
+        isMobile: false,
+      },
+    },
+    {
+      name: 'tablet-webkit',
+      use: {
+        browserName: 'webkit',
+        viewport: { width: 768, height: 1024 },
+        isMobile: false,
+      },
+    },
+
+    // --- Mobile (375x812) ---
+    {
+      name: 'mobile-chromium',
       use: {
         ...devices['iPhone 13 Pro'],
-        // Override to use Chromium instead of WebKit for faster CI
         browserName: 'chromium',
+      },
+    },
+    {
+      name: 'mobile-firefox',
+      use: {
+        browserName: 'firefox',
+        viewport: { width: 375, height: 812 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
+    {
+      name: 'mobile-webkit',
+      use: {
+        ...devices['iPhone 13 Pro'],
       },
     },
   ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
+  /* Run your local dev server before starting the tests (skip when targeting Docker) */
+  webServer: process.env.E2E_BASE_URL ? undefined : {
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
