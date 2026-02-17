@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Phase 16 - (next phase)
+**Current focus:** Phase 16 - Examples Shareable Links E2E Tests
 
 ## Current Position
 
-Phase: 15 of 17 (Output Flow E2E Tests) -- COMPLETE
+Phase: 16 of 17 (Examples Shareable Links E2E Tests) -- COMPLETE
 Plan: 2 of 2 in current phase -- COMPLETE
-Status: Phase 15 Complete
-Last activity: 2026-02-17 — Completed 15-02-PLAN.md
+Status: Phase 16 Complete
+Last activity: 2026-02-17 — Completed 16-02-PLAN.md
 
-Progress: [█████████████░░░░░░░] 76% (13/17 phases complete)
+Progress: [██████████████░░░░░░] 82% (14/17 phases complete)
 
 ## Performance Metrics
 
@@ -42,12 +42,13 @@ Progress: [█████████████░░░░░░░] 76% (13
 | 13. Upload E2E | 2/2 | ~16min | ~8min |
 | 14. Execution E2E | 2/2 | ~5min | ~3min |
 | 15. Output E2E | 2/2 | ~11min | ~5min |
+| 16. Examples/Shareable Links E2E | 2/2 | ~2min | ~1min |
 
 **Recent Trend:**
-- Last 5 plans: 3-14min range
+- Last 5 plans: 1-14min range
 - Trend: Stable (fast execution)
 
-*Updated after 15-02 completion*
+*Updated after 16-02 completion*
 
 ## Accumulated Context
 
@@ -69,6 +70,7 @@ Recent decisions affecting current work:
 - Phase 14-02: EXEC-03 error tests use page.route('**/execute**') interception (no Docker); EXEC-04 button state tests use isMobile skip to auto-run across Chromium/Firefox/WebKit desktop
 - Phase 15-01: OutputPage uses .bg-slate-900 first() for filePreviewHeader; syntaxHighlighterBlock covers pre code/.react-syntax-highlighter/pre[class*="language-"]; e2e/tsconfig.json uses ESNext/bundler for import.meta support; non-folder treeItems via :not([aria-expanded]) selector
 - Phase 15-02: OUTP-03 uses Promise.all([page.waitForEvent('download'), button.click()]) for anchor download elements; OUTP-04 uses dual route interception (**/file-tree** + **/execute**) to simulate empty output state without Docker
+- Phase 16-02: Cross-browser shareable links suite uses isMobile skip for desktop-only execution; pageerror capture pattern for zero-JS-exception assertions on invalid ?tool= params
 
 ### Pending Todos
 
@@ -82,10 +84,10 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Completed 15-02-PLAN.md (output download + empty-state E2E tests — Phase 15 complete)
+Stopped at: Completed 16-02-PLAN.md (shareable links cross-browser E2E tests — Phase 16 complete)
 Resume file: None
-Next step: Execute Phase 16
+Next step: Execute Phase 17
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-17 after 15-02 execution*
+*Last updated: 2026-02-17 after 16-02 execution*
