@@ -9,10 +9,10 @@ Requirements for Comprehensive E2E Testing milestone. Each maps to roadmap phase
 
 ### Test Infrastructure
 
-- [ ] **INFRA-01**: Playwright config includes Chromium, Firefox, and WebKit browser projects
-- [ ] **INFRA-02**: Playwright config includes desktop (1280x720), tablet (768x1024), and mobile (375x812) viewports
-- [ ] **INFRA-03**: E2E tests run against Docker production container (not dev server)
-- [ ] **INFRA-04**: Shared test fixtures extracted into reusable utilities (DRY helpers for common patterns)
+- [x] **INFRA-01**: Playwright config includes Chromium, Firefox, and WebKit browser projects
+- [x] **INFRA-02**: Playwright config includes desktop (1280x720), tablet (768x1024), and mobile (375x812) viewports
+- [x] **INFRA-03**: E2E tests run against Docker production container (not dev server)
+- [x] **INFRA-04**: Shared test fixtures extracted into reusable utilities (DRY helpers for common patterns)
 
 ### Landing Page Tests
 
@@ -83,10 +83,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 11 | Pending |
-| INFRA-02 | Phase 11 | Pending |
-| INFRA-03 | Phase 11 | Pending |
-| INFRA-04 | Phase 11 | Pending |
+| INFRA-01 | Phase 11 | Complete |
+| INFRA-02 | Phase 11 | Complete |
+| INFRA-03 | Phase 11 | Complete |
+| INFRA-04 | Phase 11 | Complete |
 | LAND-01 | Phase 12 | Pending |
 | LAND-02 | Phase 12 | Pending |
 | LAND-03 | Phase 12 | Pending |

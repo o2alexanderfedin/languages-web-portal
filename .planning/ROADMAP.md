@@ -34,7 +34,7 @@
 
 **Milestone Goal:** Every user-facing behavior verified across Chromium, Firefox, and WebKit browsers on desktop, tablet, and mobile viewports — running against the Docker production image.
 
-- [ ] **Phase 11: Test Infrastructure & Configuration** - Cross-browser and cross-device Playwright setup
+- [x] **Phase 11: Test Infrastructure & Configuration** - Cross-browser and cross-device Playwright setup
 - [ ] **Phase 12: Landing Page E2E Tests** - Hero, tool grid, responsive layout, navigation
 - [ ] **Phase 13: Upload Flow E2E Tests** - Drag-drop, validation, error handling
 - [ ] **Phase 14: Execution Flow E2E Tests** - Streaming, progress, error states
@@ -55,8 +55,8 @@
   4. Shared test fixtures exist and are reusable across test suites (DRY pattern)
 **Plans:** 2 plans
 Plans:
-- [ ] 11-01-PLAN.md — Cross-browser/viewport Playwright config with Docker target support
-- [ ] 11-02-PLAN.md — Shared test fixtures extraction and test refactoring
+- [x] 11-01-PLAN.md — Cross-browser/viewport Playwright config with Docker target support
+- [x] 11-02-PLAN.md — Shared test fixtures extraction and test refactoring
 
 ### Phase 12: Landing Page E2E Tests
 **Goal**: Landing page fully verified across browsers and devices with responsive behavior
@@ -138,7 +138,7 @@ Plans:
 | 8. Docker Infrastructure & Wrapper | v1.1 | 2/2 | Complete | 2026-02-16 |
 | 9. Tool Activation & Examples | v1.1 | 3/3 | Complete | 2026-02-16 |
 | 10. E2E Testing | v1.1 | 2/2 | Complete | 2026-02-16 |
-| 11. Test Infrastructure & Configuration | v1.2 | 0/2 | In progress | - |
+| 11. Test Infrastructure & Configuration | v1.2 | 2/2 | Complete | 2026-02-16 |
 | 12. Landing Page E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 13. Upload Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 14. Execution Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
