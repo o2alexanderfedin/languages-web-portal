@@ -160,7 +160,7 @@ export function UploadZone({ onUploadSuccess }: UploadZoneProps) {
                     ? JSON.stringify(error.data)
                     : 'An error occurred during upload')}
             </div>
-            <Button onClick={() => reset()} variant="outline" size="sm" className="mt-2">
+            <Button onClick={() => { reset(); setRejectionError(null); }} variant="outline" size="sm" className="mt-2">
               Try Again
             </Button>
           </div>
