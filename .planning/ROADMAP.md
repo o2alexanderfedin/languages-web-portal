@@ -38,7 +38,7 @@
 - [x] **Phase 12: Landing Page E2E Tests** - Hero, tool grid, responsive layout, navigation (completed 2026-02-17)
 - [x] **Phase 13: Upload Flow E2E Tests** - Drag-drop, validation, error handling (completed 2026-02-17)
 - [x] **Phase 14: Execution Flow E2E Tests** - Streaming, progress, error states (completed 2026-02-17)
-- [ ] **Phase 15: Output Flow E2E Tests** - File tree, preview, download
+- [x] **Phase 15: Output Flow E2E Tests** - File tree, preview, download (completed 2026-02-17)
 - [ ] **Phase 16: Examples & Shareable Links E2E Tests** - Example loading, URL parameters
 - [ ] **Phase 17: Edge Cases & Polish** - Theme toggle, 404, browser navigation, tool switching
 
@@ -109,7 +109,7 @@ Plans:
   2. File preview shows syntax highlighting for source files
   3. ZIP download button triggers successful file download
   4. Empty output state displays appropriate message when no files generated
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 15-01-PLAN.md — OutputPage POM and file tree/file preview tests (OUTP-01, OUTP-02, Docker serial)
 - [ ] 15-02-PLAN.md — Download and empty-state tests (OUTP-03, OUTP-04, route interception)
@@ -154,7 +154,7 @@ Plans:
 | 12. Landing Page E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 13. Upload Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 14. Execution Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
-| 15. Output Flow E2E Tests | v1.2 | 0/2 | Not started | - |
+| 15. Output Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 16. Examples & Shareable Links E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 17. Edge Cases & Polish | v1.2 | 0/TBD | Not started | - |
 
