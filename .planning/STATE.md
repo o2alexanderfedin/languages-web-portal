@@ -5,51 +5,72 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** v1.2 Comprehensive E2E Testing
+**Current focus:** Phase 11 - Test Infrastructure & Configuration (v1.2 Comprehensive E2E Testing)
 
 ## Current Position
 
-**Milestone:** v1.2 Comprehensive E2E Testing
-**Status:** Defining requirements
-**Last activity:** 2026-02-16 — Milestone v1.2 started
+Phase: 11 of 17 (Test Infrastructure & Configuration)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-02-16 — v1.2 milestone roadmap created
 
-**Milestones shipped:**
-- v1.0 MVP (2026-02-14) — 7 phases, 17 plans, 82 commits
-- v1.1 Java FV Integration (2026-02-16) — 3 phases, 7 plans, 20 commits
+Progress: [██████████░░░░░░░░░░] 59% (10/17 phases complete)
 
 ## Performance Metrics
 
-**v1.0 Delivered:**
-- 7 phases, 17 plans
-- 2 days (2026-02-12 → 2026-02-14)
-- 82 commits, 198 files, 8,239 LOC TypeScript/React
-- 187 unit tests + 36 E2E tests
+**Velocity:**
+- Total plans completed: 19
+- Average duration: ~45 min per plan
+- Total execution time: ~14 hours
 
-**v1.1 Delivered:**
-- 3 phases (8-10), 7 plans
-- 1 day (2026-02-15 → 2026-02-16)
-- 20 commits, 37 files, 20/20 requirements satisfied
-- Docker 3-stage build with JDK 25 + Java FV CLI
-- 24 new E2E tests (60 total)
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| 1. Project Setup | 3 | ~3h | ~60min |
+| 2. Upload | 2 | ~1.5h | ~45min |
+| 3. Execution | 3 | ~2h | ~40min |
+| 4. Streaming | 2 | ~1h | ~30min |
+| 5. Output | 3 | ~2h | ~40min |
+| 6. Landing | 2 | ~1.5h | ~45min |
+| 7. E2E v1.0 | 2 | ~1h | ~30min |
+| 8. Docker | 2 | ~1.5h | ~45min |
+| 9. Tool Activation | 3 | ~2h | ~40min |
+| 10. E2E v1.1 | 2 | ~1h | ~30min |
+
+**Recent Trend:**
+- Last 5 plans: 30-45min range
+- Trend: Stable
+
+*Updated after v1.1 completion*
 
 ## Accumulated Context
+
+### Decisions
+
+Decisions are logged in PROJECT.md Key Decisions table.
+Recent decisions affecting current work:
+
+- Phase 7: Playwright for E2E testing (desktop + mobile browser testing with POM pattern)
+- Phase 8: Docker 3-stage build with JDK 25 (Maven → JDK runtime → Node.js production)
+- Phase 10: E2E tests covering Java verification user flow
+
+### Pending Todos
+
+None yet.
 
 ### Blockers/Concerns
 
 **Active:**
 - CVC5/Yices/Bitwuzla not available on linux-aarch64 in Docker — Z3 only (acceptable for current tools)
 
-### Pending Todos
-
-None. Awaiting next milestone planning.
-
 ## Session Continuity
 
-**Last session:** 2026-02-16
-**Stopped at:** Completed v1.1 milestone archival
-**Next steps:**
-1. `/gsd:new-milestone` — start next milestone (questioning → research → requirements → roadmap)
+Last session: 2026-02-16
+Stopped at: v1.2 milestone roadmap created with 7 phases (11-17)
+Resume file: None
+Next step: Plan Phase 11 with `/gsd:plan-phase 11`
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-16 after v1.1 milestone completion*
+*Last updated: 2026-02-16 after v1.2 roadmap creation*

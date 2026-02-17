@@ -4,6 +4,7 @@
 
 - **v1.0 MVP** — Phases 1-7 (shipped 2026-02-14) — [Details](milestones/v1.0-ROADMAP.md)
 - **v1.1 Java FV Integration** — Phases 8-10 (shipped 2026-02-16) — [Details](milestones/v1.1-ROADMAP.md)
+- **v1.2 Comprehensive E2E Testing** — Phases 11-17 (active 2026-02-16)
 
 ## Phases
 
@@ -29,6 +30,97 @@
 
 </details>
 
+### v1.2 Comprehensive E2E Testing (Active)
+
+**Milestone Goal:** Every user-facing behavior verified across Chromium, Firefox, and WebKit browsers on desktop, tablet, and mobile viewports — running against the Docker production image.
+
+- [ ] **Phase 11: Test Infrastructure & Configuration** - Cross-browser and cross-device Playwright setup
+- [ ] **Phase 12: Landing Page E2E Tests** - Hero, tool grid, responsive layout, navigation
+- [ ] **Phase 13: Upload Flow E2E Tests** - Drag-drop, validation, error handling
+- [ ] **Phase 14: Execution Flow E2E Tests** - Streaming, progress, error states
+- [ ] **Phase 15: Output Flow E2E Tests** - File tree, preview, download
+- [ ] **Phase 16: Examples & Shareable Links E2E Tests** - Example loading, URL parameters
+- [ ] **Phase 17: Edge Cases & Polish** - Theme toggle, 404, browser navigation, tool switching
+
+## Phase Details
+
+### Phase 11: Test Infrastructure & Configuration
+**Goal**: Playwright configured for cross-browser, cross-device testing against Docker production container
+**Depends on**: Phase 10 (v1.1 E2E Testing)
+**Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04
+**Success Criteria** (what must be TRUE):
+  1. Playwright runs tests against all three browsers (Chromium, Firefox, WebKit) without configuration errors
+  2. Tests execute against three viewport sizes (desktop 1280x720, tablet 768x1024, mobile 375x812)
+  3. Docker production container starts and serves application for test target
+  4. Shared test fixtures exist and are reusable across test suites (DRY pattern)
+**Plans**: TBD
+
+### Phase 12: Landing Page E2E Tests
+**Goal**: Landing page fully verified across browsers and devices with responsive behavior
+**Depends on**: Phase 11
+**Requirements**: LAND-01, LAND-02, LAND-03, LAND-04
+**Success Criteria** (what must be TRUE):
+  1. Hero section, mission statement, and CTA render correctly on all browser/viewport combinations
+  2. Tool comparison grid displays all 8 tools with accurate status badges
+  3. Layout switches from table (desktop) to cards (mobile/tablet) responsively
+  4. Try Now buttons navigate correctly for available tools and show disabled state for Coming Soon tools
+**Plans**: TBD
+
+### Phase 13: Upload Flow E2E Tests
+**Goal**: File upload flow verified with drag-drop, validation, and error handling across browsers
+**Depends on**: Phase 12
+**Requirements**: UPLD-01, UPLD-02, UPLD-03, UPLD-04
+**Success Criteria** (what must be TRUE):
+  1. ZIP files upload successfully via drag-and-drop zone on all browsers
+  2. Invalid file types are rejected with user-visible error messages
+  3. Upload success displays indicator and assigns project ID
+  4. Oversized files are rejected with appropriate error message
+**Plans**: TBD
+
+### Phase 14: Execution Flow E2E Tests
+**Goal**: Tool execution flow verified with streaming, progress indicators, and error handling
+**Depends on**: Phase 13
+**Requirements**: EXEC-01, EXEC-02, EXEC-03, EXEC-04
+**Success Criteria** (what must be TRUE):
+  1. Real-time SSE streaming displays output in console view across all browsers
+  2. Execution progress indicators work (button state changes, loading spinner, connection badge)
+  3. Execution errors (timeout, server error) display user-visible messages
+  4. Execute button remains disabled until both file uploaded and tool selected
+**Plans**: TBD
+
+### Phase 15: Output Flow E2E Tests
+**Goal**: Output display verified with file tree, syntax preview, and download functionality
+**Depends on**: Phase 14
+**Requirements**: OUTP-01, OUTP-02, OUTP-03, OUTP-04
+**Success Criteria** (what must be TRUE):
+  1. Output file tree displays generated files after execution completes
+  2. File preview shows syntax highlighting for source files
+  3. ZIP download button triggers successful file download
+  4. Empty output state displays appropriate message when no files generated
+**Plans**: TBD
+
+### Phase 16: Examples & Shareable Links E2E Tests
+**Goal**: Example loading and shareable link functionality verified across browsers
+**Depends on**: Phase 15
+**Requirements**: EXMP-01, EXMP-02, EXMP-03, EXMP-04
+**Success Criteria** (what must be TRUE):
+  1. All 3 Java examples load successfully across browsers
+  2. Shareable link generation creates valid URLs with tool pre-selection
+  3. Invalid shareable link parameters are handled gracefully without crashes
+  4. Example descriptions display correctly and dropdown resets after load
+**Plans**: TBD
+
+### Phase 17: Edge Cases & Polish
+**Goal**: Edge cases verified including theme toggle, navigation, and tool switching
+**Depends on**: Phase 16
+**Requirements**: EDGE-01, EDGE-02, EDGE-03, EDGE-04
+**Success Criteria** (what must be TRUE):
+  1. Theme toggle (light/dark/system) persists correctly across page navigation
+  2. 404 page displays for unknown routes
+  3. Tool switching flow works (select tool A, switch to tool B, execute successfully)
+  4. Browser back/forward navigation preserves application state correctly
+**Plans**: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -43,7 +135,14 @@
 | 8. Docker Infrastructure & Wrapper | v1.1 | 2/2 | Complete | 2026-02-16 |
 | 9. Tool Activation & Examples | v1.1 | 3/3 | Complete | 2026-02-16 |
 | 10. E2E Testing | v1.1 | 2/2 | Complete | 2026-02-16 |
+| 11. Test Infrastructure & Configuration | v1.2 | 0/TBD | Not started | - |
+| 12. Landing Page E2E Tests | v1.2 | 0/TBD | Not started | - |
+| 13. Upload Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
+| 14. Execution Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
+| 15. Output Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
+| 16. Examples & Shareable Links E2E Tests | v1.2 | 0/TBD | Not started | - |
+| 17. Edge Cases & Polish | v1.2 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-16 after v1.1 milestone completion*
+*Last updated: 2026-02-16 after v1.2 milestone roadmap creation*
