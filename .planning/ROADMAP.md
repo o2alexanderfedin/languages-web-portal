@@ -35,7 +35,7 @@
 **Milestone Goal:** Every user-facing behavior verified across Chromium, Firefox, and WebKit browsers on desktop, tablet, and mobile viewports — running against the Docker production image.
 
 - [x] **Phase 11: Test Infrastructure & Configuration** - Cross-browser and cross-device Playwright setup
-- [ ] **Phase 12: Landing Page E2E Tests** - Hero, tool grid, responsive layout, navigation
+- [x] **Phase 12: Landing Page E2E Tests** - Hero, tool grid, responsive layout, navigation (completed 2026-02-17)
 - [ ] **Phase 13: Upload Flow E2E Tests** - Drag-drop, validation, error handling
 - [ ] **Phase 14: Execution Flow E2E Tests** - Streaming, progress, error states
 - [ ] **Phase 15: Output Flow E2E Tests** - File tree, preview, download
@@ -67,7 +67,7 @@ Plans:
   2. Tool comparison grid displays all 8 tools with accurate status badges
   3. Layout switches from table (desktop) to cards (mobile/tablet) responsively
   4. Try Now buttons navigate correctly for available tools and show disabled state for Coming Soon tools
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 12-01-PLAN.md — Landing page content and responsive layout tests (hero, tools, badges, table/cards)
 - [ ] 12-02-PLAN.md — Landing page interaction tests (Try Now navigation, Coming Soon disabled state)
@@ -142,7 +142,7 @@ Plans:
 | 9. Tool Activation & Examples | v1.1 | 3/3 | Complete | 2026-02-16 |
 | 10. E2E Testing | v1.1 | 2/2 | Complete | 2026-02-16 |
 | 11. Test Infrastructure & Configuration | v1.2 | 2/2 | Complete | 2026-02-16 |
-| 12. Landing Page E2E Tests | v1.2 | 0/2 | Not started | - |
+| 12. Landing Page E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 13. Upload Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 14. Execution Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 15. Output Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
