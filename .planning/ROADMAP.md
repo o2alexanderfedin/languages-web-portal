@@ -137,7 +137,10 @@ Plans:
   2. 404 page displays for unknown routes
   3. Tool switching flow works (select tool A, switch to tool B, execute successfully)
   4. Browser back/forward navigation preserves application state correctly
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 17-01-PLAN.md — Theme toggle persistence + 404 routing tests (EDGE-01, EDGE-02, Chromium, no Docker)
+- [ ] 17-02-PLAN.md — Tool switching Docker tests + back/forward navigation route-interception tests (EDGE-03, EDGE-04)
 
 ## Progress
 
@@ -159,8 +162,8 @@ Plans:
 | 14. Execution Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 15. Output Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 16. Examples & Shareable Links E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
-| 17. Edge Cases & Polish | v1.2 | 0/TBD | Not started | - |
+| 17. Edge Cases & Polish | v1.2 | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-17 after Phase 16 planning*
+*Last updated: 2026-02-17 after Phase 17 planning*
