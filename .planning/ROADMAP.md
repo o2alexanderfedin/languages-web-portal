@@ -123,7 +123,10 @@ Plans:
   2. Shareable link generation creates valid URLs with tool pre-selection
   3. Invalid shareable link parameters are handled gracefully without crashes
   4. Example descriptions display correctly and dropdown resets after load
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 16-01-PLAN.md — Example loading E2E tests: all 3 examples + description display + dropdown reset (EXMP-01, EXMP-04)
+- [ ] 16-02-PLAN.md — Shareable links cross-browser E2E tests: URL param pre-selection + invalid param handling (EXMP-02, EXMP-03)
 
 ### Phase 17: Edge Cases & Polish
 **Goal**: Edge cases verified including theme toggle, navigation, and tool switching
@@ -155,9 +158,9 @@ Plans:
 | 13. Upload Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 14. Execution Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 15. Output Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
-| 16. Examples & Shareable Links E2E Tests | v1.2 | 0/TBD | Not started | - |
+| 16. Examples & Shareable Links E2E Tests | v1.2 | 0/2 | Planned | - |
 | 17. Edge Cases & Polish | v1.2 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-17 after Phase 15 planning*
+*Last updated: 2026-02-17 after Phase 16 planning*
