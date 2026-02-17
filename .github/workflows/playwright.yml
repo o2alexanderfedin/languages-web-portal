@@ -18,7 +18,7 @@ jobs:
       - name: Build project
         run: npm run build
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium firefox webkit
       - name: Run Playwright tests
         run: npx playwright test
       - uses: actions/upload-artifact@v4
