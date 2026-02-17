@@ -67,7 +67,10 @@ Plans:
   2. Tool comparison grid displays all 8 tools with accurate status badges
   3. Layout switches from table (desktop) to cards (mobile/tablet) responsively
   4. Try Now buttons navigate correctly for available tools and show disabled state for Coming Soon tools
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 12-01-PLAN.md — Landing page content and responsive layout tests (hero, tools, badges, table/cards)
+- [ ] 12-02-PLAN.md — Landing page interaction tests (Try Now navigation, Coming Soon disabled state)
 
 ### Phase 13: Upload Flow E2E Tests
 **Goal**: File upload flow verified with drag-drop, validation, and error handling across browsers
@@ -139,7 +142,7 @@ Plans:
 | 9. Tool Activation & Examples | v1.1 | 3/3 | Complete | 2026-02-16 |
 | 10. E2E Testing | v1.1 | 2/2 | Complete | 2026-02-16 |
 | 11. Test Infrastructure & Configuration | v1.2 | 2/2 | Complete | 2026-02-16 |
-| 12. Landing Page E2E Tests | v1.2 | 0/TBD | Not started | - |
+| 12. Landing Page E2E Tests | v1.2 | 0/2 | Not started | - |
 | 13. Upload Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 14. Execution Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 15. Output Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
@@ -148,4 +151,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-16 after Phase 11 planning*
+*Last updated: 2026-02-16 after Phase 12 planning*
