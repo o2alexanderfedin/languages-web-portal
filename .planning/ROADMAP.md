@@ -109,7 +109,10 @@ Plans:
   2. File preview shows syntax highlighting for source files
   3. ZIP download button triggers successful file download
   4. Empty output state displays appropriate message when no files generated
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 15-01-PLAN.md — OutputPage POM and file tree/file preview tests (OUTP-01, OUTP-02, Docker serial)
+- [ ] 15-02-PLAN.md — Download and empty-state tests (OUTP-03, OUTP-04, route interception)
 
 ### Phase 16: Examples & Shareable Links E2E Tests
 **Goal**: Example loading and shareable link functionality verified across browsers
@@ -151,10 +154,10 @@ Plans:
 | 12. Landing Page E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 13. Upload Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 14. Execution Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
-| 15. Output Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
+| 15. Output Flow E2E Tests | v1.2 | 0/2 | Not started | - |
 | 16. Examples & Shareable Links E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 17. Edge Cases & Polish | v1.2 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-17 after Phase 14 planning*
+*Last updated: 2026-02-17 after Phase 15 planning*
