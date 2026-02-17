@@ -70,6 +70,7 @@ Recent decisions affecting current work:
 - Phase 14-02: EXEC-03 error tests use page.route('**/execute**') interception (no Docker); EXEC-04 button state tests use isMobile skip to auto-run across Chromium/Firefox/WebKit desktop
 - Phase 15-01: OutputPage uses .bg-slate-900 first() for filePreviewHeader; syntaxHighlighterBlock covers pre code/.react-syntax-highlighter/pre[class*="language-"]; e2e/tsconfig.json uses ESNext/bundler for import.meta support; non-folder treeItems via :not([aria-expanded]) selector
 - Phase 15-02: OUTP-03 uses Promise.all([page.waitForEvent('download'), button.click()]) for anchor download elements; OUTP-04 uses dual route interception (**/file-tree** + **/execute**) to simulate empty output state without Docker
+- Phase 16-01: Dual-describe split (Docker-serial EXMP-01 block + UI-parallel EXMP-04 block) within single spec file; test.setTimeout + serial mode scoped to Docker block only; DemoPage for getExampleDescription(), ExecutionPage for loadExample() + executeButton
 - Phase 16-02: Cross-browser shareable links suite uses isMobile skip for desktop-only execution; pageerror capture pattern for zero-JS-exception assertions on invalid ?tool= params
 
 ### Pending Todos
