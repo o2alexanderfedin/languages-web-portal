@@ -73,7 +73,7 @@ Each task was committed atomically:
 1. **Task 1: Create execution-errors.spec.ts with network-intercepted error tests** - `02eb557` (feat)
 2. **Task 2: Create execution-button-state.spec.ts for EXEC-04 across desktop browsers** - `49eda58` (feat)
 
-**Plan metadata:** (pending — docs commit)
+**Plan metadata:** `e5948a7` (docs: complete plan)
 
 ## Files Created/Modified
 - `e2e/tests/execution-errors.spec.ts` - 3 error scenario tests using page.route() interception: HTTP 500, SSE abort, connection timeout; each verifies user-visible error message and execute button re-enable
