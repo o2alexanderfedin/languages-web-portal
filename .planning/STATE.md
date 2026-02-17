@@ -5,13 +5,13 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Planning next milestone
+**Current focus:** v1.2 Comprehensive E2E Testing
 
 ## Current Position
 
-**Milestone:** v1.1 Java FV Integration (shipped 2026-02-16)
-**Status:** Milestone complete, awaiting next milestone planning
-**Last activity:** 2026-02-16 — v1.1 milestone archived
+**Milestone:** v1.2 Comprehensive E2E Testing
+**Status:** Defining requirements
+**Last activity:** 2026-02-16 — Milestone v1.2 started
 
 **Milestones shipped:**
 - v1.0 MVP (2026-02-14) — 7 phases, 17 plans, 82 commits

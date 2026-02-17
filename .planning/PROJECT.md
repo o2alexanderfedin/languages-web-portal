@@ -8,6 +8,18 @@ A public demo web portal for Hupyy's formal verification tools and transpilers. 
 
 Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
 
+## Current Milestone: v1.2 Comprehensive E2E Testing
+
+**Goal:** Every user-facing behavior verified across Chromium, Firefox, and WebKit browsers on desktop, tablet, and mobile viewports — running against the Docker production image. Covers all user journeys, error states, and edge cases.
+
+**Target features:**
+- Cross-browser testing: Chromium + Firefox + WebKit
+- Cross-device testing: desktop + tablet + mobile viewports
+- Docker production container as test target
+- All user journeys: landing, navigation, upload, execute, streaming, preview, download, examples, shareable links
+- Error states: bad files, oversized uploads, timeouts, server errors
+- Edge cases: theme toggle, 404 page, tool switching, keyboard navigation
+
 ## Current State
 
 **Shipped:** v1.1 Java FV Integration (2026-02-16)
@@ -41,7 +53,18 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 
 ### Active
 
-(None — awaiting next milestone planning)
+- [ ] Cross-browser E2E tests (Chromium + Firefox + WebKit)
+- [ ] Cross-device E2E tests (desktop + tablet + mobile viewports)
+- [ ] Docker production image as E2E test target
+- [ ] Landing page E2E coverage (hero, tool grid, navigation, responsive)
+- [ ] Upload flow E2E coverage (valid/invalid files, drag-drop, error messages)
+- [ ] Execution flow E2E coverage (streaming, progress, timeouts, errors)
+- [ ] Output flow E2E coverage (file tree, syntax preview, download)
+- [ ] Example loading E2E coverage (all examples, error handling)
+- [ ] Shareable links E2E coverage (generation, pre-selection, invalid params)
+- [ ] Theme toggle E2E coverage (light/dark/system)
+- [ ] Error states E2E coverage (404, server errors, network failures)
+- [ ] Edge cases E2E coverage (tool switching, browser back/forward, keyboard nav)
 
 ### Out of Scope
 
@@ -109,4 +132,4 @@ All tools are CLI-based: take input directory/files, produce output directory/fi
 | Progressive example complexity | bank-account-records → shape-matching → payment-types | ✓ Good |
 
 ---
-*Last updated: 2026-02-16 after v1.1 milestone completion*
+*Last updated: 2026-02-16 after v1.2 milestone start*
