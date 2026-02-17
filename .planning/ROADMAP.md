@@ -95,7 +95,10 @@ Plans:
   2. Execution progress indicators work (button state changes, loading spinner, connection badge)
   3. Execution errors (timeout, server error) display user-visible messages
   4. Execute button remains disabled until both file uploaded and tool selected
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 14-01-PLAN.md — ExecutionPage POM and migration of happy-path/streaming/progress tests (Chromium desktop, Docker)
+- [ ] 14-02-PLAN.md — Execution error tests (network interception) and button disabled state tests (3 desktop browsers)
 
 ### Phase 15: Output Flow E2E Tests
 **Goal**: Output display verified with file tree, syntax preview, and download functionality
@@ -147,11 +150,11 @@ Plans:
 | 11. Test Infrastructure & Configuration | v1.2 | 2/2 | Complete | 2026-02-16 |
 | 12. Landing Page E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 13. Upload Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
-| 14. Execution Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
+| 14. Execution Flow E2E Tests | v1.2 | 0/2 | In planning | - |
 | 15. Output Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 16. Examples & Shareable Links E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 17. Edge Cases & Polish | v1.2 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-16 after Phase 12 planning*
+*Last updated: 2026-02-17 after Phase 14 planning*
