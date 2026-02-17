@@ -53,7 +53,10 @@
   2. Tests execute against three viewport sizes (desktop 1280x720, tablet 768x1024, mobile 375x812)
   3. Docker production container starts and serves application for test target
   4. Shared test fixtures exist and are reusable across test suites (DRY pattern)
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 11-01-PLAN.md — Cross-browser/viewport Playwright config with Docker target support
+- [ ] 11-02-PLAN.md — Shared test fixtures extraction and test refactoring
 
 ### Phase 12: Landing Page E2E Tests
 **Goal**: Landing page fully verified across browsers and devices with responsive behavior
@@ -135,7 +138,7 @@
 | 8. Docker Infrastructure & Wrapper | v1.1 | 2/2 | Complete | 2026-02-16 |
 | 9. Tool Activation & Examples | v1.1 | 3/3 | Complete | 2026-02-16 |
 | 10. E2E Testing | v1.1 | 2/2 | Complete | 2026-02-16 |
-| 11. Test Infrastructure & Configuration | v1.2 | 0/TBD | Not started | - |
+| 11. Test Infrastructure & Configuration | v1.2 | 0/2 | In progress | - |
 | 12. Landing Page E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 13. Upload Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
 | 14. Execution Flow E2E Tests | v1.2 | 0/TBD | Not started | - |
@@ -145,4 +148,4 @@
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-16 after v1.2 milestone roadmap creation*
+*Last updated: 2026-02-16 after Phase 11 planning*
