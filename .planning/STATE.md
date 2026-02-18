@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Phase 16 - Examples Shareable Links E2E Tests
+**Current focus:** Phase 17 - Edge Cases Polish -- COMPLETE
 
 ## Current Position
 
-Phase: 16 of 17 (Examples Shareable Links E2E Tests) -- COMPLETE
+Phase: 17 of 17 (Edge Cases Polish) -- COMPLETE
 Plan: 2 of 2 in current phase -- COMPLETE
-Status: Phase 16 Complete
-Last activity: 2026-02-17 — Completed 16-02-PLAN.md
+Status: Phase 17 Complete — All phases done
+Last activity: 2026-02-18 — Completed 17-02-PLAN.md
 
-Progress: [██████████████░░░░░░] 82% (14/17 phases complete)
+Progress: [████████████████████] 100% (17/17 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25
-- Average duration: ~36 min per plan
+- Total plans completed: 26
+- Average duration: ~35 min per plan
 - Total execution time: ~14.9 hours
 
 **By Phase:**
@@ -43,12 +43,13 @@ Progress: [██████████████░░░░░░] 82% (14
 | 14. Execution E2E | 2/2 | ~5min | ~3min |
 | 15. Output E2E | 2/2 | ~11min | ~5min |
 | 16. Examples/Shareable Links E2E | 2/2 | ~2min | ~1min |
+| 17. Edge Cases Polish | 2/2 | ~4min | ~2min |
 
 **Recent Trend:**
 - Last 5 plans: 1-14min range
 - Trend: Stable (fast execution)
 
-*Updated after 16-02 completion*
+*Updated after 17-02 completion*
 
 ## Accumulated Context
 
@@ -72,6 +73,8 @@ Recent decisions affecting current work:
 - Phase 15-02: OUTP-03 uses Promise.all([page.waitForEvent('download'), button.click()]) for anchor download elements; OUTP-04 uses dual route interception (**/file-tree** + **/execute**) to simulate empty output state without Docker
 - Phase 16-01: Dual-describe split (Docker-serial EXMP-01 block + UI-parallel EXMP-04 block) within single spec file; test.setTimeout + serial mode scoped to Docker block only; DemoPage for getExampleDescription(), ExecutionPage for loadExample() + executeButton
 - Phase 16-02: Cross-browser shareable links suite uses isMobile skip for desktop-only execution; pageerror capture pattern for zero-JS-exception assertions on invalid ?tool= params
+- Phase 17-01: clickToTheme() helper iterates up to 3 clicks regardless of starting theme (avoids state assumptions); system mode test emulates dark colorScheme before goto(); EDGE-02 HTTP test asserts rendered content not HTTP status (Vite SPA fallback returns 200 for unknown routes)
+- Phase 17-02: EDGE-03 tool switching uses java-verification→cpp-to-c-transpiler cycle (only java-verification is Docker-enabled); EDGE-04 browser navigation uses real SPA routing (no route interception) with goBack/goForward({ waitUntil: 'networkidle' }) and pageErrors capture for zero-JS-exception assertions
 
 ### Pending Todos
 
@@ -84,11 +87,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-17
-Stopped at: Completed 16-02-PLAN.md (shareable links cross-browser E2E tests — Phase 16 complete)
+Last session: 2026-02-18
+Stopped at: Completed 17-02-PLAN.md (tool switching EDGE-03 + browser navigation EDGE-04 E2E tests — Phase 17 complete)
 Resume file: None
-Next step: Execute Phase 17
+Next step: All 17 phases complete — project roadmap fulfilled
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-17 after 16-02 execution*
+*Last updated: 2026-02-18 after 17-02 execution*

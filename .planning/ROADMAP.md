@@ -40,7 +40,7 @@
 - [x] **Phase 14: Execution Flow E2E Tests** - Streaming, progress, error states (completed 2026-02-17)
 - [x] **Phase 15: Output Flow E2E Tests** - File tree, preview, download (completed 2026-02-17)
 - [x] **Phase 16: Examples & Shareable Links E2E Tests** - Example loading, URL parameters (completed 2026-02-17)
-- [ ] **Phase 17: Edge Cases & Polish** - Theme toggle, 404, browser navigation, tool switching
+- [x] **Phase 17: Edge Cases & Polish** - Theme toggle, 404, browser navigation, tool switching (1/2 plans complete) (completed 2026-02-18)
 
 ## Phase Details
 
@@ -137,9 +137,9 @@ Plans:
   2. 404 page displays for unknown routes
   3. Tool switching flow works (select tool A, switch to tool B, execute successfully)
   4. Browser back/forward navigation preserves application state correctly
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
-- [ ] 17-01-PLAN.md — Theme toggle persistence + 404 routing tests (EDGE-01, EDGE-02, Chromium, no Docker)
+- [x] 17-01-PLAN.md — Theme toggle persistence + 404 routing tests (EDGE-01, EDGE-02, Chromium, no Docker) — completed 2026-02-18
 - [ ] 17-02-PLAN.md — Tool switching Docker tests + back/forward navigation route-interception tests (EDGE-03, EDGE-04)
 
 ## Progress
@@ -162,8 +162,8 @@ Plans:
 | 14. Execution Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 15. Output Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 16. Examples & Shareable Links E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
-| 17. Edge Cases & Polish | v1.2 | 0/2 | Not started | - |
+| 17. Edge Cases & Polish | 2/2 | Complete   | 2026-02-18 | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-17 after Phase 17 planning*
+*Last updated: 2026-02-18 after 17-01 execution (EDGE-01 + EDGE-02 complete)*

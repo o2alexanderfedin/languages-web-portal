@@ -51,10 +51,10 @@ Requirements for Comprehensive E2E Testing milestone. Each maps to roadmap phase
 
 ### Theme & Edge Cases
 
-- [ ] **EDGE-01**: E2E test verifies theme toggle (light/dark/system) persists across page navigation
-- [ ] **EDGE-02**: E2E test verifies 404 page for unknown routes
-- [ ] **EDGE-03**: E2E test verifies tool switching flow (select tool A, switch to tool B, execute)
-- [ ] **EDGE-04**: E2E test verifies browser back/forward navigation preserves state
+- [x] **EDGE-01**: E2E test verifies theme toggle (light/dark/system) persists across page navigation
+- [x] **EDGE-02**: E2E test verifies 404 page for unknown routes
+- [x] **EDGE-03**: E2E test verifies tool switching flow (select tool A, switch to tool B, execute)
+- [x] **EDGE-04**: E2E test verifies browser back/forward navigation preserves state
 
 ## v2 Requirements
 
@@ -107,10 +107,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXMP-02 | Phase 16 | Pending |
 | EXMP-03 | Phase 16 | Pending |
 | EXMP-04 | Phase 16 | Pending |
-| EDGE-01 | Phase 17 | Pending |
-| EDGE-02 | Phase 17 | Pending |
-| EDGE-03 | Phase 17 | Pending |
-| EDGE-04 | Phase 17 | Pending |
+| EDGE-01 | Phase 17 | Complete |
+| EDGE-02 | Phase 17 | Complete |
+| EDGE-03 | Phase 17 | Complete |
+| EDGE-04 | Phase 17 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 28 total
