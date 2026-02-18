@@ -104,3 +104,11 @@ None - no external service configuration required.
 ---
 *Phase: 17-edge-cases-polish*
 *Completed: 2026-02-18*
+
+## Self-Check: PASSED
+
+- FOUND: `e2e/tests/theme-and-404.spec.ts` (189 lines, 9 tests)
+- FOUND: `.planning/phases/17-edge-cases-polish/17-01-SUMMARY.md`
+- FOUND: commit `5a3f48d` (feat(17-01): add theme toggle persistence and 404 routing E2E tests)
+- FOUND: commit `4c17a1e` (docs(17-01): complete theme toggle + 404 routing E2E tests plan)
+- TypeScript: zero errors (`npx tsc --noEmit -p e2e/tsconfig.json`)
