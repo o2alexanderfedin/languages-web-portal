@@ -15,5 +15,6 @@
     "tests/**/*.ts",
     "fixtures/**/*.ts",
     "../playwright.config.ts"
-  ]
+  ],
+  "exclude": ["archive/**"]
 }

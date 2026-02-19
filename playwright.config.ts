@@ -29,6 +29,8 @@ if (!process.env.E2E_BASE_URL) {
 
 export default defineConfig({
   testDir: './e2e/tests',
+  /* Archive directory — files here are preserved for reference but excluded from the default test run. */
+  testIgnore: ['**/e2e/archive/**'],
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
