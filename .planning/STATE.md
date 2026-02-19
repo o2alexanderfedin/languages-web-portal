@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Phase 19 - Test Infrastructure Cleanup (Plan 1 complete)
+**Current focus:** Phase 19 - Test Infrastructure Cleanup (COMPLETE)
 
 ## Current Position
 
-Phase: 19 of 19 (Test Infrastructure Cleanup) -- IN PROGRESS
-Plan: 1 of 2 in current phase -- COMPLETE
-Status: Phase 19 Plan 01 Complete — Dead code removed, Docker guard added, LandingPage POM enforced
-Last activity: 2026-02-19 — Completed 19-01-PLAN.md
+Phase: 19 of 19 (Test Infrastructure Cleanup) -- COMPLETE
+Plan: 2 of 2 in current phase -- COMPLETE
+Status: Phase 19 Plan 02 Complete — 8 legacy specs archived via git mv, testIgnore added, phase complete
+Last activity: 2026-02-19 — Completed 19-02-PLAN.md
 
 Progress: [████████████████████] 100% (17/17 phases complete)
 
@@ -76,6 +76,7 @@ Recent decisions affecting current work:
 - Phase 17-01: clickToTheme() helper iterates up to 3 clicks regardless of starting theme (avoids state assumptions); system mode test emulates dark colorScheme before goto(); EDGE-02 HTTP test asserts rendered content not HTTP status (Vite SPA fallback returns 200 for unknown routes)
 - Phase 17-02: EDGE-03 tool switching uses java-verification→cpp-to-c-transpiler cycle (only java-verification is Docker-enabled); EDGE-04 browser navigation uses real SPA routing (no route interception) with goBack/goForward({ waitUntil: 'networkidle' }) and pageErrors capture for zero-JS-exception assertions
 - Phase 19-01: Docker guard pattern (top-level throw before defineConfig) enforces E2E_BASE_URL; webServer block removed; LandingPage POM enforced for all landing navigations in all active spec files
+- Phase 19-02: Archive pattern (git mv to e2e/archive/ + testIgnore + tsconfig exclude) retires legacy specs from CI while preserving full git history
 
 ### Pending Todos
 
@@ -89,9 +90,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-19
-Stopped at: Completed 19-01-PLAN.md (test infrastructure cleanup — dead code removed, Docker guard added, LandingPage POM enforced in all spec files)
+Stopped at: Completed 19-02-PLAN.md (test infrastructure cleanup — 8 legacy specs archived via git mv, testIgnore added, phase complete)
 Resume file: None
-Next step: Phase 19 Plan 02 (remaining tech debt cleanup)
+Next step: All phases complete — project finished
 
 ---
 *State initialized: 2026-02-12*

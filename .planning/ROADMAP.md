@@ -42,7 +42,7 @@
 - [x] **Phase 16: Examples & Shareable Links E2E Tests** - Example loading, URL parameters (completed 2026-02-17)
 - [x] **Phase 17: Edge Cases & Polish** - Theme toggle, 404, browser navigation, tool switching (1/2 plans complete) (completed 2026-02-18)
 - [x] **Phase 18: Documentation Drift Fix** - Sync REQUIREMENTS.md checkboxes and coverage count to reflect completed work (completed 2026-02-19)
-- [ ] **Phase 19: Test Infrastructure Cleanup** - Remove dead code, add Docker guard, fix POM bypass, archive legacy test files
+- [x] **Phase 19: Test Infrastructure Cleanup** - Remove dead code, add Docker guard, fix POM bypass, archive legacy test files (completed 2026-02-19)
 
 ## Phase Details
 
@@ -167,7 +167,7 @@ Plans:
   2. `playwright.config.ts` warns or errors when Docker-requiring tests run without `E2E_BASE_URL` set
   3. `browser-navigation.spec.ts` uses `LandingPage` POM for all landing page interactions
   4. 7 legacy test files moved to `e2e/archive/` or deleted — no longer run on default `npx playwright test`
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 19-01-PLAN.md — Remove orphaned helper, add Docker guard, fix LandingPage POM bypass in browser-navigation.spec.ts
 - [ ] 19-02-PLAN.md — Archive/remove 7 legacy test files (java-fv-*, landing-navigation, responsive-layout, shareable-links, upload-execute-results)
@@ -194,7 +194,7 @@ Plans:
 | 16. Examples & Shareable Links E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 17. Edge Cases & Polish | 2/2 | Complete    | 2026-02-18 | - |
 | 18. Documentation Drift Fix | 1/1 | Complete    | 2026-02-19 | - |
-| 19. Test Infrastructure Cleanup | 1/2 | In Progress|  | - |
+| 19. Test Infrastructure Cleanup | 2/2 | Complete   | 2026-02-19 | - |
 
 ---
 *Roadmap created: 2026-02-12*
