@@ -16,38 +16,38 @@ Requirements for Comprehensive E2E Testing milestone. Each maps to roadmap phase
 
 ### Landing Page Tests
 
-- [ ] **LAND-01**: E2E test verifies hero section, mission statement, and CTA across all browsers and viewports
-- [ ] **LAND-02**: E2E test verifies tool comparison grid shows all 8 tools with correct status badges
-- [ ] **LAND-03**: E2E test verifies responsive layout switches between table (desktop) and cards (mobile/tablet)
-- [ ] **LAND-04**: E2E test verifies Try Now navigation for available tools and disabled state for Coming Soon tools
+- [x] **LAND-01**: E2E test verifies hero section, mission statement, and CTA across all browsers and viewports
+- [x] **LAND-02**: E2E test verifies tool comparison grid shows all 8 tools with correct status badges
+- [x] **LAND-03**: E2E test verifies responsive layout switches between table (desktop) and cards (mobile/tablet)
+- [x] **LAND-04**: E2E test verifies Try Now navigation for available tools and disabled state for Coming Soon tools
 
 ### Upload Flow Tests
 
-- [ ] **UPLD-01**: E2E test verifies ZIP file upload via drag-and-drop zone across all browsers
-- [ ] **UPLD-02**: E2E test verifies upload rejection for invalid file types with user-visible error message
-- [ ] **UPLD-03**: E2E test verifies upload success indicator and project ID assignment
-- [ ] **UPLD-04**: E2E test verifies oversized file rejection with appropriate error message
+- [x] **UPLD-01**: E2E test verifies ZIP file upload via drag-and-drop zone across all browsers
+- [x] **UPLD-02**: E2E test verifies upload rejection for invalid file types with user-visible error message
+- [x] **UPLD-03**: E2E test verifies upload success indicator and project ID assignment
+- [x] **UPLD-04**: E2E test verifies oversized file rejection with appropriate error message
 
 ### Execution Flow Tests
 
-- [ ] **EXEC-01**: E2E test verifies real-time SSE streaming output in console view across all browsers
-- [ ] **EXEC-02**: E2E test verifies execution progress indicators (button state, loading, connection badge)
-- [ ] **EXEC-03**: E2E test verifies execution error handling (timeout, server error) with user-visible messages
-- [ ] **EXEC-04**: E2E test verifies execute button disabled until both file uploaded and tool selected
+- [x] **EXEC-01**: E2E test verifies real-time SSE streaming output in console view across all browsers
+- [x] **EXEC-02**: E2E test verifies execution progress indicators (button state, loading, connection badge)
+- [x] **EXEC-03**: E2E test verifies execution error handling (timeout, server error) with user-visible messages
+- [x] **EXEC-04**: E2E test verifies execute button disabled until both file uploaded and tool selected
 
 ### Output Flow Tests
 
-- [ ] **OUTP-01**: E2E test verifies output file tree displays generated files after execution
-- [ ] **OUTP-02**: E2E test verifies file preview with syntax highlighting for source files
-- [ ] **OUTP-03**: E2E test verifies ZIP download button triggers file download
-- [ ] **OUTP-04**: E2E test verifies empty output state message when no files generated
+- [x] **OUTP-01**: E2E test verifies output file tree displays generated files after execution
+- [x] **OUTP-02**: E2E test verifies file preview with syntax highlighting for source files
+- [x] **OUTP-03**: E2E test verifies ZIP download button triggers file download
+- [x] **OUTP-04**: E2E test verifies empty output state message when no files generated
 
 ### Example & Shareable Tests
 
-- [ ] **EXMP-01**: E2E test verifies example loading flow for all 3 Java examples across browsers
-- [ ] **EXMP-02**: E2E test verifies shareable link generation and URL parameter pre-selection
-- [ ] **EXMP-03**: E2E test verifies invalid shareable link parameters handled gracefully
-- [ ] **EXMP-04**: E2E test verifies example description display and dropdown reset after load
+- [x] **EXMP-01**: E2E test verifies example loading flow for all 3 Java examples across browsers
+- [x] **EXMP-02**: E2E test verifies shareable link generation and URL parameter pre-selection
+- [x] **EXMP-03**: E2E test verifies invalid shareable link parameters handled gracefully
+- [x] **EXMP-04**: E2E test verifies example description display and dropdown reset after load
 
 ### Theme & Edge Cases
 
