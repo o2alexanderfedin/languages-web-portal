@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
+import { LandingPage } from '../pages/LandingPage';
 
 /**
  * Theme Toggle Persistence and 404 Routing E2E tests.
@@ -35,7 +36,8 @@ test.describe('Theme Toggle Persistence (EDGE-01)', () => {
   test.skip(({ isMobile }) => isMobile, 'Theme tests run on desktop only');
 
   test('theme toggle button cycles light → dark → system', async ({ page }) => {
-    await page.goto('/');
+    const landing = new LandingPage(page);
+    await landing.goto();
 
     const btn = page.getByRole('button', { name: /Theme:/i });
 
@@ -61,7 +63,8 @@ test.describe('Theme Toggle Persistence (EDGE-01)', () => {
   });
 
   test('selecting light theme persists localStorage key', async ({ page }) => {
-    await page.goto('/');
+    const landing = new LandingPage(page);
+    await landing.goto();
 
     await clickToTheme(page, 'Light');
     await expect(page.getByRole('button', { name: /Theme:/i })).toContainText('Light');
@@ -73,7 +76,8 @@ test.describe('Theme Toggle Persistence (EDGE-01)', () => {
   });
 
   test('selecting dark theme applies dark class to html element', async ({ page }) => {
-    await page.goto('/');
+    const landing = new LandingPage(page);
+    await landing.goto();
 
     await clickToTheme(page, 'Dark');
     await expect(page.getByRole('button', { name: /Theme:/i })).toContainText('Dark');
@@ -89,15 +93,16 @@ test.describe('Theme Toggle Persistence (EDGE-01)', () => {
   });
 
   test('system mode with dark preference applies dark class to html', async ({ page }) => {
+    const landing = new LandingPage(page);
     // Emulate dark OS preference before navigating so ThemeProvider reads it on mount
     await page.emulateMedia({ colorScheme: 'dark' });
-    await page.goto('/');
+    await landing.goto();
 
     await clickToTheme(page, 'System');
     await expect(page.getByRole('button', { name: /Theme:/i })).toContainText('System');
 
     // Navigate again to trigger a fresh ThemeProvider mount under dark emulation
-    await page.goto('/');
+    await landing.goto();
 
     const hasDark = await page.evaluate(
       () => document.documentElement.classList.contains('dark'),
@@ -106,7 +111,8 @@ test.describe('Theme Toggle Persistence (EDGE-01)', () => {
   });
 
   test('dark theme persists across Landing → /demo navigation', async ({ page }) => {
-    await page.goto('/');
+    const landing = new LandingPage(page);
+    await landing.goto();
 
     await clickToTheme(page, 'Dark');
     await expect(page.getByRole('button', { name: /Theme:/i })).toContainText('Dark');
@@ -121,7 +127,8 @@ test.describe('Theme Toggle Persistence (EDGE-01)', () => {
   });
 
   test('dark theme persists after hard reload (page.reload())', async ({ page }) => {
-    await page.goto('/');
+    const landing = new LandingPage(page);
+    await landing.goto();
 
     await clickToTheme(page, 'Dark');
     await expect(page.getByRole('button', { name: /Theme:/i })).toContainText('Dark');

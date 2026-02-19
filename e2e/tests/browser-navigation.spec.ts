@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { DemoPage } from '../pages/DemoPage';
+import { LandingPage } from '../pages/LandingPage';
 
 /**
  * Browser back/forward navigation E2E tests — Chromium desktop, no Docker.
@@ -21,11 +22,13 @@ test.describe('Browser Back/Forward Navigation (EDGE-04)', () => {
     const pageErrors: string[] = [];
     page.on('pageerror', (err) => pageErrors.push(err.message));
 
+    const landing = new LandingPage(page);
+
     // Start at landing page
-    await page.goto('/');
+    await landing.goto();
 
     // Verify landing page is visible
-    await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 10_000 });
+    await landing.waitForVisible();
 
     // Navigate to /demo (direct URL — simulates clicking a Try Now link)
     await page.goto('/demo');
@@ -39,7 +42,7 @@ test.describe('Browser Back/Forward Navigation (EDGE-04)', () => {
     expect(page.url()).toMatch(/\/$/);
 
     // Landing page element must be visible again
-    await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 10_000 });
+    await landing.waitForVisible();
 
     // No JS exceptions during navigation
     expect(pageErrors).toHaveLength(0);
@@ -49,11 +52,12 @@ test.describe('Browser Back/Forward Navigation (EDGE-04)', () => {
     const pageErrors: string[] = [];
     page.on('pageerror', (err) => pageErrors.push(err.message));
 
+    const landing = new LandingPage(page);
     const demo = new DemoPage(page);
 
     // Navigate to landing first to establish history entry
-    await page.goto('/');
-    await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 10_000 });
+    await landing.goto();
+    await landing.waitForVisible();
 
     // Navigate to /demo
     await page.goto('/demo');
@@ -83,11 +87,12 @@ test.describe('Browser Back/Forward Navigation (EDGE-04)', () => {
     const pageErrors: string[] = [];
     page.on('pageerror', (err) => pageErrors.push(err.message));
 
+    const landing = new LandingPage(page);
     const demo = new DemoPage(page);
 
     // Establish landing page in history
-    await page.goto('/');
-    await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 10_000 });
+    await landing.goto();
+    await landing.waitForVisible();
 
     // Navigate to /demo with tool pre-selected via URL param
     await page.goto('/demo?tool=java-verification');
@@ -102,7 +107,7 @@ test.describe('Browser Back/Forward Navigation (EDGE-04)', () => {
     await page.goBack({ waitUntil: 'networkidle' });
 
     // Must return to landing page
-    await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 10_000 });
+    await landing.waitForVisible();
 
     // No JS exceptions during navigation
     expect(pageErrors).toHaveLength(0);
@@ -112,11 +117,12 @@ test.describe('Browser Back/Forward Navigation (EDGE-04)', () => {
     const pageErrors: string[] = [];
     page.on('pageerror', (err) => pageErrors.push(err.message));
 
+    const landing = new LandingPage(page);
     const demo = new DemoPage(page);
 
     // Navigate to landing first to build history
-    await page.goto('/');
-    await expect(page.getByTestId('landing-page')).toBeVisible({ timeout: 10_000 });
+    await landing.goto();
+    await landing.waitForVisible();
 
     // Navigate to /demo?tool=java-verification
     await page.goto('/demo?tool=java-verification');

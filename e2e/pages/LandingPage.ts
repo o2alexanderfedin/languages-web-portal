@@ -6,6 +6,7 @@ import { type Page, type Locator } from '@playwright/test';
  */
 export class LandingPage {
   readonly page: Page;
+  readonly landingContainer: Locator;
   readonly heroSection: Locator;
   readonly heroTitle: Locator;
   readonly missionStatement: Locator;
@@ -15,6 +16,7 @@ export class LandingPage {
 
   constructor(page: Page) {
     this.page = page;
+    this.landingContainer = page.getByTestId('landing-page');
     this.heroSection = page.getByTestId('hero-section');
     this.heroTitle = page.getByRole('heading', { name: /Formal Verification/i });
     this.missionStatement = this.heroSection.locator('p');
@@ -28,6 +30,15 @@ export class LandingPage {
    */
   async goto() {
     await this.page.goto('/');
+  }
+
+  /**
+   * Wait for landing page container to become visible.
+   *
+   * @param timeout - Maximum wait time in milliseconds (default: 10_000)
+   */
+  async waitForVisible(timeout = 10_000): Promise<void> {
+    await this.landingContainer.waitFor({ state: 'visible', timeout });
   }
 
   /**
