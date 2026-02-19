@@ -41,6 +41,8 @@
 - [x] **Phase 15: Output Flow E2E Tests** - File tree, preview, download (completed 2026-02-17)
 - [x] **Phase 16: Examples & Shareable Links E2E Tests** - Example loading, URL parameters (completed 2026-02-17)
 - [x] **Phase 17: Edge Cases & Polish** - Theme toggle, 404, browser navigation, tool switching (1/2 plans complete) (completed 2026-02-18)
+- [ ] **Phase 18: Documentation Drift Fix** - Sync REQUIREMENTS.md checkboxes and coverage count to reflect completed work
+- [ ] **Phase 19: Test Infrastructure Cleanup** - Remove dead code, add Docker guard, fix POM bypass, archive legacy test files
 
 ## Phase Details
 
@@ -142,6 +144,34 @@ Plans:
 - [x] 17-01-PLAN.md — Theme toggle persistence + 404 routing tests (EDGE-01, EDGE-02, Chromium, no Docker) — completed 2026-02-18
 - [ ] 17-02-PLAN.md — Tool switching Docker tests + back/forward navigation route-interception tests (EDGE-03, EDGE-04)
 
+### Phase 18: Documentation Drift Fix
+**Goal**: REQUIREMENTS.md checkboxes and coverage count accurately reflect completed work
+**Depends on**: Phase 17
+**Requirements**: INFRA-03, INFRA-04, LAND-01, LAND-02, LAND-03, LAND-04, UPLD-01, UPLD-02, UPLD-03, UPLD-04, EXEC-01, EXEC-02, EXEC-03, EXEC-04, OUTP-01, OUTP-02, OUTP-03, OUTP-04, EXMP-01, EXMP-02, EXMP-03, EXMP-04
+**Gap Closure:** Closes documentation drift from audit (20 unchecked boxes despite completion)
+**Success Criteria** (what must be TRUE):
+  1. All 28 v1.2 requirement checkboxes show `[x]` Complete in REQUIREMENTS.md
+  2. Coverage count at top of REQUIREMENTS.md shows 28/28 complete
+  3. Traceability table Status column shows Complete for all v1.2 requirements
+**Plans:** 1 plan
+Plans:
+- [ ] 18-01-PLAN.md — Sync all REQUIREMENTS.md checkboxes and coverage count
+
+### Phase 19: Test Infrastructure Cleanup
+**Goal**: Dead code removed, Docker guard added, POM contract enforced, legacy files archived
+**Depends on**: Phase 18
+**Requirements**: INFRA-03, INFRA-04, EDGE-04
+**Gap Closure:** Closes non-critical integration gaps from audit
+**Success Criteria** (what must be TRUE):
+  1. `loadExampleAndExecute()` removed from `helpers.ts` (or replaced with non-DemoPage version if needed)
+  2. `playwright.config.ts` warns or errors when Docker-requiring tests run without `E2E_BASE_URL` set
+  3. `browser-navigation.spec.ts` uses `LandingPage` POM for all landing page interactions
+  4. 7 legacy test files moved to `e2e/archive/` or deleted — no longer run on default `npx playwright test`
+**Plans:** 2 plans
+Plans:
+- [ ] 19-01-PLAN.md — Remove orphaned helper, add Docker guard, fix LandingPage POM bypass in browser-navigation.spec.ts
+- [ ] 19-02-PLAN.md — Archive/remove 7 legacy test files (java-fv-*, landing-navigation, responsive-layout, shareable-links, upload-execute-results)
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -163,7 +193,9 @@ Plans:
 | 15. Output Flow E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 16. Examples & Shareable Links E2E Tests | v1.2 | Complete    | 2026-02-17 | - |
 | 17. Edge Cases & Polish | 2/2 | Complete    | 2026-02-18 | - |
+| 18. Documentation Drift Fix | v1.2 | 0/1 | Pending | - |
+| 19. Test Infrastructure Cleanup | v1.2 | 0/2 | Pending | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-18 after 17-01 execution (EDGE-01 + EDGE-02 complete)*
+*Last updated: 2026-02-18 after audit gap closure (Phases 18-19 added)*
