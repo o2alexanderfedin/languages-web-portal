@@ -8,11 +8,25 @@ import { defineConfig, devices } from '@playwright/test';
  *   - browser: chromium, firefox, webkit
  *
  * Docker targeting:
- *   Set E2E_BASE_URL to test against a running Docker container.
- *   When E2E_BASE_URL is set, the dev server is NOT started automatically.
+ *   Set E2E_BASE_URL to test against a running target server (Docker container
+ *   or manually started dev server). E2E_BASE_URL is required — tests will abort
+ *   if it is not set.
  *
  * See https://playwright.dev/docs/test-configuration.
  */
+
+// Docker guard — abort immediately if E2E_BASE_URL is not set.
+// All e2e tests require a running target server (Docker production container or
+// local dev server started manually). Set the env var before running tests:
+//   export E2E_BASE_URL=http://localhost:3000
+if (!process.env.E2E_BASE_URL) {
+  throw new Error(
+    'E2E_BASE_URL is not set. Tests require a running target server.\n' +
+      'Start the target server and then run:\n' +
+      '  export E2E_BASE_URL=http://localhost:3000',
+  );
+}
+
 export default defineConfig({
   testDir: './e2e/tests',
   /* Run tests in files in parallel */
@@ -38,7 +52,8 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
 
-  /* Configure projects for major browsers across desktop, tablet, and mobile viewports */
+  // POM contract: all test interactions with page UI must go through Page Object Models
+  // in e2e/pages/. Never use raw page.locator() or page.getByTestId() in spec files.
   projects: [
     // --- Desktop (1280x720) ---
     {
@@ -113,11 +128,4 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests (skip when targeting Docker) */
-  webServer: process.env.E2E_BASE_URL ? undefined : {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
 });
