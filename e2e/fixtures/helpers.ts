@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { type Page } from '@playwright/test';
-import { DemoPage } from '../pages/DemoPage';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -72,26 +71,6 @@ export async function waitForExecutionComplete(
     },
     { timeout },
   );
-}
-
-/**
- * Navigate to the demo page with java-verification pre-selected,
- * load the specified example, and click execute.
- *
- * @param page - Playwright Page instance
- * @param exampleName - Name of the example to load (e.g., 'bank-account-records')
- * @returns DemoPage instance for subsequent assertions
- */
-export async function loadExampleAndExecute(
-  page: Page,
-  exampleName: string,
-): Promise<DemoPage> {
-  await page.goto('/demo?tool=java-verification');
-  const demo = new DemoPage(page);
-  await demo.exampleSelector.waitFor({ state: 'visible', timeout: 10_000 });
-  await demo.loadExample(exampleName);
-  await demo.execute();
-  return demo;
 }
 
 /**
