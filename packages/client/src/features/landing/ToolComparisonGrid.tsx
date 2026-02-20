@@ -39,6 +39,19 @@ export function ToolComparisonGrid() {
     return tool.sourceLanguage;
   };
 
+  const getButtonProps = (status: Tool['status']) => {
+    switch (status) {
+      case 'available':
+        return { variant: 'default' as const, label: 'Try Now', disabled: false };
+      case 'in-development':
+        return { variant: 'outline' as const, label: 'Preview', disabled: false };
+      case 'coming-soon':
+        return { variant: 'ghost' as const, label: 'Coming Soon', disabled: true };
+      default:
+        return { variant: 'ghost' as const, label: 'Coming Soon', disabled: true };
+    }
+  };
+
   const handleTryNow = (toolId: string) => {
     navigate(`/demo?tool=${toolId}`);
   };
@@ -62,7 +75,7 @@ export function ToolComparisonGrid() {
             </thead>
             <tbody>
               {TOOLS.map((tool) => (
-                <tr key={tool.id} className="border-b hover:bg-muted/50 transition-colors" data-testid={`tool-row-${tool.id}`}>
+                <tr key={tool.id} className="border-b" data-testid={`tool-row-${tool.id}`}>
                   <td className="p-3 font-medium">{tool.name}</td>
                   <td className="p-3 capitalize">{tool.category}</td>
                   <td className="p-3">{getLanguageDisplay(tool)}</td>
@@ -77,15 +90,20 @@ export function ToolComparisonGrid() {
                     </span>
                   </td>
                   <td className="p-3">
-                    <Button
-                      size="sm"
-                      variant={tool.status === 'coming-soon' ? 'outline' : 'default'}
-                      disabled={tool.status === 'coming-soon'}
-                      onClick={() => handleTryNow(tool.id)}
-                      data-testid={`tool-try-now-${tool.id}`}
-                    >
-                      Try Now
-                    </Button>
+                    {(() => {
+                      const { variant, label, disabled } = getButtonProps(tool.status);
+                      return (
+                        <Button
+                          size="sm"
+                          variant={variant}
+                          disabled={disabled}
+                          onClick={() => handleTryNow(tool.id)}
+                          data-testid={`tool-try-now-${tool.id}`}
+                        >
+                          {label}
+                        </Button>
+                      );
+                    })()}
                   </td>
                 </tr>
               ))}
@@ -115,15 +133,20 @@ export function ToolComparisonGrid() {
                 <span className="text-xs text-muted-foreground">
                   {getLanguageDisplay(tool)} • {tool.category}
                 </span>
-                <Button
-                  size="sm"
-                  variant={tool.status === 'coming-soon' ? 'outline' : 'default'}
-                  disabled={tool.status === 'coming-soon'}
-                  onClick={() => handleTryNow(tool.id)}
-                  data-testid={`tool-try-now-${tool.id}`}
-                >
-                  Try Now
-                </Button>
+                {(() => {
+                  const { variant, label, disabled } = getButtonProps(tool.status);
+                  return (
+                    <Button
+                      size="sm"
+                      variant={variant}
+                      disabled={disabled}
+                      onClick={() => handleTryNow(tool.id)}
+                      data-testid={`tool-try-now-${tool.id}`}
+                    >
+                      {label}
+                    </Button>
+                  );
+                })()}
               </div>
             </div>
           ))}

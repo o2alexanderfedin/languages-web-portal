@@ -84,7 +84,9 @@ export function UploadZone({ onUploadSuccess }: UploadZoneProps) {
                 ? 'border-destructive bg-destructive/5'
                 : displayState === 'success'
                   ? 'border-green-500 bg-green-50 dark:bg-green-950'
-                  : 'border-muted-foreground/25 hover:border-muted-foreground/50'
+                  : displayState === 'uploading'
+                    ? 'border-primary/40 bg-primary/5'
+                    : 'border-border hover:border-primary/60 hover:bg-muted/30'
           }
         `}
       >
@@ -93,6 +95,11 @@ export function UploadZone({ onUploadSuccess }: UploadZoneProps) {
         {/* Idle state */}
         {displayState === 'idle' && (
           <div className="space-y-3" data-testid="upload-status">
+            <div className="flex justify-center mb-1">
+              <svg className="w-10 h-10 text-muted-foreground/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              </svg>
+            </div>
             <div className="text-lg font-medium">
               Drag and drop a ZIP file here, or click to browse
             </div>

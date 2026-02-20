@@ -108,7 +108,7 @@ export function ExecutionPanel({ projectId, initialToolId, onToolChange }: Execu
   };
 
   const runButtonDisabledReason = getRunButtonDisabledReason();
-  const isRunButtonDisabled = runButtonDisabledReason !== null || isLoading;
+  const isRunButtonDisabled = runButtonDisabledReason !== null || isLoading || executionState === 'streaming';
 
   const getStatusBadgeClass = (status: ExecutionResponse['status']) => {
     switch (status) {
@@ -147,13 +147,14 @@ export function ExecutionPanel({ projectId, initialToolId, onToolChange }: Execu
         <Button
           onClick={handleRun}
           disabled={isRunButtonDisabled}
+          title={runButtonDisabledReason ?? undefined}
           size="lg"
           className="min-w-[200px]"
           data-testid="execute-button"
         >
           {executionState === 'streaming' ? (
             <>
-              <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+              <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full mr-2"></div>
               Running...
             </>
           ) : (
@@ -161,8 +162,13 @@ export function ExecutionPanel({ projectId, initialToolId, onToolChange }: Execu
           )}
         </Button>
 
-        {runButtonDisabledReason && (
-          <span className="text-sm text-muted-foreground">{runButtonDisabledReason}</span>
+        {runButtonDisabledReason && executionState !== 'streaming' && (
+          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {runButtonDisabledReason}
+          </span>
         )}
       </div>
 
