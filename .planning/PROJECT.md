@@ -8,6 +8,15 @@ A public demo web portal for Hupyy's formal verification tools and transpilers. 
 
 Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
 
+## Current Milestone: v1.3 C# Formal Verification
+
+**Goal:** Add C# Formal Verification as the second live tool — Docker image with .NET SDK, wrapper script bridging dotnet build + Roslyn analyzer to portal interface, C# example projects, and E2E test coverage.
+
+**Target features:**
+- C# FV tool integration (Docker + wrapper script)
+- C# example projects (modern features + FV contracts)
+- E2E tests for C# verification flow
+
 ## Current State
 
 **Shipped:** v1.2 Comprehensive E2E Testing (2026-02-20)
@@ -53,7 +62,12 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 
 ### Active
 
-(Next milestone requirements go here — see /gsd:new-milestone)
+- [ ] C# FV tool available and executable in the portal — v1.3
+- [ ] Docker image includes .NET SDK for `dotnet build` with Roslyn analyzer — v1.3
+- [ ] Wrapper script (`hupyy-csharp-verify`) bridging C# FV to portal `--input` interface — v1.3
+- [ ] Example C# projects for demo (modern features + FV contracts/invariants) — v1.3
+- [ ] Updated tool metadata (C# FV status → Available) in UI — v1.3
+- [ ] E2E tests covering C# verification user flow — v1.3
 
 ### Out of Scope
 
@@ -130,4 +144,4 @@ All tools are CLI-based: take input directory/files, produce output directory/fi
 | POM contract for all landing page navigations | All spec files use LandingPage.goto() — no raw page.goto('/') calls | ✓ Good |
 
 ---
-*Last updated: 2026-02-20 after v1.2 milestone*
+*Last updated: 2026-02-20 after v1.3 milestone start*

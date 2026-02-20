@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Planning next milestone
+**Current focus:** v1.3 C# Formal Verification
 
 ## Current Position
 
-Phase: 19 of 19 (Test Infrastructure Cleanup) -- COMPLETE
-Plan: 2 of 2 in current phase -- COMPLETE
-Status: Phase 19 Plan 02 Complete — 8 legacy specs archived via git mv, testIgnore added, phase complete
-Last activity: 2026-02-19 — Completed 19-02-PLAN.md
-
-Progress: [████████████████████] 100% (17/17 phases complete)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements for v1.3 C# Formal Verification
+Last activity: 2026-02-20 — Milestone v1.3 started
 
 ## Performance Metrics
 
