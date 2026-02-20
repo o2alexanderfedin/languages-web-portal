@@ -5,14 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** v1.3 C# Formal Verification
+**Current focus:** v1.3 C# Formal Verification — Phase 20: Docker Image
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements for v1.3 C# Formal Verification
-Last activity: 2026-02-20 — Milestone v1.3 started
+Phase: 20 of 23 (Docker Image — .NET Runtime + Solver Binaries)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-02-20 — v1.3 roadmap created (phases 20-23)
+
+Progress: [████████████████░░░░] 82% (19/23 phases complete across all milestones)
 
 ## Performance Metrics
 
@@ -35,19 +37,13 @@ Last activity: 2026-02-20 — Milestone v1.3 started
 | 8. Docker | 2 | ~1.5h | ~45min |
 | 9. Tool Activation | 3 | ~2h | ~40min |
 | 10. E2E v1.1 | 2 | ~1h | ~30min |
-| 11. Test Infra | 2/2 | ~24min | ~12min |
-| 12. Landing E2E | 2/2 | ~24min | ~12min |
-| 13. Upload E2E | 2/2 | ~16min | ~8min |
-| 14. Execution E2E | 2/2 | ~5min | ~3min |
-| 15. Output E2E | 2/2 | ~11min | ~5min |
-| 16. Examples/Shareable Links E2E | 2/2 | ~2min | ~1min |
-| 17. Edge Cases Polish | 2/2 | ~4min | ~2min |
+| 11-19. E2E v1.2 | 17 | ~1.5h total | ~5min |
 
 **Recent Trend:**
 - Last 5 plans: 1-14min range
 - Trend: Stable (fast execution)
 
-*Updated after 18-01 completion*
+*Updated after v1.3 roadmap creation*
 
 ## Accumulated Context
 
@@ -56,25 +52,13 @@ Last activity: 2026-02-20 — Milestone v1.3 started
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- Phase 7: Playwright for E2E testing (desktop + mobile browser testing with POM pattern)
-- Phase 8: Docker 3-stage build with JDK 25 (Maven → JDK runtime → Node.js production)
-- Phase 10: E2E tests covering Java verification user flow
-- Phase 11-01: 9-project Playwright config ({viewport}-{browser} naming), E2E_BASE_URL for Docker targeting
-- Phase 11-02: Shared test helpers in e2e/fixtures/helpers.ts for DRY test code across suites
-- Phase 12-01: Use viewport-based layout detection as fallback for Firefox mobile emulation
-- Phase 12-02: Force-click disabled buttons to verify navigation prevention behavior
-- Phase 13-01: Use DataTransfer+dispatchEvent('drop') for drag-and-drop simulation in react-dropzone tests; viewport threshold 1024px separates desktop (drag-drop) from tablet/mobile (click-upload)
-- Phase 13-02: Try Again button must call both reset() and setRejectionError(null) — RTK Query reset() alone leaves client-side rejection error state set; use conditional isVisible() assertion for react-dropzone silent rejections; Promise.race for dual-outcome (success/error) test assertions
-- Phase 14-01: ExecutionPage POM is self-contained (no helpers.ts import); connectionBadge uses .bg-yellow-100/.bg-green-100 CSS filter; execution-flow.spec.ts replaces java-fv-execution.spec.ts
-- Phase 14-02: EXEC-03 error tests use page.route('**/execute**') interception (no Docker); EXEC-04 button state tests use isMobile skip to auto-run across Chromium/Firefox/WebKit desktop
-- Phase 15-01: OutputPage uses .bg-slate-900 first() for filePreviewHeader; syntaxHighlighterBlock covers pre code/.react-syntax-highlighter/pre[class*="language-"]; e2e/tsconfig.json uses ESNext/bundler for import.meta support; non-folder treeItems via :not([aria-expanded]) selector
-- Phase 15-02: OUTP-03 uses Promise.all([page.waitForEvent('download'), button.click()]) for anchor download elements; OUTP-04 uses dual route interception (**/file-tree** + **/execute**) to simulate empty output state without Docker
-- Phase 16-01: Dual-describe split (Docker-serial EXMP-01 block + UI-parallel EXMP-04 block) within single spec file; test.setTimeout + serial mode scoped to Docker block only; DemoPage for getExampleDescription(), ExecutionPage for loadExample() + executeButton
-- Phase 16-02: Cross-browser shareable links suite uses isMobile skip for desktop-only execution; pageerror capture pattern for zero-JS-exception assertions on invalid ?tool= params
-- Phase 17-01: clickToTheme() helper iterates up to 3 clicks regardless of starting theme (avoids state assumptions); system mode test emulates dark colorScheme before goto(); EDGE-02 HTTP test asserts rendered content not HTTP status (Vite SPA fallback returns 200 for unknown routes)
-- Phase 17-02: EDGE-03 tool switching uses java-verification→cpp-to-c-transpiler cycle (only java-verification is Docker-enabled); EDGE-04 browser navigation uses real SPA routing (no route interception) with goBack/goForward({ waitUntil: 'networkidle' }) and pageErrors capture for zero-JS-exception assertions
-- Phase 19-01: Docker guard pattern (top-level throw before defineConfig) enforces E2E_BASE_URL; webServer block removed; LandingPage POM enforced for all landing navigations in all active spec files
-- Phase 19-02: Archive pattern (git mv to e2e/archive/ + testIgnore + tsconfig exclude) retires legacy specs from CI while preserving full git history
+- Phase 8: Docker 3-stage build with JDK 25 — v1.3 extends to 4-stage (adds dotnet-builder)
+- Phase 19-01: Docker guard pattern, E2E_BASE_URL required — applies to C# FV E2E tests
+- Phase 19-02: Archive pattern (git mv to e2e/archive/) for legacy spec retirement
+- v1.3 research: .NET SDK 10 (Noble) for builder stage, dotnet-runtime-8.0 for production (cs-fv targets net8.0)
+- v1.3 research: NUGET_PACKAGES must be set per-job in wrapper (NuGet/Home #8129 concurrency bug)
+- v1.3 research: TreatWarningsAsErrors=true required in .csproj — Roslyn defaults Warning severity (exit 0)
+- v1.3 research: maxExecutionTimeMs: 180000 — MSBuild cold-start + CVC5 solving needs extra margin
 
 ### Pending Todos
 
@@ -83,15 +67,16 @@ None yet.
 ### Blockers/Concerns
 
 **Active:**
+- Phase 22 (Examples): Hupyy C# FV NuGet package name, contract attribute namespace (`using CsFv.Contracts;`?), and diagnostic ID format are not publicly documented — must be confirmed from cs-fv source before writing examples
 - CVC5/Yices/Bitwuzla not available on linux-aarch64 in Docker — Z3 only (acceptable for current tools)
 
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: v1.2 milestone complete — archived to milestones/v1.2-ROADMAP.md, git tagged v1.2
+Stopped at: v1.3 roadmap created — phases 20-23 written to ROADMAP.md
 Resume file: None
-Next step: /gsd:new-milestone — start v1.3 planning (questioning → research → requirements → roadmap)
+Next step: /gsd:plan-phase 20 — plan the Docker Image phase
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-18 after 17-02 execution*
+*Last updated: 2026-02-20 — v1.3 roadmap created, position set to Phase 20*
