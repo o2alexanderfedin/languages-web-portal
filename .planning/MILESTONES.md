@@ -38,3 +38,20 @@
 
 ---
 
+
+## v1.2 Comprehensive E2E Testing (Shipped: 2026-02-20)
+
+**Phases completed:** 9 phases (11-19), 17 plans
+**Timeline:** 4 days (2026-02-16 → 2026-02-20)
+**Stats:** 58 files changed, 6,514 insertions, 3,480 LOC TypeScript (e2e/), 28/28 requirements satisfied
+
+**Key accomplishments:**
+1. 9-project Playwright configuration (3 browsers × 3 viewports) with E2E_BASE_URL Docker targeting and shared DRY helpers
+2. Complete cross-browser E2E coverage across all user flows — landing, upload, execution, output, examples, shareable links, edge cases — 13 spec files, 78 tests × 9 projects (~700 test runs)
+3. Four Page Object Models (LandingPage, UploadPage, ExecutionPage, OutputPage) providing type-safe, reusable test abstractions
+4. SSE streaming verification, progress indicators, and route-interception-based error state tests without Docker dependency
+5. Theme toggle persistence, 404 routing, tool switching, and browser back/forward navigation coverage
+6. Infrastructure cleanup: dead code removed, Docker guard added, POM contract enforced, 8 legacy specs archived via `git mv`
+
+---
+

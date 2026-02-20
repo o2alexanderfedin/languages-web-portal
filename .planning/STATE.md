@@ -2,10 +2,10 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-16)
+See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Phase 19 - Test Infrastructure Cleanup (COMPLETE)
+**Current focus:** Planning next milestone
 
 ## Current Position
 
@@ -89,10 +89,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-19
-Stopped at: Completed 19-02-PLAN.md (test infrastructure cleanup — 8 legacy specs archived via git mv, testIgnore added, phase complete)
+Last session: 2026-02-20
+Stopped at: v1.2 milestone complete — archived to milestones/v1.2-ROADMAP.md, git tagged v1.2
 Resume file: None
-Next step: All phases complete — project finished
+Next step: /gsd:new-milestone — start v1.3 planning (questioning → research → requirements → roadmap)
 
 ---
 *State initialized: 2026-02-12*

@@ -8,24 +8,12 @@ A public demo web portal for Hupyy's formal verification tools and transpilers. 
 
 Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
 
-## Current Milestone: v1.2 Comprehensive E2E Testing
-
-**Goal:** Every user-facing behavior verified across Chromium, Firefox, and WebKit browsers on desktop, tablet, and mobile viewports — running against the Docker production image. Covers all user journeys, error states, and edge cases.
-
-**Target features:**
-- Cross-browser testing: Chromium + Firefox + WebKit
-- Cross-device testing: desktop + tablet + mobile viewports
-- Docker production container as test target
-- All user journeys: landing, navigation, upload, execute, streaming, preview, download, examples, shareable links
-- Error states: bad files, oversized uploads, timeouts, server errors
-- Edge cases: theme toggle, 404 page, tool switching, keyboard navigation
-
 ## Current State
 
-**Shipped:** v1.1 Java FV Integration (2026-02-16)
-**Codebase:** ~9,000 LOC TypeScript/React across 235 files
+**Shipped:** v1.2 Comprehensive E2E Testing (2026-02-20)
+**Codebase:** ~9,000 LOC TypeScript/React (server + client) + 3,480 LOC TypeScript (e2e/)
 **Tech stack:** TypeScript, Node.js 22, Express, React 18.3, Vite, Tailwind CSS v4, shadcn/ui, Redux Toolkit, RTK Query, Playwright
-**Tests:** 190+ unit tests (Vitest) + 60 E2E tests (Playwright)
+**Tests:** 190+ unit tests (Vitest) + 78 E2E test cases × 9 browser/viewport projects (~700 test runs)
 **Deployment:** Docker multi-stage build (JDK 25 + Node.js 22), ready for Digital Ocean
 **Live tools:** Java Formal Verification (available, 120s timeout)
 
@@ -50,21 +38,22 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 - ✓ Example Java projects for demo (records, pattern matching, sealed types) — v1.1
 - ✓ Updated tool metadata (status, description) in UI — v1.1
 - ✓ E2E tests covering Java verification user flow — v1.1
+- ✓ Cross-browser E2E tests (Chromium + Firefox + WebKit) — v1.2
+- ✓ Cross-device E2E tests (desktop + tablet + mobile viewports) — v1.2
+- ✓ Docker production image as E2E test target — v1.2
+- ✓ Landing page E2E coverage (hero, tool grid, navigation, responsive) — v1.2
+- ✓ Upload flow E2E coverage (valid/invalid files, drag-drop, error messages) — v1.2
+- ✓ Execution flow E2E coverage (streaming, progress, timeouts, errors) — v1.2
+- ✓ Output flow E2E coverage (file tree, syntax preview, download) — v1.2
+- ✓ Example loading E2E coverage (all examples, error handling) — v1.2
+- ✓ Shareable links E2E coverage (generation, pre-selection, invalid params) — v1.2
+- ✓ Theme toggle E2E coverage (light/dark/system) — v1.2
+- ✓ Error states E2E coverage (404, server errors, network failures) — v1.2
+- ✓ Edge cases E2E coverage (tool switching, browser back/forward) — v1.2
 
 ### Active
 
-- [ ] Cross-browser E2E tests (Chromium + Firefox + WebKit)
-- [ ] Cross-device E2E tests (desktop + tablet + mobile viewports)
-- [ ] Docker production image as E2E test target
-- [ ] Landing page E2E coverage (hero, tool grid, navigation, responsive)
-- [ ] Upload flow E2E coverage (valid/invalid files, drag-drop, error messages)
-- [ ] Execution flow E2E coverage (streaming, progress, timeouts, errors)
-- [ ] Output flow E2E coverage (file tree, syntax preview, download)
-- [ ] Example loading E2E coverage (all examples, error handling)
-- [ ] Shareable links E2E coverage (generation, pre-selection, invalid params)
-- [ ] Theme toggle E2E coverage (light/dark/system)
-- [ ] Error states E2E coverage (404, server errors, network failures)
-- [ ] Edge cases E2E coverage (tool switching, browser back/forward, keyboard nav)
+(Next milestone requirements go here — see /gsd:new-milestone)
 
 ### Out of Scope
 
@@ -78,6 +67,9 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 - javac plugin mode — CLI jar mode is simpler and doesn't require project structure
 - Custom solver configuration — Z3 bundled is sufficient for demo; multi-solver is v2
 - Java source code editing in browser — upload-only approach, consistent with v1.0 pattern
+- Visual regression testing — screenshot comparison is v2 scope
+- Accessibility testing (axe-core) — v2 scope
+- Performance/load testing — v2 scope
 
 ## Context
 
@@ -130,6 +122,12 @@ All tools are CLI-based: take input directory/files, produce output directory/fi
 | 120s timeout for Java FV | Complex verification needs more time than default 60s | ✓ Good |
 | Native select for example picker | Simple dropdown UI, no complex library needed | ✓ Good |
 | Progressive example complexity | bank-account-records → shape-matching → payment-types | ✓ Good |
+| 9-project Playwright config ({viewport}-{browser}) | Clear naming, E2E_BASE_URL env var for Docker targeting | ✓ Good |
+| Shared helpers in e2e/fixtures/helpers.ts | DRY test code — path constants + reusable utilities across suites | ✓ Good |
+| Route interception for error state tests | Tests error flows (EXEC-03, OUTP-04) without Docker dependency | ✓ Good |
+| Docker guard (top-level throw before defineConfig) | Aborts test run with actionable error if E2E_BASE_URL not set | ✓ Good |
+| git mv to e2e/archive/ for legacy spec retirement | Preserves full git history while removing from default test run | ✓ Good |
+| POM contract for all landing page navigations | All spec files use LandingPage.goto() — no raw page.goto('/') calls | ✓ Good |
 
 ---
-*Last updated: 2026-02-16 after v1.2 milestone start*
+*Last updated: 2026-02-20 after v1.2 milestone*
