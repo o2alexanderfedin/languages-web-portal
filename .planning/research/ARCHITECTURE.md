@@ -1,7 +1,7 @@
 # Architecture Research
 
-**Domain:** CLI Tool Execution Web Portal
-**Researched:** 2026-02-12
+**Domain:** CLI Tool Execution Web Portal — C# Formal Verification Integration
+**Researched:** 2026-02-20
 **Confidence:** HIGH
 
 ## Standard Architecture
@@ -19,51 +19,47 @@
 │         │                │                │                     │
 │         └────────────────┴────────────────┘                     │
 │                          │                                      │
-│                ┌─────────┴─────────┐                            │
-│                │  State Manager    │                            │
-│                │  (React Hooks)    │                            │
-│                └─────────┬─────────┘                            │
-│                          │                                      │
-├──────────────────────────┼──────────────────────────────────────┤
-│                          │                                      │
-│           HTTP           │         WebSocket                    │
-│           (REST)         │         (bidirectional)              │
-│                          │                                      │
-├──────────────────────────┴──────────────────────────────────────┤
-│                    Backend (Node.js + Express)                   │
+│                    RTK Query (API calls)                        │
+└──────────────────────────┼──────────────────────────────────────┘
+                           │ HTTP/SSE
+┌──────────────────────────┼──────────────────────────────────────┐
+│                    Express Server (Node.js 22)                   │
 ├─────────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐            │
-│  │   Upload    │  │   Process   │  │   Download   │            │
-│  │   Handler   │  │   Manager   │  │   Handler    │            │
-│  └──────┬──────┘  └──────┬──────┘  └──────┬───────┘            │
-│         │                │                │                     │
-│         └────────────────┴────────────────┘                     │
-│                          │                                      │
-│                ┌─────────┴─────────┐                            │
-│                │  WebSocket Server │                            │
-│                │  (express-ws)     │                            │
-│                └─────────┬─────────┘                            │
-│                          │                                      │
-├──────────────────────────┼──────────────────────────────────────┤
-│                          │                                      │
-│                ┌─────────┴─────────┐                            │
-│                │   Job Scheduler   │                            │
-│                │   (node-cron)     │                            │
-│                └─────────┬─────────┘                            │
-│                          │                                      │
-├──────────────────────────┴──────────────────────────────────────┤
-│                    Process Layer                                 │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────┐   │
+│  │ /upload  │  │ /execute │  │ /stream  │  │  /examples   │   │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └──────┬───────┘   │
+│       │             │             │               │             │
+│  ┌────▼─────────────▼─────────────▼───────────────▼──────┐     │
+│  │   Services: executionService, queueService,            │     │
+│  │   streamService, projectService, exampleService        │     │
+│  └────────────────────────┬───────────────────────────────┘     │
+│                           │                                     │
+│  ┌────────────────────────▼───────────────────────────────┐     │
+│  │              toolRegistry (config/toolRegistry.ts)      │     │
+│  │  id → { command, defaultArgs, maxExecutionTimeMs,       │     │
+│  │          available }                                     │     │
+│  └────────────────────────┬───────────────────────────────┘     │
+└───────────────────────────┼─────────────────────────────────────┘
+                            │ execa (subprocess, no shell)
+┌───────────────────────────┼─────────────────────────────────────┐
+│                    Container (Docker)                            │
 ├─────────────────────────────────────────────────────────────────┤
-│  ┌──────────────────────────────────────────────────────┐       │
-│  │            CLI Process Spawner                        │       │
-│  │        (child_process.spawn with streams)             │       │
-│  └──────────────────────────────────────────────────────┘       │
-├─────────────────────────────────────────────────────────────────┤
-│                     File System Layer                            │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Project    │  │    Temp      │  │    Output    │          │
-│  │ Directories  │  │   Upload     │  │     Zip      │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │              /usr/local/bin/ wrapper scripts              │   │
+│  │  hupyy-java-verify (bash)  │  hupyy-csharp-verify (bash) │   │
+│  └───────────┬────────────────┴──────────────┬──────────────┘   │
+│              │                               │                  │
+│  ┌───────────▼──────────┐    ┌───────────────▼──────────────┐   │
+│  │  java -jar           │    │  dotnet /usr/local/lib/       │   │
+│  │  java-fv-cli.jar     │    │  cs-fv/cs-fv.dll verify       │   │
+│  │  verify *.java       │    │  <file.cs>                    │   │
+│  └──────────────────────┘    └───────────────────────────────┘   │
+│              │                               │                  │
+│  ┌───────────▼──────────┐    ┌───────────────▼──────────────┐   │
+│  │  JDK 25 (JRE noble)  │    │  .NET SDK 8.0 runtime +       │   │
+│  │  Z3 (z3-turnkey jar) │    │  CVC5 binary (/usr/local/bin) │   │
+│  └──────────────────────┘    │  Z3 CLI binary (fallback)     │   │
+│                               └───────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -71,801 +67,418 @@
 
 | Component | Responsibility | Typical Implementation |
 |-----------|----------------|------------------------|
-| **Upload Handler** | Receives zip files, validates size/type, extracts to ephemeral project directory | Multer middleware with file-type validation, unzipper library for extraction |
-| **Process Manager** | Spawns CLI tool processes, manages stdout/stderr streams, tracks process lifecycle | child_process.spawn() with stream piping to WebSocket |
-| **WebSocket Server** | Maintains persistent connections, broadcasts process output in real-time, handles reconnection | express-ws or Socket.IO with connection registry |
-| **Terminal Component** | Renders streamed output, handles ANSI codes, provides scrolling and interaction | react-console-emulator or custom component with ANSI parser |
-| **Job Scheduler** | Schedules cleanup of ephemeral directories 5-15 minutes after completion | node-cron with metadata-driven cleanup policies |
-| **Download Handler** | Zips output files, streams to client, schedules cleanup | archiver library with streaming response |
-| **State Manager** | Coordinates frontend state (upload status, process running, output ready) | React hooks (useState, useEffect, useReducer) with WebSocket integration |
+| toolRegistry.ts | Maps tool IDs to CLI commands, timeout, availability flag | TypeScript Map, read by executionService |
+| executionService.ts | Runs wrapper script via execa, streams stdout/stderr, returns status | `execa(command, args, { all: true, buffer: false })` |
+| hupyy-csharp-verify | Adapts `--input <dir>` to `cs-fv verify <file> [files...]` | Bash script finding *.cs, invoking cs-fv CLI |
+| cs-fv CLI | The actual C# FV tool — Roslyn analysis + CVC5/Z3 SMT solving | Pre-built .NET self-contained publish artifact |
+| CVC5 binary | SMT solver for contracts — installed system-wide | `/usr/local/bin/cvc5` via apt or manual install |
+| Z3 CLI (fallback) | Z3 as CLI process when Microsoft.Z3 library has no Linux native lib | `/usr/local/bin/z3` via apt package |
+| examples/csharp-verification/ | 3 C# example projects used in demo dropdown | Directory of .cs files, each with README.md |
 
 ## Recommended Project Structure
 
+### New Files (v1.3)
+
 ```
 languages-web-portal/
-├── client/                    # Frontend React application
-│   ├── src/
-│   │   ├── components/        # React components
-│   │   │   ├── upload/        # File upload UI
-│   │   │   ├── terminal/      # Console output viewer
-│   │   │   └── download/      # Results download UI
-│   │   ├── hooks/             # Custom React hooks
-│   │   │   ├── useWebSocket.ts  # WebSocket connection hook
-│   │   │   ├── useFileUpload.ts # Upload state management
-│   │   │   └── useProcess.ts    # Process status tracking
-│   │   ├── services/          # API client layer
-│   │   │   ├── api.ts         # REST API calls
-│   │   │   └── websocket.ts   # WebSocket client
-│   │   └── types/             # TypeScript types/interfaces
-│   └── package.json
-│
-├── server/                    # Backend Node.js application
-│   ├── src/
-│   │   ├── routes/            # Express routes
-│   │   │   ├── upload.ts      # File upload endpoint
-│   │   │   ├── process.ts     # Process management endpoints
-│   │   │   └── download.ts    # Download endpoint
-│   │   ├── services/          # Business logic
-│   │   │   ├── projectManager.ts    # Ephemeral directory management
-│   │   │   ├── processRunner.ts     # CLI tool execution
-│   │   │   ├── streamHandler.ts     # Output streaming coordination
-│   │   │   └── cleanupScheduler.ts  # Cleanup job scheduler
-│   │   ├── websocket/         # WebSocket handlers
-│   │   │   ├── server.ts      # WebSocket server setup
-│   │   │   └── handlers.ts    # Message handlers
-│   │   ├── middleware/        # Express middleware
-│   │   │   ├── upload.ts      # File upload validation
-│   │   │   ├── auth.ts        # Authentication (if needed)
-│   │   │   └── errorHandler.ts # Error handling
-│   │   ├── utils/             # Utilities
-│   │   │   ├── fileValidator.ts   # File type/size validation
-│   │   │   ├── zipHandler.ts      # Zip extraction/creation
-│   │   │   └── pathSanitizer.ts   # Path security utilities
-│   │   └── types/             # TypeScript types/interfaces
-│   └── package.json
-│
-├── shared/                    # Shared types between client/server
-│   └── types/
-│       ├── api.ts             # API request/response types
-│       ├── process.ts         # Process status types
-│       └── websocket.ts       # WebSocket message types
-│
-└── tools/                     # CLI tools (8 formal verification tools)
-    ├── tool1/
-    ├── tool2/
-    └── ...
+└── scripts/
+    └── hupyy-csharp-verify.sh       # NEW: C# FV wrapper script
+
+packages/server/examples/
+└── csharp-verification/             # MODIFY: Add FV contracts to existing .cs files
+    ├── null-check/
+    │   ├── Program.cs               # MODIFY: add [Requires]/[Ensures] + using CsFv.Contracts
+    │   └── README.md                # Keep as-is
+    ├── array-bounds/
+    │   ├── Program.cs               # MODIFY: add [Requires]/[Ensures] + using CsFv.Contracts
+    │   └── README.md                # Keep as-is
+    └── division-safety/
+        ├── Program.cs               # MODIFY: add [Requires]/[Ensures] + using CsFv.Contracts
+        └── README.md                # Keep as-is
+
+packages/shared/src/constants/
+└── tools.ts                         # MODIFY: csharp-verification status → 'available'
+
+packages/server/src/config/
+└── toolRegistry.ts                  # MODIFY: csharp-verification available → true, timeout → 120000
+
+Dockerfile                           # MODIFY: add .NET SDK stage + CVC5 install in production stage
+```
+
+### Modified Files (v1.3)
+
+```
+Dockerfile                           # MODIFY: 3 changes (see Docker section below)
+scripts/hupyy-csharp-verify.sh       # NEW
+packages/server/examples/csharp-verification/*/Program.cs  # MODIFY: add FV contracts
+packages/shared/src/constants/tools.ts  # MODIFY: status field
+packages/server/src/config/toolRegistry.ts  # MODIFY: available + timeout
 ```
 
 ### Structure Rationale
 
-- **client/ and server/:** Clear separation of concerns, allows independent deployment if needed later
-- **shared/:** Ensures type safety across client-server boundary, eliminates type drift
-- **services/:** Isolates business logic from routes, makes testing easier and promotes reusability
-- **middleware/:** Modular request processing pipeline, each middleware has single responsibility
-- **websocket/:** Separate from REST routes because WebSocket lifecycle differs significantly from HTTP
-- **tools/:** External CLI executables kept separate from application code for security and maintainability
+- **scripts/hupyy-csharp-verify.sh:** Mirrors hupyy-java-verify.sh pattern. Bash adapter script, installed to `/usr/local/bin/hupyy-csharp-verify` in Docker. Translates portal's `--input <dir>` interface into `dotnet /path/cs-fv.dll verify <files...>`.
+- **examples/csharp-verification/:** Three existing examples already exist but have no FV contracts. They need `using CsFv.Contracts;` and `[Requires]`/`[Ensures]` attributes added to demonstrate real verification, not just null-safety patterns.
+- **toolRegistry.ts:** Single source of truth for availability and timeout. Changing `available: false` to `available: true` and `maxExecutionTimeMs: 60000` to `120000` is the only server-side change beyond the wrapper script.
+- **tools.ts (shared):** Status drives the UI badge. `'in-development'` → `'available'` unlocks the tool in the frontend.
 
 ## Architectural Patterns
 
-### Pattern 1: Stream-Driven Process Output
+### Pattern 1: Wrapper Script Adapter (Java FV pattern, replicated for C#)
 
-**What:** Pipe child process stdout/stderr directly to WebSocket connections without buffering entire output
+**What:** A bash script at `/usr/local/bin/hupyy-<tool>-verify` adapts the portal's generic `--input <projectPath>` interface to whatever the actual CLI tool requires.
 
-**When to use:** When CLI tools produce significant output (logs, compilation results, verification traces) and users need real-time feedback
+**When to use:** Any time the tool CLI has a different argument shape than `--input <dir>`.
 
-**Trade-offs:**
-- **Pros:** Low memory footprint, immediate user feedback, scales to large outputs
-- **Cons:** Requires careful error handling, connection interruptions need reconnection logic
+**Trade-offs:** Simple, language-agnostic, easy to test manually. Cannot stream incremental output from the tool itself if the tool buffers; cs-fv CLI outputs incrementally per-method which works well.
 
-**Example:**
-```typescript
-import { spawn } from 'child_process';
-import { WebSocket } from 'ws';
+**Example (hupyy-csharp-verify.sh):**
+```bash
+#!/bin/bash
+set -euo pipefail
 
-function executeToolWithStreaming(
-  toolPath: string,
-  args: string[],
-  projectDir: string,
-  ws: WebSocket
-) {
-  const process = spawn(toolPath, args, {
-    cwd: projectDir,
-    env: { ...process.env, FORCE_COLOR: '0' } // Disable ANSI if desired
-  });
+# Wrapper for C# FV CLI - bridges portal interface to cs-fv command
+# Interface: hupyy-csharp-verify --input <path>
+# Invokes:   dotnet /usr/local/lib/cs-fv/cs-fv.dll verify <file1> [file2...]
 
-  // Stream stdout chunks directly to WebSocket
-  process.stdout.on('data', (chunk: Buffer) => {
-    ws.send(JSON.stringify({
-      type: 'stdout',
-      data: chunk.toString('utf-8')
-    }));
-  });
+CSFV_DLL="${CSFV_DLL:-/usr/local/lib/cs-fv/cs-fv.dll}"
+DOTNET_BIN="${DOTNET_HOME:+$DOTNET_HOME/bin/}dotnet"
 
-  // Stream stderr chunks directly to WebSocket
-  process.stderr.on('data', (chunk: Buffer) => {
-    ws.send(JSON.stringify({
-      type: 'stderr',
-      data: chunk.toString('utf-8')
-    }));
-  });
+if [[ "$#" -ne 2 ]] || [[ "$1" != "--input" ]]; then
+  echo "Usage: hupyy-csharp-verify --input <projectPath>" >&2
+  exit 1
+fi
 
-  // Notify completion
-  process.on('close', (code: number) => {
-    ws.send(JSON.stringify({
-      type: 'exit',
-      code: code
-    }));
-  });
+PROJECT_PATH="$2"
 
-  return process;
-}
+if [[ ! -d "$PROJECT_PATH" ]]; then
+  echo "Error: Project path does not exist: $PROJECT_PATH" >&2
+  exit 1
+fi
+
+# Find all .cs files (excluding bin/ obj/ directories)
+CS_FILES=()
+while IFS= read -r -d '' file; do
+  CS_FILES+=("$file")
+done < <(find "$PROJECT_PATH" \
+  -name "*.cs" -type f \
+  -not -path "*/bin/*" \
+  -not -path "*/obj/*" \
+  -print0)
+
+if [[ ${#CS_FILES[@]} -eq 0 ]]; then
+  echo "Error: No .cs files found in $PROJECT_PATH" >&2
+  echo "C# verification requires at least one .cs source file" >&2
+  exit 1
+fi
+
+# Execute cs-fv CLI - output streams naturally to stdout/stderr
+exec "$DOTNET_BIN" "$CSFV_DLL" verify "${CS_FILES[@]}"
 ```
 
-### Pattern 2: Ephemeral Directory Lifecycle
+### Pattern 2: Docker Multi-Stage Build for Multiple Runtimes
 
-**What:** Create temporary isolated directories per execution request, track with metadata, schedule cleanup based on completion time
+**What:** Each runtime dependency (JDK, .NET) has its own builder stage or is installed in the production stage. Builder stages produce artifacts (jars, published .NET DLLs). Production stage installs only runtimes, not SDKs.
 
-**When to use:** When users upload files for processing and outputs need temporary storage before download
+**When to use:** When the container needs multiple language runtimes (Java + .NET + Node.js).
 
-**Trade-offs:**
-- **Pros:** Isolation prevents cross-contamination, automatic cleanup prevents disk bloat, simple to implement
-- **Cons:** Requires careful path sanitization, cleanup scheduling adds complexity, disk space must be monitored
+**Trade-offs:** Larger production image than single-runtime. Alternative (separate containers per tool) is over-engineering for 5-20 concurrent users.
 
-**Example:**
-```typescript
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+**Example Docker stage structure for v1.3:**
+```dockerfile
+# Stage 1: Node.js Builder (unchanged)
+FROM node:22-alpine AS node-builder
+# ... build TypeScript + React
 
-interface ProjectMetadata {
-  id: string;
-  created: Date;
-  completed?: Date;
-  status: 'uploading' | 'processing' | 'completed' | 'failed';
-  cleanupScheduledAt?: Date;
-}
+# Stage 2: Java Builder (unchanged)
+FROM eclipse-temurin:25-jdk AS java-builder
+# ... build java-fv-cli.jar with Maven
 
-class ProjectManager {
-  private baseDir: string;
-  private projects = new Map<string, ProjectMetadata>();
+# Stage 3: .NET Builder (NEW)
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dotnet-builder
+WORKDIR /build
+COPY cs-fv/ .
+RUN dotnet publish src/CsFv.Cli/CsFv.Cli.csproj \
+    -c Release \
+    -o /out/cs-fv \
+    --self-contained false
+# Result: /out/cs-fv/cs-fv.dll + all dependent DLLs
 
-  constructor(baseDir: string) {
-    this.baseDir = baseDir;
-  }
-
-  async createProject(): Promise<string> {
-    const projectId = uuidv4();
-    const projectDir = path.join(this.baseDir, projectId);
-
-    await fs.mkdir(projectDir, { recursive: true });
-
-    this.projects.set(projectId, {
-      id: projectId,
-      created: new Date(),
-      status: 'uploading'
-    });
-
-    return projectId;
-  }
-
-  async markCompleted(projectId: string): Promise<void> {
-    const project = this.projects.get(projectId);
-    if (!project) throw new Error('Project not found');
-
-    project.completed = new Date();
-    project.status = 'completed';
-
-    // Schedule cleanup for 5-15 minutes later
-    const cleanupDelay = Math.random() * 10 + 5; // 5-15 minutes
-    project.cleanupScheduledAt = new Date(Date.now() + cleanupDelay * 60 * 1000);
-  }
-
-  getProjectsForCleanup(): string[] {
-    const now = new Date();
-    return Array.from(this.projects.values())
-      .filter(p => p.cleanupScheduledAt && p.cleanupScheduledAt <= now)
-      .map(p => p.id);
-  }
-
-  async cleanupProject(projectId: string): Promise<void> {
-    const projectDir = path.join(this.baseDir, projectId);
-    await fs.rm(projectDir, { recursive: true, force: true });
-    this.projects.delete(projectId);
-  }
-}
+# Stage 4: Production (MODIFY — was Stage 3)
+FROM eclipse-temurin:25-jre-noble AS production
+# Install Node.js 22 (existing)
+# Install .NET 8.0 runtime (NEW — NOT SDK, runtime only)
+RUN apt-get update && \
+    apt-get install -y dotnet-runtime-8.0 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install CVC5 (NEW — required by cs-fv as primary solver)
+# Install Z3 (NEW — required by cs-fv as fallback solver)
+RUN apt-get update && \
+    apt-get install -y z3 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Note: CVC5 may need manual install if not in apt
 ```
 
-### Pattern 3: Type-Based WebSocket Message Routing
+### Pattern 3: Tool Registry as Single Gate for Availability
 
-**What:** All WebSocket messages carry a "type" field that determines handler dispatch on both client and server
+**What:** `toolRegistry.ts` is the single authoritative place that determines whether a tool responds to execution requests. Setting `available: false` makes the tool unusable regardless of whether the binary exists on disk.
 
-**When to use:** When multiple message types flow over same WebSocket connection (stdout, stderr, status updates, errors)
+**When to use:** During phased rollout — binary can be deployed but not exposed until `available: true`.
 
-**Trade-offs:**
-- **Pros:** Extensible (add new types easily), type-safe with TypeScript discriminated unions, clear message intent
-- **Cons:** Requires agreement on message schema, slightly more overhead than raw data
-
-**Example:**
-```typescript
-// shared/types/websocket.ts
-export type WebSocketMessage =
-  | { type: 'stdout'; data: string }
-  | { type: 'stderr'; data: string }
-  | { type: 'exit'; code: number }
-  | { type: 'error'; message: string }
-  | { type: 'status'; status: 'starting' | 'running' | 'completed' };
-
-// server/websocket/handlers.ts
-export function handleMessage(ws: WebSocket, message: WebSocketMessage) {
-  switch (message.type) {
-    case 'stdout':
-      // Handle stdout
-      break;
-    case 'stderr':
-      // Handle stderr
-      break;
-    case 'exit':
-      // Handle process exit
-      break;
-    case 'error':
-      // Handle error
-      break;
-    case 'status':
-      // Handle status update
-      break;
-  }
-}
-
-// client/hooks/useWebSocket.ts
-export function useWebSocket(projectId: string) {
-  const [messages, setMessages] = useState<string[]>([]);
-  const [status, setStatus] = useState<string>('idle');
-
-  useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:3000/ws/${projectId}`);
-
-    ws.onmessage = (event) => {
-      const msg: WebSocketMessage = JSON.parse(event.data);
-
-      switch (msg.type) {
-        case 'stdout':
-        case 'stderr':
-          setMessages(prev => [...prev, msg.data]);
-          break;
-        case 'exit':
-          setStatus(msg.code === 0 ? 'completed' : 'failed');
-          break;
-        case 'status':
-          setStatus(msg.status);
-          break;
-        case 'error':
-          setStatus('error');
-          console.error(msg.message);
-          break;
-      }
-    };
-
-    return () => ws.close();
-  }, [projectId]);
-
-  return { messages, status };
-}
-```
-
-### Pattern 4: Metadata-Driven Cleanup Scheduler
-
-**What:** Store project metadata (creation time, completion time, status) in-memory or lightweight database, run periodic job to identify and delete expired projects
-
-**When to use:** When ephemeral resources need reliable cleanup without manual intervention
-
-**Trade-offs:**
-- **Pros:** Predictable cleanup, handles server restarts gracefully if persisted, prevents disk bloat
-- **Cons:** Requires scheduler (node-cron), adds complexity, must handle cleanup failures idempotently
-
-**Example:**
-```typescript
-import cron from 'node-cron';
-
-class CleanupScheduler {
-  private projectManager: ProjectManager;
-
-  constructor(projectManager: ProjectManager) {
-    this.projectManager = projectManager;
-  }
-
-  start() {
-    // Run cleanup every minute
-    cron.schedule('* * * * *', async () => {
-      const projectsToClean = this.projectManager.getProjectsForCleanup();
-
-      for (const projectId of projectsToClean) {
-        try {
-          await this.projectManager.cleanupProject(projectId);
-          console.log(`Cleaned up project: ${projectId}`);
-        } catch (error) {
-          // Log but don't throw - cleanup should be idempotent
-          console.error(`Failed to cleanup project ${projectId}:`, error);
-        }
-      }
-    });
-
-    console.log('Cleanup scheduler started');
-  }
-}
-```
-
-### Pattern 5: Layered Architecture (Routes → Services → Utils)
-
-**What:** Separate concerns into distinct layers: routes handle HTTP/WebSocket protocol, services contain business logic, utils provide pure functions
-
-**When to use:** Almost always - improves maintainability, testability, and separates concerns in Node.js APIs
-
-**Trade-offs:**
-- **Pros:** Easy to test (mock services in route tests), clear responsibilities, promotes code reuse
-- **Cons:** More files to navigate, may feel like overkill for tiny projects
-
-**Example:**
-```typescript
-// server/routes/process.ts
-import { Router } from 'express';
-import { ProcessService } from '../services/processRunner';
-
-const router = Router();
-const processService = new ProcessService();
-
-router.post('/process/:projectId/:toolName', async (req, res) => {
-  try {
-    const { projectId, toolName } = req.params;
-    const result = await processService.startTool(projectId, toolName);
-    res.json({ success: true, processId: result.processId });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-export default router;
-
-// server/services/processRunner.ts
-import { spawn } from 'child_process';
-import { WebSocketServer } from '../websocket/server';
-
-export class ProcessService {
-  private wsServer: WebSocketServer;
-
-  constructor() {
-    this.wsServer = WebSocketServer.getInstance();
-  }
-
-  async startTool(projectId: string, toolName: string) {
-    const toolPath = this.getToolPath(toolName);
-    const projectDir = this.getProjectDir(projectId);
-
-    const process = spawn(toolPath, [], { cwd: projectDir });
-
-    // Stream to WebSocket clients subscribed to this project
-    this.wsServer.streamToProject(projectId, process);
-
-    return { processId: process.pid };
-  }
-
-  private getToolPath(toolName: string): string {
-    // Business logic for resolving tool paths
-    return `/tools/${toolName}/bin/${toolName}`;
-  }
-
-  private getProjectDir(projectId: string): string {
-    // Business logic for resolving project directories
-    return `/tmp/projects/${projectId}`;
-  }
-}
-```
+**Trade-offs:** Simple boolean gate. No version-awareness or health-check. Sufficient for this portal's scope.
 
 ## Data Flow
 
-### Upload and Extract Flow
+### C# Verification Request Flow
 
 ```
-User selects zip file
+User selects "C# Verification" tool + example/upload
     ↓
-[Upload Component] → POST /api/upload
+React: POST /api/execute { toolId: 'csharp-verification', projectId }
     ↓
-[Upload Handler] → Validate file (size, type, MIME)
+execute.ts route: validates body, resolves projectPath, generates jobId
     ↓
-[Multer Middleware] → Save to temp location
+queueService.addJob() → executionService.executeJob()
     ↓
-[Project Manager] → Create ephemeral directory
+execa('/usr/local/bin/hupyy-csharp-verify', ['--input', projectPath])
     ↓
-[Zip Handler] → Extract to project directory
+hupyy-csharp-verify.sh: finds *.cs files, runs:
+  dotnet /usr/local/lib/cs-fv/cs-fv.dll verify <files...>
     ↓
-Response: { projectId, uploadedFiles }
+cs-fv CLI: Roslyn parses C#, extracts [Requires]/[Ensures] contracts
+    ↓
+cs-fv: generates SMT-LIB2 formulas → invokes CVC5 binary (primary)
+       or Z3 CLI (fallback for array theories)
+    ↓
+Each method result printed to stdout as it completes (streaming)
+    ↓
+executionService: onOutput callback → streamService.sendOutput(jobId, line)
+    ↓
+SSE: GET /api/stream/:jobId → client receives real-time console output
+    ↓
+cs-fv exits 0 (all verified) or 1 (some failed)
+    ↓
+executionService: status = 'completed' or 'failed'
+    ↓
+streamService.sendComplete(jobId, result)
+    ↓
+React: console shows all output, execution status shown
 ```
 
-### Process Execution and Streaming Flow
+### State Management
 
 ```
-User selects tool
-    ↓
-[Frontend] → POST /api/process/{projectId}/{toolName}
-    ↓
-[Process Handler] → Spawn child process
-    ↓
-[Process Manager] → pipe stdout/stderr
-    ↓
-[WebSocket Server] → Broadcast chunks to client
-    ↓
-[Terminal Component] → Render output in real-time
-    ↓
-Process exits → Mark project as completed
-    ↓
-[Job Scheduler] → Schedule cleanup (5-15 min)
+Redux Store
+    ↓ (subscribe)
+ToolPicker → selects toolId → URL param pre-selection (shareable links)
+ExampleSelector → loads example → POST /api/examples/:toolId/:example → projectId
+UploadZone → uploads zip → POST /api/upload → projectId
+ExecuteButton → POST /api/execute → jobId
+Terminal ← SSE /api/stream/:jobId ← real-time output lines
 ```
 
-### Download and Cleanup Flow
+### Key Data Flows
 
-```
-User clicks download
-    ↓
-[Download Component] → GET /api/download/{projectId}
-    ↓
-[Download Handler] → Create zip of outputs
-    ↓
-[Archiver] → Stream zip to response
-    ↓
-Client receives file
-    ↓
-[Job Scheduler] → Execute scheduled cleanup
-    ↓
-[Project Manager] → Delete ephemeral directory
-```
-
-### WebSocket Connection Lifecycle
-
-```
-Frontend initializes
-    ↓
-[useWebSocket hook] → Connect to ws://server/ws/{projectId}
-    ↓
-[WebSocket Server] → Register connection in project room
-    ↓
-Process starts → Stream chunks to all connections in room
-    ↓
-Connection lost → Frontend attempts reconnection
-    ↓
-Component unmounts → Close connection
-    ↓
-No connections left → Remove empty room
-```
+1. **Example loading for C#:** `GET /api/examples/csharp-verification` → lists null-check/array-bounds/division-safety → user picks one → `POST /api/examples/csharp-verification/null-check` → copies files to temp dir → returns projectId.
+2. **CVC5 solver invocation:** cs-fv CLI writes SMT-LIB2 to temp file or stdin → spawns `cvc5 --lang=smt2 <file>` subprocess → parses "sat"/"unsat" from stdout → maps to Verified/Failed/Counterexample.
+3. **Z3 fallback invocation:** cs-fv CLI detects array theories → uses Z3CliStrategy → spawns `z3 -smt2 -in` subprocess with SMT piped to stdin.
 
 ## Scaling Considerations
 
 | Scale | Architecture Adjustments |
 |-------|--------------------------|
-| **5-20 users (initial)** | Single Node.js process handles everything. Ephemeral directories on local disk. WebSocket connections managed in-memory. Simple node-cron for cleanup. No additional infrastructure needed. |
-| **20-100 users** | Consider moving ephemeral storage to shared volume (NFS/EFS) if multiple server instances needed. Add Redis for WebSocket connection registry if load balancing across instances. Implement rate limiting per user/IP. Monitor disk space usage and adjust cleanup frequency. |
-| **100-1000 users** | Move to horizontal scaling with multiple server instances behind load balancer. Use Redis Pub/Sub for cross-instance WebSocket broadcasting. Implement job queue (BullMQ) for process execution instead of direct spawning. Consider cloud storage (S3) for ephemeral projects with lifecycle policies. Add monitoring and alerting for disk space, memory, and active processes. |
+| 0-20 users (current) | Single container, p-queue concurrency, 120s timeout — no changes needed |
+| 20-100 users | Increase p-queue concurrency limit, add memory monitoring, possibly queue visible to users |
+| 100+ users | Horizontal scaling requires shared session storage; current ephemeral /app/uploads is per-container |
 
 ### Scaling Priorities
 
-1. **First bottleneck: Concurrent process execution**
-   - **What breaks:** Too many simultaneous CLI processes consume CPU/memory
-   - **How to fix:** Implement job queue with concurrency limit (e.g., BullMQ with maxConcurrency: 10), queue overflow requests, show queue position to users
-
-2. **Second bottleneck: WebSocket connection scaling**
-   - **What breaks:** Single server instance can't handle all WebSocket connections
-   - **How to fix:** Use Redis Pub/Sub for cross-instance communication, enable sticky sessions on load balancer, or consider Socket.IO's built-in Redis adapter
-
-3. **Third bottleneck: Disk space from ephemeral directories**
-   - **What breaks:** Projects accumulate faster than cleanup runs, disk fills
-   - **How to fix:** More aggressive cleanup (reduce retention time), implement disk space monitoring with alerts, add manual cleanup endpoint for emergencies
-
-## Anti-Patterns
-
-### Anti-Pattern 1: Buffering Entire Process Output in Memory
-
-**What people do:** Collect all stdout/stderr into string/array, then send once complete
-
-```typescript
-// DON'T DO THIS
-let output = '';
-process.stdout.on('data', (chunk) => {
-  output += chunk.toString();
-});
-process.on('close', () => {
-  ws.send(output); // Send all at once
-});
-```
-
-**Why it's wrong:** Large outputs (verification traces, compilation logs) exhaust memory, users see no feedback until completion, defeats real-time streaming purpose
-
-**Do this instead:** Stream chunks directly to WebSocket as they arrive (see Pattern 1)
-
-### Anti-Pattern 2: Trusting Client-Provided File Paths
-
-**What people do:** Use uploaded filenames or user-provided paths directly in file system operations
-
-```typescript
-// DON'T DO THIS
-app.post('/upload', (req, res) => {
-  const userPath = req.body.extractPath; // User controls this!
-  extractZip(uploadedFile, `/tmp/${userPath}`); // Path traversal risk
-});
-```
-
-**Why it's wrong:** Path traversal attacks (../../etc/passwd), overwriting system files, security vulnerabilities
-
-**Do this instead:** Generate all paths server-side using UUIDs, sanitize and validate any user input, never trust client data
-
-```typescript
-// DO THIS
-app.post('/upload', (req, res) => {
-  const projectId = uuidv4(); // Server-generated
-  const projectDir = path.join(SAFE_BASE_DIR, projectId); // Controlled base
-  extractZip(uploadedFile, projectDir);
-});
-```
-
-### Anti-Pattern 3: Not Cleaning Up on Process Failure
-
-**What people do:** Only schedule cleanup on successful completion, ignore failed/crashed processes
-
-```typescript
-// DON'T DO THIS
-process.on('close', (code) => {
-  if (code === 0) {
-    scheduleCleanup(projectId); // Only cleanup if successful
-  }
-  // Failed processes never cleaned!
-});
-```
-
-**Why it's wrong:** Failed processes leave directories forever, disk fills with orphaned projects, no way to recover
-
-**Do this instead:** Always schedule cleanup regardless of exit code, cleanup is about resource management not success indication
-
-```typescript
-// DO THIS
-process.on('close', (code) => {
-  markProjectCompleted(projectId, code); // Always mark completed
-  scheduleCleanup(projectId); // Always cleanup
-});
-```
-
-### Anti-Pattern 4: Synchronous File Operations in Request Handlers
-
-**What people do:** Use fs.readFileSync, fs.writeFileSync in async request handlers
-
-```typescript
-// DON'T DO THIS
-app.get('/download/:projectId', (req, res) => {
-  const zip = fs.readFileSync(`/tmp/${req.params.projectId}/output.zip`); // Blocks!
-  res.send(zip);
-});
-```
-
-**Why it's wrong:** Blocks event loop, freezes server for all users during I/O, kills performance under load
-
-**Do this instead:** Use fs.promises or streaming for all file operations
-
-```typescript
-// DO THIS
-app.get('/download/:projectId', async (req, res) => {
-  const zipPath = `/tmp/${req.params.projectId}/output.zip`;
-  res.download(zipPath); // Streams automatically
-});
-```
-
-### Anti-Pattern 5: Using vm2 or Similar for Sandboxing
-
-**What people do:** Attempt to sandbox CLI tool execution with JavaScript VM sandboxes (vm2, vm module)
-
-```typescript
-// DON'T DO THIS
-import vm from 'vm2';
-const sandbox = new vm.VM();
-sandbox.run(userCode); // Multiple known sandbox escape vulnerabilities
-```
-
-**Why it's wrong:** vm2 has critical CVE-2026-22709 (CVSS 9.8) with sandbox escape, JavaScript-level sandboxing fundamentally flawed, new bypasses discovered regularly
-
-**Do this instead:** Use OS-level isolation (Docker containers, separate user permissions), process isolation with restricted environments, or cloud sandboxing services
-
-```typescript
-// DO THIS
-import { spawn } from 'child_process';
-// Run in isolated environment with limited permissions
-const process = spawn('docker', [
-  'run',
-  '--rm',
-  '--network=none', // No network access
-  '--memory=512m', // Memory limit
-  '--cpus=1', // CPU limit
-  '--read-only', // Read-only filesystem
-  'tool-image',
-  'tool-command'
-]);
-```
+1. **First bottleneck:** CVC5 CPU saturation. Each verification is CPU-intensive; concurrent verifications compete. Mitigation: p-queue concurrency capped at CPU cores, queue status visible to users.
+2. **Second bottleneck:** Docker image size. Adding .NET SDK + CVC5 + Z3 increases image. Mitigation: use `dotnet-runtime` (not SDK) in production; `--self-contained false` publish for cs-fv.
 
 ## Integration Points
 
-### External Services
+### New vs Modified Components (v1.3)
 
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| **CLI Tools** | Child process spawn with stdio pipes | Tools run as separate processes, isolated from Node.js runtime. Ensure tools are statically compiled or dependencies bundled. |
-| **File Storage (optional)** | Cloud storage SDK (AWS S3, DO Spaces) | For production, consider moving ephemeral directories to object storage with lifecycle policies. Local disk sufficient for initial deployment. |
-| **Monitoring (optional)** | APM agents (New Relic, Datadog) or custom metrics | Track: active processes, disk usage, WebSocket connections, request rates. Essential before scaling beyond 100 users. |
+| Component | Status | Change |
+|-----------|--------|--------|
+| `scripts/hupyy-csharp-verify.sh` | NEW | Create wrapper script following hupyy-java-verify.sh pattern |
+| `Dockerfile` Stage 3 (.NET builder) | NEW | Add `dotnet-builder` stage before production |
+| `Dockerfile` production stage: .NET runtime install | NEW | `apt-get install -y dotnet-runtime-8.0` |
+| `Dockerfile` production stage: CVC5 + Z3 install | NEW | Install solver binaries |
+| `Dockerfile` production: copy cs-fv publish | NEW | `COPY --from=dotnet-builder /out/cs-fv /usr/local/lib/cs-fv` |
+| `Dockerfile` production: install wrapper script | NEW | `COPY scripts/hupyy-csharp-verify.sh /usr/local/bin/hupyy-csharp-verify` |
+| `packages/server/src/config/toolRegistry.ts` | MODIFY | `available: true`, `maxExecutionTimeMs: 120000` for csharp-verification |
+| `packages/shared/src/constants/tools.ts` | MODIFY | `status: 'available'` for csharp-verification |
+| `packages/server/examples/csharp-verification/*/Program.cs` | MODIFY | Add `using CsFv.Contracts;` + `[Requires]`/`[Ensures]` attributes |
 
 ### Internal Boundaries
 
 | Boundary | Communication | Notes |
 |----------|---------------|-------|
-| **Frontend ↔ Backend REST** | HTTP JSON API | Standard REST for request/response patterns (upload, download, status queries). Use shared TypeScript types for type safety. |
-| **Frontend ↔ Backend WebSocket** | WebSocket with JSON messages | Real-time streaming for process output. Use type-based message routing (Pattern 3). Handle reconnection on client side. |
-| **Routes ↔ Services** | Direct function calls | Routes are thin HTTP/WebSocket adapters. Services contain business logic. Services don't know about Express req/res. |
-| **Services ↔ Process Manager** | Event emitters or callbacks | Process Manager emits events (stdout, stderr, exit). Services subscribe and relay to WebSocket clients. |
-| **Job Scheduler ↔ Project Manager** | Direct function calls | Scheduler queries Project Manager for cleanup candidates, calls cleanup methods. Idempotent cleanup operations. |
+| executionService ↔ wrapper script | execa subprocess, `--input <path>` | No shell injection; args passed as array |
+| wrapper script ↔ cs-fv CLI | `dotnet /usr/local/lib/cs-fv/cs-fv.dll verify <files>` | Not `dotnet run` (requires SDK); uses pre-published DLL |
+| cs-fv CLI ↔ CVC5 | subprocess via `ProcessStartInfo`, SMT-LIB2 via file/stdin | CVC5 must be in PATH or CSFV_CVC5_PATH env var |
+| cs-fv CLI ↔ Z3 | subprocess via `ProcessStartInfo`, `-smt2 -in` flags | Z3StrategyFactory tries library first (fails on Linux), falls back to CLI |
+| Docker COPY ↔ cs-fv repo | `COPY cs-fv/ .` in dotnet-builder stage | Requires cs-fv to be sibling directory in Docker build context |
 
-## Security Considerations
+## Critical Architecture Decisions
 
-### File Upload Security
+### Decision 1: .NET Runtime vs SDK in Production Image
 
-1. **Validation layers:**
-   - File size limits (enforce at Multer and nginx/reverse proxy level)
-   - MIME type validation (use file-type library to verify actual content)
-   - Extension whitelist (only .zip allowed)
-   - Malware scanning for production (Pompelmi or ClamAV)
+Use `dotnet-runtime-8.0` (not `dotnet-sdk-8.0`) in the production Docker stage.
 
-2. **Archive extraction safety:**
-   - Limit recursion depth during extraction (prevent zip bombs)
-   - Cap total extracted size (prevent decompression bombs)
-   - Sanitize extracted file paths (prevent path traversal)
-   - Extract to isolated project directories only
+**Rationale:** SDK includes compiler, NuGet, MSBuild — none needed at runtime. Runtime-only reduces image size by ~500MB. The cs-fv CLI is published as a framework-dependent DLL (`--self-contained false`), so the runtime must be installed separately.
 
-3. **Input sanitization:**
-   - Never trust client-provided paths or filenames
-   - Validate tool names against whitelist
-   - Generate all project IDs server-side (UUID v4)
-   - Use path.join with controlled base directories
+**Consequence:** The `dotnet-builder` stage must produce a complete published output with all DLL dependencies included (`dotnet publish -o /out/cs-fv`).
 
-### Process Isolation
+### Decision 2: CVC5 as Primary Solver (not Z3 Library)
 
-1. **Avoid JavaScript sandboxing:**
-   - Do NOT use vm2 (CVE-2026-22709 with CVSS 9.8)
-   - Do NOT rely on Node.js permission model for untrusted code
+Install CVC5 as a system binary in the production Docker image.
 
-2. **Recommended isolation (choose based on requirements):**
-   - **Minimal (sufficient for trusted users):** Run CLI tools as separate processes with limited environment
-   - **Medium (recommended):** Use Docker containers with network isolation, memory/CPU limits, read-only filesystems
-   - **Maximum (for untrusted code):** Cloud sandboxing services or VMs with full isolation
+**Rationale:** The Microsoft.Z3 NuGet package 4.12.2 ships native libraries only for `osx-x64` and `win-x64` — no Linux runtime. Z3 library mode will silently fail on Docker/Linux, causing fallback to Z3 CLI mode. CVC5 is cs-fv's proven default solver and must be available as a binary. Installing both CVC5 and Z3 CLI covers all solver paths.
 
-3. **Resource limits:**
-   - Process timeout (kill if exceeds 5 minutes)
-   - Memory limits per process
-   - CPU usage limits
-   - Concurrent process cap (prevent fork bombs)
+**Consequence:** Production image must install `cvc5` package (or download binary) and `z3` (apt) during build.
 
-### WebSocket Security
+### Decision 3: cs-fv Invokes Files Individually, Not by Directory
 
-1. **Connection validation:**
-   - Validate projectId exists before establishing WebSocket
-   - Implement rate limiting (max messages per connection)
-   - Timeout idle connections (close after 30 minutes)
+The wrapper script finds `*.cs` files and passes them as individual arguments to `cs-fv verify <file1> [file2...]`.
 
-2. **Message validation:**
-   - Validate message structure (TypeScript helps)
-   - Sanitize any user-provided data in messages
-   - Limit message size
+**Rationale:** The cs-fv CLI `verify` command takes individual `.cs` file paths, not directory paths. This mirrors the Java FV wrapper which similarly collects `.java` files via `find` and passes them individually to `java -jar ... verify <files>`.
 
-## Build Order Implications
+**Consequence:** The wrapper script must exclude `bin/` and `obj/` directories to avoid passing compiled artifacts as source files.
 
-Based on component dependencies, recommended implementation order:
+### Decision 4: wrapper script uses `exec` for clean signal handling
 
-### Phase 1: Core Infrastructure (Foundation)
-**Build order:** File system → Process spawning → Basic streaming
-1. Project Manager (ephemeral directory creation/deletion)
-2. CLI Process Spawner (child_process.spawn with basic stdout capture)
-3. Simple Express server with health check endpoint
+The final invocation uses `exec "$DOTNET_BIN" "$CSFV_DLL" verify ...` (not a subshell).
 
-**Why first:** Other components depend on these primitives. Validates CLI tools execute correctly before building UI.
+**Rationale:** `exec` replaces the bash process with the dotnet process, ensuring SIGTERM from the portal's timeout mechanism propagates directly to cs-fv. This is the same pattern used in hupyy-java-verify.sh.
 
-### Phase 2: Upload and Extraction
-**Build order:** Upload endpoint → Validation → Extraction
-1. File upload endpoint with Multer
-2. File validation (size, type, MIME checks)
-3. Zip extraction to project directories
+### Decision 5: Timeout set to 120s (matching Java FV)
 
-**Why second:** Establishes data flow into system. Blocks testing of full workflow until files can enter.
+`maxExecutionTimeMs: 120000` in toolRegistry for csharp-verification.
 
-### Phase 3: Real-Time Streaming
-**Build order:** WebSocket server → Stream integration → Frontend connection
-1. WebSocket server setup (express-ws)
-2. Connect process stdout/stderr to WebSocket
-3. Basic frontend WebSocket client
+**Rationale:** CVC5 verification of complex SMT formulas can take 10-60+ seconds per method. Three example files with multiple methods may approach 60-90 seconds total. The Java FV was given 120s for the same reason. 60s (the default for other tools) is too low.
 
-**Why third:** Most complex component. Requires working upload/process flow to test effectively.
+## Anti-Patterns
 
-### Phase 4: Frontend Terminal UI
-**Build order:** Terminal component → Upload UI → Download UI
-1. Terminal/console component (render streamed output)
-2. Upload interface (file picker, progress)
-3. Download interface (button, status)
+### Anti-Pattern 1: Using `dotnet run` in the wrapper script
 
-**Why fourth:** UI can develop in parallel once APIs stable. Terminal needs working WebSocket stream to test.
+**What people do:** `dotnet run --project /path/to/CsFv.Cli -- verify <files>`
 
-### Phase 5: Cleanup and Lifecycle
-**Build order:** Completion tracking → Scheduler → Cleanup logic
-1. Mark projects as completed after process exits
-2. Job scheduler setup (node-cron)
-3. Cleanup job implementation
+**Why it's wrong:** `dotnet run` requires the .NET SDK (not just runtime). It rebuilds the project on first run. It is 3-10x slower to start than invoking a published DLL. Docker production should not have SDK installed.
 
-**Why fifth:** Less critical for initial testing. Can develop after core workflow proven. Essential before production deployment.
+**Do this instead:** `dotnet /usr/local/lib/cs-fv/cs-fv.dll verify <files>` — invoke the pre-published DLL directly with the runtime.
 
-### Phase 6: Download and Zip Creation
-**Build order:** Output zip creation → Download endpoint → Frontend integration
-1. Zip creation from project outputs (archiver)
-2. Download endpoint with streaming
-3. Frontend download trigger
+### Anti-Pattern 2: Installing .NET SDK in production Docker stage
 
-**Why sixth:** Depends on completed processes with output. Can be tested manually until UI ready.
+**What people do:** `apt-get install dotnet-sdk-8.0` in the production stage to avoid a separate builder stage.
 
-### Dependency Graph
+**Why it's wrong:** Adds ~500MB to the image. SDK is not needed at runtime. Violates minimal-image principle.
 
-```
-Project Manager (1)
-    ↓
-Process Spawner (1) ──→ Upload Handler (2)
-    ↓                         ↓
-WebSocket Server (3) ←── Extraction (2)
-    ↓                         ↓
-Terminal Component (4)    Completion Tracking (5)
-    ↓                         ↓
-Upload/Download UI (4)    Cleanup Scheduler (5)
-    ↓                         ↓
-Output Zip Creation (6) ←─────┘
+**Do this instead:** Add a dedicated `dotnet-builder` stage. Production stage installs only `dotnet-runtime-8.0`.
+
+### Anti-Pattern 3: Relying on Microsoft.Z3 library for Linux
+
+**What people do:** Assume `Microsoft.Z3` NuGet package works cross-platform.
+
+**Why it's wrong:** Version 4.12.2 ships only `osx-x64` and `win-x64` native libraries. On Linux/Docker, `libz3.so` is not found → `DllNotFoundException` at runtime → cs-fv silently falls back to Z3 CLI mode (if available) or fails.
+
+**Do this instead:** Install `z3` via apt in the production Docker stage. The cs-fv `Z3StrategyFactory` tries library first (fails on Linux), falls back to CLI automatically. Having `z3` in PATH ensures CLI fallback works.
+
+### Anti-Pattern 4: Passing a directory to `cs-fv verify`
+
+**What people do:** `cs-fv verify /app/uploads/<projectId>` (the whole directory)
+
+**Why it's wrong:** The cs-fv CLI `verify` command takes individual `.cs` file paths as positional arguments, not directories. Passing a directory path is not supported.
+
+**Do this instead:** Use `find` in the wrapper script to enumerate `*.cs` files, then pass them individually.
+
+### Anti-Pattern 5: Example files without FV contracts
+
+**What people do:** Ship the existing `Program.cs` examples as-is (null checks, bounds checks with `if` guards — no `[Requires]`/`[Ensures]` attributes).
+
+**Why it's wrong:** cs-fv exits with "No methods with contracts found" and produces no verification output. The demo shows nothing interesting.
+
+**Do this instead:** Add `using CsFv.Contracts;` and `[Requires]`/`[Ensures]` attributes to example methods so the verification produces real output (verified / failed / counterexample).
+
+## Example Project Structure for C# FV Demo
+
+### What makes a good C# FV example
+
+Each example needs:
+1. `using CsFv.Contracts;` import at the top
+2. Methods with `[Requires("precondition")]` and/or `[Ensures("postcondition")]` attributes
+3. The contracts should be verifiable (not too complex for CVC5 in ~30s per method)
+4. The example should demonstrate something meaningful about safety
+
+### Transformed null-check example (illustrative)
+
+```csharp
+using CsFv.Contracts;
+
+public class User
+{
+    public string Name { get; }
+
+    [Requires("name != null")]
+    [Ensures("Name != null")]
+    public User(string name)
+    {
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+    }
+
+    [Requires("Name != null")]
+    [Ensures("result != null")]
+    public string GetDisplayName()
+    {
+        return Name;
+    }
+}
 ```
 
-Numbers indicate suggested phase order. Arrows show dependencies (A → B means B depends on A).
+### Transformed division-safety example (illustrative)
+
+```csharp
+using CsFv.Contracts;
+
+public class SafeMath
+{
+    [Requires("divisor != 0")]
+    [Ensures("result * divisor == dividend")]
+    public static int Divide(int dividend, int divisor)
+    {
+        return dividend / divisor;
+    }
+}
+```
+
+## Suggested Build Order for Phases
+
+| Phase | Work | Dependencies |
+|-------|------|-------------|
+| 1 | Docker multi-stage: add dotnet-builder stage, install .NET runtime + CVC5 + Z3 in production | None — pure Docker changes |
+| 2 | Wrapper script `hupyy-csharp-verify.sh` | Depends on cs-fv CLI being buildable in Docker (Phase 1) |
+| 3 | toolRegistry.ts + tools.ts: flip available/status | Depends on wrapper script being in place (Phase 2) |
+| 4 | Transform example Program.cs files: add FV contracts | Can be done in parallel with Phase 2; requires understanding cs-fv contract syntax |
+| 5 | E2E tests for C# verification flow | Depends on all above — tests against running Docker image |
+
+**Rationale for this order:** Docker changes are infrastructure prerequisites. The wrapper script is the core bridge. Registry/status changes are one-liner modifications. Example transformation is content work that can be parallelized with infrastructure. E2E tests come last as they verify the full stack.
 
 ## Sources
 
-**Architecture and Patterns:**
-- [Building real-time applications with WebSockets](https://render.com/articles/building-real-time-applications-with-websockets) - MEDIUM confidence
-- [Building Real-Time APIs: WebSockets, SSE, WebRTC](https://dasroot.net/posts/2026/01/building-real-time-apis-webscokets-sse-webrtc/) - MEDIUM confidence
-- [Realtime at Scale with Node.js, WebSocket & SSE](https://medium.com/@bhagyarana80/realtime-at-scale-with-node-js-websocket-sse-74fd7f3e79ed) - MEDIUM confidence
-- [Why Server-Sent Events Beat WebSockets for 95% of Real-Time Cloud Applications](https://medium.com/codetodeploy/why-server-sent-events-beat-websockets-for-95-of-real-time-cloud-applications-830eff5a1d7c) - MEDIUM confidence
-
-**Process Management:**
-- [Express / node / socket.io code to stream unix child process output over websockets](https://gist.github.com/foogoof/978488) - MEDIUM confidence
-- [Child process | Node.js v25.6.1 Documentation](https://nodejs.org/api/child_process.html) - HIGH confidence (official docs)
-- [How To Launch Child Processes in Node.js | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-launch-child-processes-in-node-js) - MEDIUM confidence
-
-**File Management and Cleanup:**
-- [Node.js File System in Practice: A Production-Grade Guide for 2026](https://thelinuxcode.com/nodejs-file-system-in-practice-a-production-grade-guide-for-2026/) - MEDIUM confidence
-- [Running Scheduled Tasks in Node.js (Cron Jobs) | Lead With Skills](https://www.leadwithskills.com/blogs/running-scheduled-tasks-nodejs-cron) - MEDIUM confidence
-- [File Storage | Supabase Docs](https://supabase.com/docs/guides/functions/ephemeral-storage) - MEDIUM confidence (official docs)
-
-**Frontend Integration:**
-- [How to Use WebSockets in React for Real-Time Applications](https://oneuptime.com/blog/post/2026-01-15-websockets-react-real-time-applications/view) - MEDIUM confidence
-- [Real-time State Management in React Using WebSockets](https://moldstud.com/articles/p-real-time-state-management-in-react-using-websockets-boost-your-apps-performance) - LOW confidence
-- [GitHub - linuswillner/react-console-emulator](https://github.com/linuswillner/react-console-emulator) - MEDIUM confidence
-
-**ZIP Processing:**
-- [How To Work With Zip Files in Node.js | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-work-with-zip-files-in-node-js) - MEDIUM confidence
-- [Best methods for unzipping files in Node.js - LogRocket Blog](https://blog.logrocket.com/best-methods-unzipping-files-node-js/) - MEDIUM confidence
-- [unzipper - npm](https://www.npmjs.com/package/unzipper) - HIGH confidence (official package docs)
-
-**Security:**
-- [Critical vm2 Node.js Flaw Allows Sandbox Escape](https://thehackernews.com/2026/01/critical-vm2-nodejs-flaw-allows-sandbox.html) - HIGH confidence
-- [Node.js January 2026 Security Release](https://nodesource.com/blog/nodejs-security-release-january-2026) - HIGH confidence
-- [Secure File Uploads in Node.js: Validation, Limits & S3 Storage](https://prateeksha.com/blog/file-uploads-nodejs-safe-validation-limits-s3) - MEDIUM confidence
-- [Best Practices for Secure File Uploads in Web Applications](https://webpenetrationtesting.com/best-practices-for-secure-file-uploads-in-web-applications/) - MEDIUM confidence
-- [Pompelmi: Open-source secure file upload scanning for Node.js](https://www.helpnetsecurity.com/2026/02/02/pompelmi-open-source-secure-file-upload-scanning-node-js/) - MEDIUM confidence
-
-**Design Patterns:**
-- [Top Node.js Design Patterns You Should Know in 2026](https://nareshit.com/blogs/top-nodejs-design-patterns-2026) - MEDIUM confidence
-- [Getting Started with Express WebSockets | Better Stack Community](https://betterstack.com/community/guides/scaling-nodejs/express-websockets/) - MEDIUM confidence
-- [Worker Threads vs Queuing Systems in Node.js](https://dev-aditya.medium.com/worker-threads-vs-queuing-systems-in-node-js-44695d902ca1) - MEDIUM confidence
+- Existing codebase: `packages/server/src/config/toolRegistry.ts` (tool registry pattern)
+- Existing codebase: `packages/server/src/services/executionService.ts` (execa subprocess pattern)
+- Existing codebase: `scripts/hupyy-java-verify.sh` (wrapper script pattern)
+- Existing codebase: `Dockerfile` (multi-stage build pattern)
+- cs-fv project: `cs-fv/USAGE.md` (CLI interface: `cs-fv verify <files...>`)
+- cs-fv project: `cs-fv/global.json` (requires .NET SDK 10.0.103 to build; net8.0 target framework for runtime)
+- cs-fv project: `cs-fv/src/CsFv.Cli/CsFv.Cli.csproj` (PackAsTool, uses System.CommandLine)
+- cs-fv project: `cs-fv/src/CsFv.Verification/Z3StrategyFactory.cs` (library → CLI fallback pattern)
+- cs-fv project: `cs-fv/src/CsFv.Verification/RealCvc5Runner.cs` (CVC5 invoked as subprocess via PATH)
+- NuGet cache: `~/.nuget/packages/microsoft.z3/4.12.2/runtimes/` (only osx-x64 and win-x64 — no linux)
+- Existing examples: `packages/server/examples/csharp-verification/` (3 examples exist, need FV contracts added)
 
 ---
-*Architecture research for: CLI Tool Execution Web Portal*
-*Researched: 2026-02-12*
+*Architecture research for: C# Formal Verification integration into Hupyy Languages Web Portal*
+*Researched: 2026-02-20*

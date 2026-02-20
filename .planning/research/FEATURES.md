@@ -1,267 +1,300 @@
-# Feature Landscape
+# Feature Research
 
-**Domain:** Developer Tool Demo Portal (Formal Verification & Transpiler Tools)
-**Researched:** 2026-02-12
-**Confidence:** MEDIUM
+**Domain:** C# Formal Verification Tool Integration — Demo Portal Second Live Tool
+**Researched:** 2026-02-20
+**Confidence:** MEDIUM-HIGH
 
-## Table Stakes
+---
 
-Features users expect. Missing = product feels incomplete.
+## Scope
+
+This document covers NEW features only for v1.3 (C# FV milestone). All existing portal
+infrastructure (file upload, SSE streaming, output preview, download, tool comparison grid,
+example picker, E2E tests) is ALREADY BUILT and out of scope here.
+
+Existing pattern to follow: Java FV integration (v1.1) — Docker + wrapper script +
+example projects + E2E test coverage.
+
+---
+
+## Feature Landscape
+
+### Table Stakes (Users Expect These)
+
+Features users assume exist when they select "C# Verification" in the portal. Missing = tool
+feels unfinished or broken.
 
 | Feature | Why Expected | Complexity | Notes |
 |---------|--------------|------------|-------|
-| File upload (drag-and-drop) | Standard UX pattern for developer portals, reduces friction | Low | Must support zip files. Drag-and-drop is baseline expectation per upload UX research |
-| Real-time execution progress | Users expect feedback for long-running tasks >10 seconds | Medium | Show percentage or steps completed. Critical for CLI tools that take time |
-| Output preview/display | Users need to see results inline before downloading | Medium | Syntax-highlighted output for code files. Per Compiler Explorer pattern |
-| Downloadable results (zip) | Users need artifacts for their workflows | Low | One-click download of processed output bundle |
-| Tool selection interface | Multi-tool portal needs clear tool picker | Low | Radio buttons or dropdown. Should be obvious which tool runs |
-| Basic error handling | Users need to know when uploads fail or tools error | Medium | Clear error messages with actionable guidance |
-| File size limits clearly stated | Users expect upload constraints to be visible | Low | Display max size before upload attempt |
-| Responsive layout | Developers use various screen sizes | Medium | Mobile-friendly but desktop-optimized (primary use case) |
-| Browser-local file validation | Catch bad uploads before server processing | Low | Check file type, size on client side |
-| Shareable links/permalinks | Share examples with colleagues/in docs | Medium | Standard for all major playgrounds (godbolt, Rust Playground) |
+| C# FV tool executes via portal (dotnet build + analyzer) | Tool shows "Available" badge — users expect it to actually run | MEDIUM | Wrapper script bridges `--input` interface to `dotnet build` invocation in project dir |
+| Wrapper script `hupyy-csharp-verify` with `--input <path>` interface | All portal tools follow identical `--input <path>` CLI interface (established in v1.1) | LOW | Must match java wrapper pattern exactly: parse `--input`, validate `.cs` files exist, exec `dotnet build` |
+| C# FV example projects loadable in example picker | Java FV has 3 examples; C# FV users expect the same or similar | MEDIUM | 3 examples minimum, matching the established dropdown pattern (name + subtitle) |
+| Verification output streams to real-time console | SSE streaming is core UX; established with Java FV | LOW (infra exists) | `dotnet build` output goes to stdout/stderr naturally; wrapper just exec's, infra handles streaming |
+| Non-zero exit code on verification failure | Java FV examples include intentional failures to show "VERIFICATION FAILED" clearly | LOW | `dotnet build` exits non-zero on error/warning-as-error; wrapper propagates exit code |
+| C# FV tool status flipped to "Available" in UI | Badge and tool picker both updated | LOW | Single line change in `tools.ts` + `toolRegistry.ts`, same as Java FV activation |
+| E2E tests covering C# verification flow | Java FV has E2E coverage; C# FV must too (quality gate) | MEDIUM | Reuse existing Playwright helpers; cover load-example → execute → see-output flow |
+| `.cs` file validation in wrapper | Wrapper must reject uploads with no `.cs` files with clear error message | LOW | Mirror Java wrapper: `find "$PROJECT_PATH" -name "*.cs"` check |
+| Benefit-focused tool description in UI | Java FV: "Prove your Java code is correct — automated formal verification for modern Java" | LOW | C# needs equivalent: "Prove your C# code is correct — automated formal verification for modern C#" |
 
-## Differentiators
+### Differentiators (Competitive Advantage)
 
-Features that set product apart. Not expected, but valued.
+Features that make the C# FV demo notable relative to just "another tool activated."
 
 | Feature | Value Proposition | Complexity | Notes |
 |---------|-------------------|------------|-------|
-| Side-by-side tool comparison grid | Helps users choose right tool for their use case | Low | Landing page feature. Per SaaS comparison page patterns 2026 |
-| Example/template gallery | Reduces friction to first success, drives adoption | Medium | Pre-built zip samples per tool. Per Pulumi Developer Portal pattern |
-| Multi-file output preview | Preview specific files without downloading entire zip | Medium-High | Tree view + file selector + preview pane |
-| Streaming output logs | See tool progress in real-time (stdout/stderr) | Medium-High | WebSocket or SSE. Builds trust during long waits |
-| Sales narrative integration | Position as solution to AI code verification problem | Low | Landing page storytelling. Differentiates from academic demos |
-| Execution metrics display | Show processing time, file counts, verification stats | Low-Medium | Transparency builds trust in formal verification tools |
-| Tool recommendation engine | "Which tool should I use?" quiz/wizard | Medium | Reduces decision paralysis for 8 tools |
-| Inline documentation per tool | Contextual help without leaving portal | Low-Medium | Tool descriptions, input requirements, output formats |
-| Result comparison view | Compare outputs from different tools side-by-side | High | Advanced feature for power users |
-| CLI command generation | Show equivalent CLI command for local reproduction | Low | Educational value, builds trust in process |
+| Examples demonstrate intentional failure (visible verification fail) | Users understand what "VERIFICATION FAILED" means; builds trust in tool | LOW | One example or one file within an example should produce non-zero exit with clear diagnostic output; mirrors Java FV pattern |
+| C# modern language features in examples | Shows tool works with current C# (12/13 features) not legacy code | MEDIUM | Records, primary constructors, nullable reference types, pattern matching — covers modern idioms developers actually write |
+| Progressive complexity across 3 examples | Simple → complex progression helps users understand what the tool detects | MEDIUM | Example 1: minimal null safety; Example 2: type-safe domain modeling with records; Example 3: complex invariants with intentional failure |
+| Roslyn diagnostic output clearly displayed | `dotnet build` produces structured MSBuild diagnostic lines — users read them in the console | LOW (infra exists) | Format: `File.cs(line,col): warning CAXXXX: message` — already readable in streaming console |
+| Multi-file C# examples (2-3 files each) | Real C# projects span files; single-file demos feel artificial | MEDIUM | Each example zip should contain 2-3 `.cs` files + a `.csproj` referencing the Roslyn analyzer NuGet |
+| Timeout tuned for C# FV execution | `dotnet build` with analyzer can take 15-60 seconds on first cold run | LOW | Set 120s timeout matching Java FV; `dotnet` cold start + NuGet restore can be slow |
 
-## Anti-Features
+### Anti-Features (Commonly Requested, Often Problematic)
 
-Features to explicitly NOT build.
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| In-browser C# code editor | Seems easier to try; avoids zip upload friction | Out-of-scope per PROJECT.md; breaks upload-only pattern established in v1.0; requires Monaco editor integration | Upload-only with high-quality examples — examples load instantly and demonstrate tool well |
+| Custom Roslyn rules configuration | Advanced users want to tune severity levels | Scope creep; demo portal, not a CI/CD pipeline; config via `.editorconfig` not surfaced in UI | Bake sensible default rules into the example `.csproj`; document what rules run in README |
+| Multi-solver or alternative analyzer backends | Users familiar with Dafny/CBMC may ask | Hupyy C# FV is specifically a Roslyn analyzer — not a Dafny or CBMC wrapper | Label it clearly as Roslyn-based; Dafny comparison is future scope |
+| SARIF output display | Structured JSON output exists via ErrorLog option | SARIF is verbose JSON; users benefit more from the raw human-readable `dotnet build` output already streamed | Stream raw `dotnet build` stdout/stderr as-is; no output file tree needed for C# FV |
+| Output file download (zip) for C# FV | Follows Java FV pattern which also streams-only | Java FV also produces no output files (console-only); C# FV is same | Console output is the result; no file tree or download needed, consistent with Java FV |
+| NuGet restore inside portal execution | Users may expect full project lifecycle | NuGet restore adds 30-120s latency on first run; complicates Docker layer caching | Pre-install the Hupyy C# FV NuGet package in Docker image; examples reference it as a local/pre-installed package |
+| Support for .NET Framework projects | Legacy C# codebases use .csproj with `<TargetFramework>net48` | .NET Framework requires Windows SDK; Docker image uses Linux .NET SDK | Examples target `net8.0` or `net9.0` only; document in tool description |
 
-| Anti-Feature | Why Avoid | What to Do Instead |
-|--------------|-----------|-------------------|
-| User accounts/authentication | Adds complexity, maintenance burden, privacy concerns for public demo | Stateless design with browser-local storage for history |
-| Real-time collaboration | Scope creep. Not core value proposition for verification tools | Shareable links are sufficient |
-| Persistent cloud storage | 5-20 concurrent users don't need cloud file hosting | Download results immediately, no cloud persistence |
-| Version control integration | Over-engineered for demo portal. Belongs in CLI tools | Provide CLI installation docs instead |
-| Custom execution environments | Users can't configure compilers/tool versions in demos | Offer one stable version per tool, document limitations |
-| Social features (comments, likes) | Not aligned with professional developer tool use case | Focus on technical capability demonstration |
-| Analytics dashboards | Tool usage stats not valuable to end users | Simple metrics display per execution is sufficient |
-| Multi-step wizards | Adds friction. Formal verification tools are already complex | Single-page interface with clear sections |
-| Mobile app | Desktop is primary use case for developer tools | Responsive web is sufficient, no native apps |
-| Real-time pricing calculator | Demo portal, not sales tool. Keep separate | Link to sales page, don't mix concerns |
+---
 
 ## Feature Dependencies
 
 ```
-File Upload
-    └──requires──> File Validation (client-side)
-    └──requires──> File Size Limit Display
+C# FV Tool Activation (tools.ts + toolRegistry.ts)
+    └──requires──> Wrapper Script (hupyy-csharp-verify)
+                       └──requires──> Docker image with .NET SDK
+                                          └──requires──> Hupyy C# FV NuGet pre-installed in image
 
-Tool Execution
-    └──requires──> File Upload
-    └──requires──> Real-time Progress Indicators
-    └──requires──> Error Handling
+C# FV Example Projects
+    └──requires──> C# FV Tool Activation (tool must be available to load examples)
+    └──requires──> .csproj in each example referencing the analyzer
+    └──enhances──> Demo narrative (intentional failure example shows verifier works)
 
-Output Preview
-    └──requires──> Tool Execution
-    └──enhances──> Downloadable Results
+E2E Tests for C# FV
+    └──requires──> C# FV Tool Activation
+    └──requires──> C# FV Example Projects (tests load examples by name)
+    └──reuses──> Existing Playwright helpers (e2e/fixtures/helpers.ts)
 
-Shareable Links
-    └──requires──> Serialization of (Tool Selection + Input Files)
-    └──conflicts──> User-uploaded sensitive files (privacy concern)
+Wrapper Script
+    └──follows-pattern-of──> hupyy-java-verify.sh
+    └──executes──> dotnet build <project_dir>
+    └──propagates──> exit code (non-zero on verification failure)
 
-Example Gallery
-    └──enhances──> Tool Selection Interface
-    └──reduces-need-for──> User Documentation
-
-Multi-file Output Preview
-    └──requires──> Output Preview
-    └──requires──> Tree View Component
-
-Streaming Output Logs
-    └──requires──> Real-time Progress (foundation)
-    └──enhances──> Long-running Task UX
-
-Tool Comparison Grid (landing page)
-    └──independent──> Portal functionality
-    └──informs──> Tool Selection Interface
-
-CLI Command Generation
-    └──requires──> Tool Execution configuration capture
+Docker Image (.NET SDK layer)
+    └──extends──> Existing Docker 3-stage build (JDK 25 + Node.js 22)
+    └──adds──> .NET SDK stage (dotnet 8/9 SDK)
+    └──pre-installs──> Hupyy C# FV NuGet analyzer package
 ```
 
-## MVP Recommendation
+### Dependency Notes
 
-### Launch With (v1)
+- **Docker image must be updated before wrapper script is meaningful:** The wrapper calls `dotnet build` which must exist in the Docker image. This is the hardest dependency — .NET SDK adds ~300MB to the image.
+- **Example `.csproj` files must reference the analyzer:** Without the `<PackageReference>` to the Hupyy C# FV analyzer NuGet in each example's `.csproj`, `dotnet build` runs but produces no verification diagnostics. This is the key difference from generic C# projects.
+- **NuGet pre-installation in Docker:** If the analyzer NuGet is pre-installed in Docker (via global tools or pre-restored packages), examples won't need network access during execution — consistent with Java FV which bundles the jar.
+- **E2E tests depend on tool being live in Docker:** Same guard as Java FV — E2E must run against the Docker production image with `E2E_BASE_URL` set.
 
-- **File upload with drag-and-drop** — Essential for any file-processing portal
-- **Tool selection interface** — Core functionality for multi-tool portal
-- **Real-time progress indicators** — Required for tools taking >10 seconds
-- **Output preview with syntax highlighting** — Users need to see results inline
-- **Downloadable results (zip)** — Users need artifacts
-- **Basic error handling** — Users need failure feedback
-- **Shareable links** — Standard for demo portals, low-cost high-value
-- **Landing page with tool comparison grid** — Differentiator, drives tool adoption
-- **Example gallery (3-5 per tool)** — Reduces time-to-first-success
+---
 
-**Rationale:** This set enables core workflow (upload → process → preview → download) with enough polish to feel professional. Comparison grid and examples address "which tool?" and "how to start?" friction.
+## C# FV Example Projects — Recommended Design
+
+### Design Principles (from Java FV pattern analysis)
+
+1. Progressive complexity: simple → complex
+2. Multi-file projects (2-3 `.cs` files each, not single-file)
+3. Mix of passing and failing verification
+4. Domain-themed names (not "Hello World"), matching existing Java FV pattern
+5. Each example zip contains: 2-3 `.cs` files + 1 `.csproj` + 1 `README.md`
+6. Verification infers from code structure AND from explicit annotations where the tool supports them
+
+### Recommended 3 Examples
+
+#### Example 1: "Null-Safe User Repository" (simple — already partially stubbed)
+
+**Theme:** Null safety with nullable reference types
+**C# features:** `string?`, null-coalescing operators, `ArgumentNullException.ThrowIfNull`, nullable flow analysis
+**Files:** `User.cs`, `UserRepository.cs`, `Program.cs`
+**Verification target:** Null reference safety analysis — compiler flow analysis + analyzer checks null guards
+**Outcome:** PASSES verification (all null paths guarded correctly)
+**Complexity:** LOW — demonstrates "green" verification, good first example
+**Note:** Existing `null-check/Program.cs` stub is a starting point but needs splitting into multi-file and needs a `.csproj`
+
+#### Example 2: "Order Processing with Records" (medium — uses modern C# features)
+
+**Theme:** Type-safe domain modeling with records and pattern matching
+**C# features:** `record`, primary constructors, `switch` expression pattern matching, discriminated unions via sealed classes/interfaces, `required` properties
+**Files:** `Order.cs`, `OrderProcessor.cs`, `Program.cs`
+**Verification target:** Exhaustive pattern matching (compiler warns on non-exhaustive switch), null safety in record properties, type contracts
+**Outcome:** PASSES verification with informational diagnostics showing what was checked
+**Complexity:** MEDIUM — shows verifier working with modern C# idioms developers actually write
+
+#### Example 3: "Bank Account with Invariant Violation" (complex — intentional failure)
+
+**Theme:** Financial invariants — demonstrates what happens when code violates contracts
+**C# features:** Records, numeric types, generic constraints, `IComparable`, nullable analysis
+**Files:** `BankAccount.cs`, `Transaction.cs`, `UnsafeWithdrawal.cs`
+**Verification target:** Negative balance invariant, overflow safety, null preconditions
+**Outcome:** FAILS verification on `UnsafeWithdrawal.cs` — produces visible error diagnostics (non-zero exit)
+**Complexity:** HIGH — mirrors Java FV's `UnsafeRefund.java` pattern; users see "VERIFICATION FAILED" output
+**Note:** "bank-account" theme mirrors Java FV's `bank-account-records` example — intentional parallel for comparison
+
+### .csproj Structure for Examples
+
+Each example must have a `.csproj` that:
+- Targets `net8.0` or `net9.0` (Linux Docker compatible)
+- Has `<Nullable>enable</Nullable>` to activate nullable reference types
+- References the Hupyy C# FV analyzer via `<PackageReference>`
+- Has `<TreatWarningsAsErrors>false</TreatWarningsAsErrors>` so warnings still surface without failing exit on warnings (only errors fail)
+- Does NOT include `<Sdk>Microsoft.NET.Sdk.Web</Sdk>` — console app only
+
+### Verification Output Format to Expect
+
+The portal streaming console will show `dotnet build` output in this format:
+
+```
+MSBuild version 17.x.x [/usr/share/dotnet/sdk]
+  Determining projects to restore...
+  Restored /tmp/project/ExampleProject.csproj
+  ExampleProject -> /tmp/project/bin/Debug/net8.0/ExampleProject.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+```
+
+On verification failure:
+
+```
+MSBuild version 17.x.x [/usr/share/dotnet/sdk]
+  BankAccount.cs(42,13): error HFVCS001: Balance invariant violation: balance may be negative [/tmp/project/ExampleProject.csproj]
+  UnsafeWithdrawal.cs(18,5): warning HFVCS002: Unchecked arithmetic operation on monetary value [/tmp/project/ExampleProject.csproj]
+
+Build FAILED.
+
+Error(s):
+  BankAccount.cs(42,13): error HFVCS001: Balance invariant violation: balance may be negative
+```
+
+Key format elements users see in the streaming console:
+- `File.cs(line,col): severity DIAGID: human-readable message` — MSBuild standard format (MEDIUM confidence — from official MSBuild docs)
+- `Build succeeded.` / `Build FAILED.` — clear terminal signal
+- Summary count `N Warning(s)` / `N Error(s)` — gives users a summary at the end
+- Non-zero exit code on `Build FAILED` — portal shows execution as failed (red status)
+
+Confidence: MEDIUM — diagnostic ID format (`HFVCS001`) depends on the actual Hupyy C# FV analyzer implementation. The surrounding MSBuild output format is HIGH confidence from official docs.
+
+---
+
+## MVP Definition
+
+### Launch With (v1.3)
+
+- [x] **Docker image updated with .NET SDK** — Without this, nothing runs. Hardest infra change.
+- [x] **`hupyy-csharp-verify` wrapper script** — Bridges `--input <path>` to `dotnet build`; mirrors java wrapper
+- [x] **3 C# FV example projects with `.csproj`** — Null-safe repository, Order records, Bank account invariant (with failure)
+- [x] **Tool status → Available in `tools.ts` + `toolRegistry.ts`** — Flips badge and enables execution
+- [x] **Benefit-focused tool description** — "Prove your C# code is correct — automated formal verification for modern C#"
+- [x] **120s execution timeout** — Matches Java FV; `dotnet` cold start can be slow
+- [x] **E2E tests for C# FV flow** — Load example → execute → see output (at minimum 1 happy path test)
 
 ### Add After Validation (v1.x)
 
-- **Streaming output logs** — Add when users request visibility into long-running processes
-- **Multi-file output preview** — Add when zip outputs have >5 files regularly
-- **Execution metrics display** — Add when users ask "how long should this take?"
-- **Tool recommendation engine** — Add if analytics show users struggling with tool selection
-- **Inline documentation per tool** — Add based on support request patterns
-- **CLI command generation** — Add when users ask "how do I automate this?"
-
-**Trigger:** User feedback, support requests, or analytics indicating friction points.
+- [ ] **More C# examples** — Add when users ask for more patterns (LINQ verification, async/await safety, generics constraints)
+- [ ] **Execution timeout tuning** — Adjust if 120s proves too short or too long after real-world data
+- [ ] **C# FV documentation inline** — Add when users ask "what rules does this check?"
 
 ### Future Consideration (v2+)
 
-- **Result comparison view** — Complex feature, defer until power users request
-- **Advanced filtering in example gallery** — Add when gallery has >50 examples
-- **Batch processing multiple zips** — Add if users request repeatedly
-- **API access for programmatic use** — Add when users want to integrate with CI/CD
-- **Historical results browser (session-only)** — Add if users re-run same files often
+- [ ] **SARIF output parsing and display** — Complex; adds value for CI/CD users but not demo portal users
+- [ ] **Side-by-side Java FV vs C# FV comparison** — Interesting for polyglot teams; not core to v1.3
+- [ ] **Dafny integration** — Different tool class entirely; separate milestone
 
-**Rationale:** These features increase complexity without clear initial demand. Wait for product-market fit signals.
+---
 
 ## Feature Prioritization Matrix
 
 | Feature | User Value | Implementation Cost | Priority |
 |---------|------------|---------------------|----------|
-| File upload (drag-and-drop) | HIGH | LOW | P1 |
-| Tool selection interface | HIGH | LOW | P1 |
-| Real-time progress indicators | HIGH | MEDIUM | P1 |
-| Output preview | HIGH | MEDIUM | P1 |
-| Downloadable results | HIGH | LOW | P1 |
-| Basic error handling | HIGH | MEDIUM | P1 |
-| Shareable links | HIGH | MEDIUM | P1 |
-| Landing page comparison grid | MEDIUM | LOW | P1 |
-| Example gallery | HIGH | MEDIUM | P1 |
-| File size limit display | MEDIUM | LOW | P1 |
-| Responsive layout | MEDIUM | MEDIUM | P1 |
-| Browser-local validation | MEDIUM | LOW | P1 |
-| Streaming output logs | MEDIUM | MEDIUM-HIGH | P2 |
-| Multi-file output preview | MEDIUM | MEDIUM-HIGH | P2 |
-| Execution metrics | MEDIUM | LOW-MEDIUM | P2 |
-| Tool recommendation engine | MEDIUM | MEDIUM | P2 |
-| Inline documentation | MEDIUM | LOW-MEDIUM | P2 |
-| CLI command generation | LOW-MEDIUM | LOW | P2 |
-| Result comparison view | LOW | HIGH | P3 |
-| Sales narrative integration | MEDIUM | LOW | P1 |
+| Docker .NET SDK layer | HIGH (nothing works without it) | HIGH | P1 |
+| Wrapper script `hupyy-csharp-verify` | HIGH | LOW | P1 |
+| 3 C# example projects with `.csproj` | HIGH | MEDIUM | P1 |
+| Tool activation (status + registry) | HIGH | LOW | P1 |
+| Benefit-focused description | MEDIUM | LOW | P1 |
+| 120s timeout | MEDIUM | LOW | P1 |
+| E2E tests (happy path) | HIGH (quality gate) | MEDIUM | P1 |
+| Intentional failure example | MEDIUM (trust-building) | LOW | P1 |
+| Full E2E test suite (edge cases) | MEDIUM | MEDIUM | P2 |
+| More than 3 examples | LOW | MEDIUM | P2 |
+| Inline documentation | LOW | LOW | P2 |
 
-**Priority key:**
-- P1: Must have for launch (MVP)
-- P2: Should have, add when capacity allows or user feedback demands
-- P3: Nice to have, future consideration
+---
 
-## Competitor Feature Analysis
+## Comparison with Java FV Pattern
 
-| Feature | Compiler Explorer (godbolt) | Rust Playground | Our Approach |
-|---------|------------------------------|-----------------|--------------|
-| Code editor | Full-featured Monaco editor with Vim mode, themes | Simple editor with rustfmt integration | Not applicable (file upload, not code editor) |
-| Real-time compilation | Instant feedback as you type | Compile button with run modes | Progress indicators during CLI execution |
-| Output visualization | Assembly, CFG, AST, IR views with syntax options | Stdout/stderr + compilation messages | Syntax-highlighted file preview + logs |
-| Sharing | Short links, full URLs, iframe embeds | Share button with permalink | Permalink with serialized config (tool + input hash) |
-| Multiple compilers | 3000+ compiler versions across 81 languages | Stable/Beta/Nightly Rust channels | One stable version per 8 tools (simplicity) |
-| Execution modes | Compile-only, Execute, Conformance | Debug/Release profiles | Single mode per tool (tools define behavior) |
-| Library integration | Conan package manager | Popular crates available | Not applicable (tools process uploaded code) |
-| Configuration | Extensive (compiler flags, optimization levels) | Minimal (edition, channel) | Minimal (tool selection + file upload) |
-| Session persistence | Browser-local storage + user templates | Browser-local storage | Browser-local history (no user accounts) |
-| Output formats | Assembly (Intel/AT&T), IR, tree views | Text output only | Zip download + inline preview of text files |
-| Visual aids | Control flow graphs (PNG/SVG export) | None | None (defer until user demand) |
-| AI features | "Claude Explain" for code explanation | None | None in MVP (could add "Explain verification results" later) |
+| Aspect | Java FV (v1.1) | C# FV (v1.3) | Notes |
+|--------|----------------|---------------|-------|
+| Wrapper script name | `hupyy-java-verify.sh` | `hupyy-csharp-verify` | Same `--input <path>` interface |
+| CLI invocation | `java -jar java-fv-cli.jar verify <files>` | `dotnet build <project_dir>` | C# needs project dir (`.csproj`), not individual files |
+| File detection | Find `*.java` files | Find `*.cs` files + validate `.csproj` exists | `.csproj` required for `dotnet build` |
+| Docker addition | JDK 25 + Java FV jar | .NET SDK 8/9 + pre-installed NuGet analyzer | .NET SDK is larger (~300MB vs JDK ~200MB) |
+| Example count | 3 examples, 3-4 files each | 3 examples, 3-4 files each (`.cs` + `.csproj`) | Same structure |
+| Example themes | Records, Pattern Matching, Sealed Types | Null Safety, Records+Patterns, Invariant Violation | C# themes mirror C# idioms |
+| Failure example | `UnsafeRefund.java` (sealed types example) | `UnsafeWithdrawal.cs` (bank account example) | Same "unsafe" naming pattern |
+| Execution timeout | 120s | 120s | Same — both tools can be slow |
+| Output type | Console only (no file tree) | Console only (no file tree) | Same |
+| Diagnostic format | Java FV CLI output (tool-specific) | MSBuild format: `File.cs(line,col): severity ID: message` | C# output is more structured (MSBuild standard) |
 
-**Key Insight:** Compiler Explorer and Rust Playground focus on **editing** code and seeing compilation results. Our portal focuses on **processing uploaded projects** through formal verification/transpilation CLI tools. This is fundamentally different UX — less iterative editing, more batch processing with detailed results.
-
-**Our Competitive Position:**
-- **More like:** Azure DevOps pipeline visualizer, GitHub Actions workflow viewer (upload → process → result)
-- **Less like:** Code playgrounds (edit → compile → view output in loop)
-- **Differentiation:** Tool comparison grid, formal verification narrative, multi-tool selection
-
-## Additional Research Notes
-
-### Web Search Findings
-
-Research conducted via web search (MEDIUM confidence, verified across multiple sources):
-
-1. **File Upload UX (2026):** Drag-and-drop is baseline expectation. Chunked uploads improve reliability. Real-time feedback (progress bars) required for files >10 seconds processing. Client-side validation prevents wasted server requests. [Uploadcare](https://uploadcare.com/blog/file-uploader-ux-best-practices/), [Transloadit](https://transloadit.com/devtips/optimizing-file-uploads-in-web-applications/)
-
-2. **Progress Indicators:** Determinate indicators (percentage) for measurable tasks. Indeterminate (spinner) when duration unknown. Display estimated time remaining for tasks >10 seconds. [UserGuiding](https://userguiding.com/blog/progress-trackers-and-indicators), [NN/g](https://www.nngroup.com/articles/designing-for-waits-and-interruptions/)
-
-3. **Developer Portal Adoption:** Developers need clear understanding of tool's role. Latency more important than initial load speed for long sessions. Global command surfaces (searchable actions) becoming standard. [Evil Martians](https://evilmartians.com/chronicles/six-things-developer-tools-must-have-to-earn-trust-and-adoption)
-
-4. **Syntax Highlighting:** Prism.js and Highlight.js are industry standard (192 languages supported). Real-time highlighting as users type in editors. For static output display, Prism.js sufficient. [Prism](https://prismjs.com/), [Highlight.js](https://highlightjs.org/)
-
-5. **Comparison Pages (SaaS 2026):** Side-by-side feature tables standard. "Us vs them" checklists win comparison battles. Interactive split-screen with drag sliders emerging pattern. [SaaSFrame](https://www.saasframe.io/categories/comparison-page), [Prismic](https://prismic.io/blog/the-12-best-landing-page-builders-detailed-comparison)
-
-6. **Template Galleries:** Pulumi Developer Portal offers org templates, curated templates, AI-generated templates. Reduces time-to-productivity. Platform teams standardize via template galleries. [Pulumi Blog](https://www.pulumi.com/blog/developer-portal-gallery/)
-
-7. **Code Sharing Platforms:** GitHub Gist, CodePen, Codeshare all use permalink patterns. No accounts required for basic sharing. Share button generates short URL. [Snappify](https://snappify.com/blog/code-sharing-tools)
-
-### Confidence Assessment
-
-- **Table Stakes:** HIGH confidence (patterns consistent across Compiler Explorer inspection, Rust Playground, code playground research, upload UX best practices)
-- **Differentiators:** MEDIUM confidence (based on SaaS comparison page trends, developer portal patterns, template gallery research — not all verified in formal verification domain specifically)
-- **Anti-Features:** MEDIUM-HIGH confidence (based on scope analysis, 5-20 user scale, demo portal positioning — avoids common over-engineering patterns)
-- **Competitor Analysis:** MEDIUM confidence (Compiler Explorer features verified via WebFetch, Rust Playground limited data, patterns extrapolated from code playground research)
-
-### Gaps Identified
-
-1. **Formal verification specific patterns:** Limited research on formal verification tool portals specifically. Most findings extrapolated from code playgrounds and developer tools generally. **Mitigation:** Core UX patterns (upload → process → preview → download) are domain-agnostic.
-
-2. **Transpiler output visualization:** No research found on best practices for displaying transpiler results (C++ → C, C++ → Rust). **Mitigation:** Start with syntax-highlighted text preview, iterate based on user feedback.
-
-3. **Security considerations for uploaded code:** Research focused on file size/type validation, not malicious code handling. **Mitigation:** Flag for deeper research in Architecture/Pitfalls phases.
-
-4. **Accessibility standards:** No specific research on accessible file upload widgets or progress indicators. **Mitigation:** Follow WCAG 2.1 AA guidelines, test with screen readers.
+---
 
 ## Sources
 
-### Primary Research
-- [Compiler Explorer](https://godbolt.org/) - Feature inspection via WebFetch
-- [GitHub: compiler-explorer/compiler-explorer](https://github.com/compiler-explorer/compiler-explorer)
-- [Rust Playground](https://play.rust-lang.org/)
-- [GitHub: rust-lang/rust-playground](https://github.com/rust-lang/rust-playground)
+### Official Documentation
+- [MSBuild Diagnostic Format](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-diagnostic-format-for-tasks?view=vs-2022) — Authoritative source for `File.cs(line,col): severity CODE: message` format (HIGH confidence)
+- [Code Analysis in .NET](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview) — Roslyn analyzer severity levels: Error, Warning, Suggestion, Silent, None (HIGH confidence)
+- [Roslyn Analyzers Overview](https://learn.microsoft.com/en-us/visualstudio/code-quality/roslyn-analyzers-overview?view=visualstudio) — IDE/CA diagnostic ID formats, NuGet package delivery (HIGH confidence)
+- [Nullable Reference Types](https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references) — C# nullable flow analysis for example design (HIGH confidence)
+- [Code Contracts (.NET Framework)](https://learn.microsoft.com/en-us/dotnet/framework/debug-trace-profile/code-contracts) — Confirmed NOT supported in .NET 5+; use nullable types instead (HIGH confidence)
+- [dotnet build command](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build) — CLI interface reference (HIGH confidence)
 
-### File Upload & Processing
-- [Uploadcare: File uploader UX best practices](https://uploadcare.com/blog/file-uploader-ux-best-practices/)
-- [Transloadit: Optimizing file uploads in web applications](https://transloadit.com/devtips/optimizing-file-uploads-in-web-applications/)
-- [STRV: Common file upload strategies](https://www.strv.com/blog/common-file-upload-strategies-and-their-pros-cons)
+### Project Pattern Sources
+- `packages/server/examples/java-verification/` — Established example structure to replicate
+- `scripts/hupyy-java-verify.sh` — Wrapper script pattern to follow
+- `.planning/phases/09-tool-activation-examples/09-CONTEXT.md` — Java FV activation decisions
+- `packages/shared/src/constants/tools.ts` — Tool metadata structure
+- `packages/server/src/config/toolRegistry.ts` — Tool execution config structure
 
-### Progress Indicators & Long Tasks
-- [UserGuiding: Progress trackers and indicators](https://userguiding.com/blog/progress-trackers-and-indicators)
-- [Mobbin: Progress indicator UI design](https://mobbin.com/glossary/progress-indicator)
-- [Nielsen Norman Group: Designing for long waits](https://www.nngroup.com/articles/designing-for-waits-and-interruptions/)
+### Existing C# Stubs (to validate/replace)
+- `packages/server/examples/csharp-verification/null-check/Program.cs` — Stub exists; needs multi-file split + `.csproj`
+- `packages/server/examples/csharp-verification/division-safety/Program.cs` — Stub exists; uses `Debug.Assert` (not analyzer contracts); replace with records example
+- `packages/server/examples/csharp-verification/array-bounds/Program.cs` — Stub exists; good but needs `.csproj` and multi-file expansion
 
-### Developer Portal Patterns
-- [Evil Martians: 6 things developer tools must have in 2026](https://evilmartians.com/chronicles/six-things-developer-tools-must-have-to-earn-trust-and-adoption)
-- [Pulumi Blog: Developer Portal Gallery](https://www.pulumi.com/blog/developer-portal-gallery/)
-- [Cortex: Internal Developer Portals best practices](https://www.cortex.io/ebook/best-practices-for-building-or-deploying-an-internal-developer-portal)
-
-### Code Playgrounds & Sharing
-- [Snappify: Best code sharing tools](https://snappify.com/blog/code-sharing-tools)
-- [Simple Programmer: Best code playgrounds](https://simpleprogrammer.com/best-code-playgrounds/)
-- [PlayCode: Python Playground 2026](https://playcode.io/blog/best-python-playground-online-2026)
-
-### Syntax Highlighting
-- [Prism](https://prismjs.com/)
-- [Highlight.js](https://highlightjs.org/)
-- [VS Code: Syntax highlight guide](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide)
-
-### SaaS Comparison & Landing Pages
-- [SaaSFrame: SaaS Comparison Page UI examples](https://www.saasframe.io/categories/comparison-page)
-- [Prismic: Landing page builders comparison](https://prismic.io/blog/the-12-best-landing-page-builders-detailed-comparison)
-- [SaaSFrame: SaaS landing page trends 2026](https://www.saasframe.io/blog/10-saas-landing-page-trends-for-2026-with-real-examples)
+### Web Research (MEDIUM confidence — WebSearch verified)
+- [Roslyn Analyzer Customize Rules](https://learn.microsoft.com/en-us/visualstudio/code-quality/use-roslyn-analyzers?view=visualstudio) — Severity levels (Error/Warning/Suggestion)
+- [Building a Code Analyzer for .NET](https://timheuer.com/blog/building-a-code-analyzer-for-net/) — NuGet delivery, `dotnet build` integration
+- [Roslyn GitHub Analyzer Format](https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Report%20Analyzer%20Format.md) — Performance reporting format (distinct from diagnostic format)
 
 ---
-*Feature research for: Hapyy Languages Web Portal*
-*Researched: 2026-02-12*
+
+## Gaps and Open Questions
+
+1. **Hupyy C# FV NuGet package name and installation method** — The actual NuGet package ID for the Hupyy C# FV analyzer is not publicly discoverable (tool is "Finishing Up" per PROJECT.md). The wrapper script and example `.csproj` files depend on this. **Mitigation:** Confirm package name with project owner before writing wrapper; examples should reference the pre-installed local path if NuGet not published yet.
+
+2. **Exact diagnostic IDs produced by the analyzer** — Roslyn analyzer diagnostic IDs are tool-defined (e.g., `HFVCS001`). The actual IDs matter for example design — examples should trigger specific known diagnostics. **Mitigation:** Obtain from Hupyy C# FV source or documentation before finalizing examples.
+
+3. **`dotnet build` cold start in Docker** — First run after Docker container starts requires NuGet restore. If packages aren't pre-cached in the image, this adds 30-120s of latency before verification starts. **Mitigation:** Pre-restore packages in Docker build step; explore `dotnet build --no-restore` for subsequent runs.
+
+4. **Docker image size impact** — Adding .NET SDK to the existing JDK 25 + Node.js 22 image adds ~300-500MB. **Mitigation:** Consider multi-stage build where .NET SDK is a separate stage; investigate `dotnet/sdk:8.0-alpine` as base.
+
+5. **Example design depends on actual analyzer rules** — The three example themes (null safety, records, invariant violation) are appropriate for a Roslyn FV tool, but the specific patterns that trigger diagnostics depend on what the Hupyy C# FV analyzer actually checks. **Mitigation:** Design examples to use common Roslyn analyzer patterns (nullable, CA rules) as fallback if Hupyy-specific rules aren't documented.
+
+---
+
+*Feature research for: C# Formal Verification — v1.3 milestone*
+*Researched: 2026-02-20*
 *Researcher: GSD Project Researcher (Phase 6)*
+*Confidence: MEDIUM-HIGH (portal pattern from existing Java FV is HIGH; C# FV output format from MSBuild docs is HIGH; Hupyy-specific analyzer internals are LOW — gaps noted above)*

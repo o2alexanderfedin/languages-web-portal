@@ -1,419 +1,256 @@
 # Project Research Summary
 
-**Project:** Hapyy Languages Web Portal
-**Domain:** CLI-based Formal Verification Demo Web Portal
-**Researched:** 2026-02-12
-**Confidence:** HIGH
+**Project:** Hapyy Languages Web Portal — C# Formal Verification Integration (v1.3)
+**Domain:** CLI Tool Execution Web Portal — Adding C# FV as the second live tool via Roslyn + dotnet build
+**Researched:** 2026-02-20
+**Confidence:** HIGH (infrastructure, Docker, wrapper pattern); MEDIUM (C# FV analyzer internals, Hupyy NuGet specifics)
 
 ## Executive Summary
 
-The Hapyy Languages Web Portal is a developer tool demo platform for showcasing 8 formal verification and transpilation CLI tools. Research shows this fits the pattern of a **file-processing web portal** rather than a code playground—users upload project zips, execute CLI tools server-side, and download results. The recommended approach uses a modern TypeScript full-stack with Node.js v24 + Express 5, React 19 + Vite 7, and Server-Sent Events (SSE) for real-time stdout streaming.
+This milestone (v1.3) adds C# Formal Verification as the portal's second live tool, following the established Java FV integration pattern from v1.1. The portal already has all necessary infrastructure: SSE streaming, execa subprocess execution, tool registry gating, wrapper script adapter pattern, 3-stage Docker builds, and E2E test fixtures. The work is entirely additive — a new Docker stage for .NET SDK + solver binaries, a new wrapper script, updated tool registry entries, three overhauled C# example projects with formal verification contracts, and E2E tests. No server services, frontend code, or streaming infrastructure needs to change.
 
-The core architectural pattern is **ephemeral workspace isolation**: each execution creates a temporary directory, runs tools in sandboxed child processes, streams output via SSE, packages results as downloadable zips, and schedules cleanup. This differs from code playground patterns (Monaco editor, instant compilation) and aligns more with batch processing workflows like CI/CD pipeline viewers.
+The recommended approach mirrors Java FV exactly. The C# FV tool (`cs-fv`) is a pre-built .NET CLI that accepts individual `.cs` files and runs Roslyn analysis backed by CVC5 and Z3 SMT solving. The wrapper script `hupyy-csharp-verify` finds all `.cs` files in the uploaded directory and invokes `dotnet /usr/local/lib/cs-fv/cs-fv.dll verify <files...>`. The Docker image gains a `dotnet-builder` stage that publishes the cs-fv CLI; the production stage installs `dotnet-runtime-8.0`, CVC5 (primary solver), and Z3 (fallback CLI — the `Microsoft.Z3` NuGet package ships no Linux native libraries). NuGet package cache is pre-seeded during Docker build to eliminate network calls at request time.
 
-The primary risk vectors are **malicious file uploads** (zip bombs, path traversal, symlink attacks) and **resource exhaustion** (runaway processes, disk space). These must be addressed in Phase 1 (file upload/extraction) and Phase 2 (tool execution/sandboxing) respectively—deferring security to later phases would require full rewrites. Success depends on strict input validation, OS-level process isolation, and comprehensive resource limits from the start.
+The dominant risks are Docker-specific. The .NET SDK adds 300-900 MB to the image — mitigated by using Alpine-based SDK in the builder stage and runtime-only in production. NuGet's global package cache has a confirmed concurrency race condition under concurrent builds (NuGet/Home #8129) — mitigated by setting `NUGET_PACKAGES` per-job in the wrapper script. The non-root `nodejs` user needs a writable HOME for dotnet tooling — mitigated in the Dockerfile. A non-obvious correctness risk: Roslyn analyzer diagnostics default to Warning severity, so `dotnet build` exits 0 even on verification failure; the `.csproj` must set `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`. Execution timeout must be raised from 60s to 180s for MSBuild cold-start plus CVC5 solving time.
 
 ## Key Findings
 
 ### Recommended Stack
 
-For a TypeScript full-stack with 5-20 concurrent users on Digital Ocean, the optimal stack prioritizes stability, TypeScript-first design, and simplicity over cutting-edge performance. Express 5 (production-ready as of Jan 2025) provides mature HTTP handling with improved async error forwarding. React 19 + Vite 7 deliver modern frontend DX with 40x faster builds than legacy CRA. Server-Sent Events (SSE) are preferred over WebSockets for unidirectional stdout streaming—simpler implementation, native HTTP/S, automatic reconnection.
+The new stack additions for v1.3 are exclusively .NET-related. No new npm packages, no frontend changes, no server service changes are required. The existing `executionService.ts` streams any subprocess output without modification; the existing `toolRegistry.ts` already has the `csharp-verification` entry declared with `available: false`.
 
-**Core technologies:**
-- **Node.js v24 LTS (Krypton)**: Current Active LTS with 30-month support guarantee, production-stable runtime
-- **TypeScript 5.9.3**: Current stable release, maximum ecosystem compatibility (TS 6.0 beta available but stick with stable)
-- **Express 5.x**: Newly stable (Jan 2025) with async error handling improvements, security fixes, 200M+ weekly downloads
-- **React 19.2 + Vite 7**: Modern frontend stack with first-class TypeScript, HMR, component-based UI
-- **Server-Sent Events (SSE)**: Simpler than WebSocket for unidirectional streaming, native HTTP compatibility
-- **Multer + Archiver + Unzipper**: Industry-standard file handling—multipart uploads, streaming zip creation/extraction
-- **child_process.spawn()**: Native Node.js process spawning with stream-based stdout/stderr access
-- **tmp package**: Ephemeral directory management with automatic cleanup policies
+**Core technologies (new additions only):**
+- `.NET SDK 10.0` (`mcr.microsoft.com/dotnet/sdk:10.0-noble`) — builder stage for publishing cs-fv CLI; .NET 10 LTS, EOL Nov 2028 (vs .NET 8/9 both EOL Nov 2026)
+- `dotnet-runtime-8.0` — production stage runtime-only install (NOT SDK); reduces image by ~500 MB vs full SDK; cs-fv targets `net8.0` TargetFramework
+- `CVC5 binary` — primary SMT solver; cs-fv invokes it as a subprocess via PATH; must be installed as a system binary in production
+- `Z3 CLI binary` — fallback SMT solver; `Microsoft.Z3` NuGet 4.12.2 has no Linux native libraries (confirmed from NuGet cache inspection — only `osx-x64` and `win-x64`); `Z3StrategyFactory` falls back to CLI automatically when library load fails
+- `hupyy-csharp-verify.sh` bash wrapper — adapts `--input <dir>` portal interface to `dotnet <dll> verify <files...>`; uses `exec` for signal propagation; `--tl:off --verbosity minimal --nologo --no-restore` flags required
+- `NUGET_PACKAGES` env var (per-job path) — mandatory to prevent NuGet cache race conditions under concurrent builds
 
-**Critical version requirements:**
-- Avoid Express 4 (superseded by Express 5)
-- Avoid Create React App (deprecated 2023, use Vite)
-- Avoid vm2 for sandboxing (CVE-2026-22709 CVSS 9.8 critical sandbox escape)
+**Critical version/flag requirements:**
+- .NET SDK 10.0 to build cs-fv; `net8.0` TargetFramework for the published DLL (runtime compatibility)
+- `--tl:off` required for non-TTY subprocess; .NET 8+ emits ANSI escape codes by default that corrupt SSE streaming output
+- `--no-restore` in wrapper; packages must be pre-seeded in Docker image layer via a dummy project restore during build
+- `CodeAnalysisTreatWarningsAsErrors=true` (or `TreatWarningsAsErrors=true`) in example `.csproj` files to ensure exit code 1 on verification failure
+- `maxExecutionTimeMs: 180000` in toolRegistry (not 60000 default; not even 120000 as used by Java FV)
+
+See `.planning/research/STACK.md` for full stack detail including wrapper script, Dockerfile snippets, and alternatives considered.
 
 ### Expected Features
 
-Research across Compiler Explorer, Rust Playground, and developer portal best practices identifies feature expectations for tool demo portals.
+The feature scope for v1.3 is tightly bounded by the Java FV integration pattern. All portal infrastructure is in place. New deliverables: Docker integration, wrapper script, three C# example projects with FV contracts, and E2E tests.
 
 **Must have (table stakes):**
-- **File upload with drag-and-drop** — baseline UX expectation for developer portals, reduces friction
-- **Real-time execution progress** — users expect feedback for tasks >10 seconds (formal verification can be slow)
-- **Output preview with syntax highlighting** — users need to see results inline before downloading
-- **Downloadable results (zip)** — users need artifacts for their workflows
-- **Tool selection interface** — multi-tool portal needs clear picker (8 tools require obvious selection)
-- **Basic error handling** — clear error messages with actionable guidance
-- **Shareable links/permalinks** — standard for all major playgrounds (godbolt, Rust Playground)
+- C# FV tool executes via portal — `available: true` in toolRegistry + wrapper script invoking cs-fv CLI
+- Wrapper script `hupyy-csharp-verify` with `--input <path>` interface — identical contract to Java FV wrapper
+- `.csproj` validation before `dotnet build` invocation — helpful error if absent (C# requires a project file; Java FV does not)
+- Three C# FV example projects with `[Requires]`/`[Ensures]` contracts — null-safe repository (pass), order records (pass with diagnostics), bank account invariant violation (fail with exit code 1)
+- Verification output streams to real-time console — zero infrastructure change; executionService handles this
+- Non-zero exit code on verification failure — requires `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` in `.csproj`; Roslyn defaults to Warning severity which exits 0
+- E2E tests covering C# verification flow — happy path minimum; known-bad project test required to catch silent exit-code bug
 
-**Should have (competitive differentiators):**
-- **Landing page tool comparison grid** — helps users choose right tool, positions as comprehensive platform
-- **Example/template gallery** — reduces friction to first success (3-5 examples per tool drives adoption)
-- **Streaming output logs** — see tool progress in real-time (builds trust during long waits)
-- **Execution metrics display** — show processing time, file counts, verification stats (transparency builds trust)
-- **CLI command generation** — show equivalent CLI command for local reproduction (educational value)
+**Should have (differentiators):**
+- Intentional failure example (bank account) — users see "VERIFICATION FAILED" output, builds trust in the tool
+- Modern C# idioms in examples — records, primary constructors, nullable reference types, pattern matching
+- Progressive complexity across 3 examples — simple (null safety) → medium (records + patterns) → complex (invariant violation)
+- Multi-file examples (2-3 `.cs` files each) — real C# projects span files; single-file demos feel artificial
+- 180s execution timeout — accounts for MSBuild cold-start + CVC5 solving time
 
 **Defer (v2+):**
-- **Result comparison view** — complex feature, defer until power users request
-- **Tool recommendation engine** — "which tool should I use?" wizard, add if analytics show selection friction
-- **Multi-file output preview** — tree view + file selector, add when zip outputs regularly have >5 files
-- **API access for programmatic use** — add when users want CI/CD integration
+- SARIF output parsing and structured display
+- Side-by-side Java FV vs C# FV comparison view
+- Dafny integration
+- More than 3 example projects
+- In-browser C# code editor (explicitly out of scope per PROJECT.md)
 
 **Anti-features (explicitly avoid):**
-- **User accounts/authentication** — adds complexity, not needed for public demo (use browser-local storage for history)
-- **Persistent cloud storage** — 5-20 concurrent users don't need cloud hosting (download immediately)
-- **Real-time collaboration** — scope creep, shareable links are sufficient
-- **Mobile app** — desktop is primary use case, responsive web is sufficient
+- In-browser C# editor — breaks upload-only pattern; requires Monaco integration
+- Custom Roslyn rules configuration — scope creep for a demo portal
+- NuGet restore inside portal execution — adds 30-120s latency; pre-install packages in Docker instead
+- .NET Framework project support — requires Windows SDK; Docker image is Linux
+
+See `.planning/research/FEATURES.md` for full feature detail, dependency graph, and Java FV pattern comparison.
 
 ### Architecture Approach
 
-The architecture follows a **layered stream-driven pattern** with ephemeral workspace isolation. File uploads trigger temporary directory creation (UUID-based paths), extraction validation (size/ratio/path checks), CLI tool spawning (child_process with stdio pipes), real-time output streaming (SSE to client), and scheduled cleanup (5-15 minutes post-completion). This differs from code playground patterns—less iterative editing, more batch processing.
+The architecture follows the established Portal Tool Integration Pattern exactly. `toolRegistry.ts` gates availability; `executionService.ts` spawns the wrapper script via execa (no shell, array args); the wrapper adapts the portal's `--input <dir>` interface to the tool's native CLI; output streams through SSE to the browser. The only structural change is Docker: 3-stage becomes 4-stage (node-builder, java-builder, dotnet-builder, production).
 
-**Major components:**
-1. **Project Manager** — creates/tracks/cleans ephemeral directories with metadata-driven lifecycle (status, timestamps, cleanup scheduling)
-2. **Process Spawner** — executes CLI tools via child_process.spawn() with stream piping to WebSocket/SSE, handles timeouts and zombie prevention
-3. **Upload/Download Handlers** — Multer for multipart uploads with validation, Archiver for streaming zip creation, path sanitization throughout
-4. **SSE/WebSocket Server** — maintains persistent connections, broadcasts process output chunks in real-time, handles reconnection
-5. **Cleanup Scheduler** — node-cron job queries Project Manager for expired workspaces, deletes recursively, handles failures idempotently
-6. **Frontend State Manager** — React hooks coordinate upload status, process running state, output ready state with SSE integration
+**Major components (new/modified for v1.3):**
+1. `Dockerfile` — dotnet-builder stage (NEW): `dotnet publish` cs-fv CLI with `--self-contained false`; production stage (MODIFY): install `dotnet-runtime-8.0`, CVC5, Z3, copy cs-fv DLLs and wrapper script
+2. `scripts/hupyy-csharp-verify.sh` (NEW) — finds `*.cs` files (excluding bin/obj), validates `.csproj` exists, sets per-job `NUGET_PACKAGES`, `exec`s `dotnet <dll> verify <files...>`
+3. `packages/server/src/config/toolRegistry.ts` (MODIFY) — `available: true`, `maxExecutionTimeMs: 180000`, env-variable override for `CSHARP_FV_CMD`
+4. `packages/shared/src/constants/tools.ts` (MODIFY) — `status: 'available'` for csharp-verification
+5. `packages/server/examples/csharp-verification/*/` (MODIFY) — add `using CsFv.Contracts;`, `[Requires]`/`[Ensures]` attributes, `.csproj` files; existing stubs have no FV contracts
+6. E2E tests (NEW) — load-example, execute, assert output, assert `status: 'failed'` for bank account example
 
-**Key architectural patterns:**
-- **Stream-Driven Output** (Pattern 1): Pipe child process stdout/stderr directly to SSE without buffering—low memory, immediate feedback, scales to large outputs
-- **Ephemeral Directory Lifecycle** (Pattern 2): UUID-based temp directories with metadata tracking (created, completed, status, cleanup scheduled)
-- **Type-Based Message Routing** (Pattern 3): All SSE messages carry "type" field (stdout/stderr/exit/error/status) with TypeScript discriminated unions
-- **Metadata-Driven Cleanup** (Pattern 4): In-memory metadata store tracks projects, cron job periodically scans for expired entries
-- **Layered Architecture** (Pattern 5): Routes → Services → Utils separation (HTTP protocol vs business logic vs pure functions)
+**Key architectural constraints:**
+- cs-fv CLI `verify` takes individual `.cs` file paths as positional arguments, NOT a directory — wrapper must `find` and enumerate files
+- `dotnet build` requires a `.csproj` at the project root — wrapper must validate before invoking, unlike Java FV
+- Production stage must NOT install full .NET SDK — use runtime-only (`dotnet-runtime-8.0`) to avoid ~500 MB bloat; cs-fv is published as a framework-dependent DLL
+- `exec` replaces bash process in wrapper — SIGTERM from portal timeout propagates directly to cs-fv (same as Java FV pattern)
 
-**Build order implications:**
-1. **Phase 1: Core Infrastructure** — Project Manager + CLI spawning + basic Express (validates tools execute before building UI)
-2. **Phase 2: Upload & Extraction** — File upload endpoint + validation + zip extraction (establishes data flow into system)
-3. **Phase 3: Real-time Streaming** — SSE server + stream integration + frontend connection (most complex, needs working upload/process to test)
-4. **Phase 4: Frontend Terminal UI** — Terminal component + Upload UI + Download UI (UI develops after APIs stable)
-5. **Phase 5: Cleanup & Lifecycle** — Completion tracking + scheduler + cleanup logic (essential before production but not for initial testing)
-6. **Phase 6: Download & Zip Creation** — Output zip creation + download endpoint (depends on completed processes)
+**Suggested build order (from ARCHITECTURE.md):**
+
+| Phase | Work | Can Parallelize? |
+|-------|------|------------------|
+| 1 | Docker multi-stage: dotnet-builder + runtime/CVC5/Z3 in production | No — prerequisite for everything |
+| 2 | Wrapper script + toolRegistry/tools.ts changes | No — requires Docker image to test |
+| 3 | Example projects with FV contracts | Partially — content work, but contract syntax must be confirmed from cs-fv source |
+| 4 | E2E tests | No — requires all above to be complete |
+
+See `.planning/research/ARCHITECTURE.md` for full system diagram, data flow, and anti-patterns.
 
 ### Critical Pitfalls
 
-Research identified 10 critical pitfalls with specific prevention strategies. Top 5 by severity:
+Top pitfalls for v1.3, ordered by phase impact and severity:
 
-1. **Zip Bomb / Decompression Bomb** (CRITICAL) — Malicious archives (42.zip) expand from kilobytes to terabytes, exhausting disk. **Prevention:** Limit extracted size (100MB max), monitor compression ratio (reject if >100:1), limit nesting depth (max 2 levels), timeout decompression (5 seconds), use streaming extraction with size tracking. **Address in Phase 1.**
+1. **NuGet cache race condition under concurrent builds** — NuGet's `PluginCacheEntry.UpdateCacheFileAsync` is not concurrency-safe (confirmed bug: NuGet/Home #8129). Under 5+ concurrent `dotnet build` processes, file move operations fail intermittently. Avoid by setting `NUGET_PACKAGES` to a per-job writable temp directory in the wrapper script. Never rely on the global cache for correctness. Test: run 10 concurrent builds, verify zero failures.
 
-2. **Path Traversal via Archive Entries** (CRITICAL) — Archives with `../../etc/passwd` paths extract files outside workspace, allowing system file overwrites. **Prevention:** Validate each entry path BEFORE extraction, reject absolute paths and `..` components, verify resolved path is child of extraction directory, use path normalization before comparison. **Address in Phase 1.**
+2. **Non-root user cannot write to default NuGet directories** — The portal runs as `nodejs` (UID 1001). If `$HOME` is unset or `/`, `dotnet restore` fails with permission denied (dotnet-docker issues #78, #84). Fix in Dockerfile: give `nodejs` user a writable home (`-m -d /home/nodejs`), set `NUGET_PACKAGES` to a path owned by `nodejs`, set `DOTNET_CLI_TELEMETRY_OPTOUT=1`. Verify: run `dotnet build` as `nodejs` user interactively in container.
 
-3. **Arbitrary Code Execution via Malicious Files** (CRITICAL) — Uploaded files exploit CLI tool parsing vulnerabilities (buffer overflows, format strings). **Prevention:** Run ALL tools in strict sandboxes (gVisor minimum, microVMs preferred), drop privileges (run as nobody), disable network access, mount filesystems read-only except workspace, set resource limits (CPU/memory/processes). **Address in Phase 2.**
+3. **Roslyn analyzer diagnostics at Warning severity — exit code 0 on verification failure** — `dotnet build` exits 0 when analyzers report Warning-severity diagnostics. The portal interprets exit 0 as `status: 'completed'`, silently hiding verification failures. Fix: add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to all example `.csproj` files. Verify with an E2E test that asserts `status: 'failed'` on the bank account intentional-failure example.
 
-4. **Resource Exhaustion / Denial of Service** (CRITICAL) — Single user or tool consumes all server resources (formal verification has exponential worst-case). **Prevention:** Limit concurrent executions to CPU core count, enforce strict timeouts (30-60s for demo), use cgroups for CPU/memory limits, implement per-IP rate limiting (5 concurrent jobs, 20/hour), queue requests when at capacity. **Address in Phase 2.**
+4. **MSBuild default verbosity floods SSE console** — Default verbosity emits 50+ lines of MSBuild target evaluation and restore progress before any verification result appears. Fix: always pass `--verbosity minimal --nologo --tl:off` to `dotnet build`. Set these in wrapper script on first implementation; changing output format later breaks E2E assertions.
 
-5. **Process Leaks / Zombie Processes** (HIGH) — CLI tools don't terminate properly, orphans accumulate, process table fills. **Prevention:** Track all spawned PIDs, register process.on('exit') handlers, use process groups with tree-kill, escalate SIGTERM → SIGKILL, monitor for zombies, cleanup on graceful shutdown and crashes. **Address in Phase 2.**
+5. **NuGet restore requires internet access at request time** — Without pre-seeded packages in the Docker image, `dotnet restore` during build requires network access to `api.nuget.org`. In restricted egress environments, every build fails. Fix: run `dotnet restore` on a reference project during Docker image build, copy cache into production stage, use `--no-restore` in wrapper. Test: `docker run --network=none <image> hupyy-csharp-verify --input /example`.
 
-**Additional critical pitfalls:**
-- **Symlink Attacks** (Phase 1): Archive contains symlink pointing outside workspace, then file with same name—write follows symlink. Skip/reject symlink entries entirely.
-- **Temp Cleanup Failures** (Phase 2): Race conditions or crashes prevent cleanup, disk fills. Use unique names (PID+timestamp+UUID), register cleanup handlers for crashes, validate paths before deletion, never follow symlinks.
-- **WebSocket Memory Leaks** (Phase 3): Connections not removed from tracking, memory exhausts. Remove on 'close' event, set max connections (100-200), implement heartbeat, timeout inactive connections (60s).
-- **Inadequate Error Context** (Phase 4): Cryptic tool errors confuse users. Capture/parse stdout/stderr, classify errors (user vs system), provide actionable messages with examples.
-- **No Graceful Degradation** (Phase 4): Portal crashes when at capacity instead of queuing. Implement request queue (max 100 pending), return "at capacity" with retry-after, show queue position.
+6. **Execution timeout too short** — Current config sets `maxExecutionTimeMs: 60000`; Java FV uses 120000; C# needs 180000 (NuGet cold-start + MSBuild initialization + CVC5 solving). Additionally, `EXECUTION_LIMITS.maxTimeoutMs` constant may cap per-tool overrides at 60000 — verify and raise if needed.
+
+7. **Missing `.csproj` causes cryptic MSBuild error** — Java FV accepts bare `.java` files; `dotnet build` requires a `.csproj`. Without a wrapper-level check, users uploading `.cs`-only zips see `MSB1003: Specify a project or solution file`. Fix: check for `.csproj` existence in the wrapper before invoking dotnet; emit a clear actionable error.
+
+8. **Docker image bloat from full .NET SDK** — Using the SDK image in production adds 600-900 MB. Fix: use a dedicated `dotnet-builder` stage, install only `dotnet-runtime-8.0` in production. Use Alpine-based SDK image in the builder stage for smaller intermediate layers.
+
+See `.planning/research/PITFALLS.md` for the full pitfall list including general portal pitfalls (zip bomb, path traversal, process leaks, WebSocket memory leaks) that apply to all tools, plus the complete `"Looks Done But Isn't"` checklist specific to C# integration.
 
 ## Implications for Roadmap
 
-Based on component dependencies and pitfall timing, recommended phase structure follows a **foundation-first, security-critical-early** approach:
+Based on research, four phases map to the v1.3 milestone. The dependency chain is strict: Docker must exist before the wrapper is testable; the wrapper must exist before the registry activation exposes the tool; examples require contract syntax confirmed from cs-fv source; E2E tests come last.
 
-### Phase 1: File Upload & Validation (Foundation + Security)
-**Rationale:** Establishes data flow into system. Security pitfalls (zip bomb, path traversal, symlinks) MUST be addressed here—retrofitting validation after launch requires rewriting extraction logic. Validates file handling before building complex streaming infrastructure.
+### Phase 1: Docker Image — .NET Runtime + Solver Binaries
 
-**Delivers:**
-- Project Manager (ephemeral directory creation with UUID paths)
-- File upload endpoint (Express + Multer with size limits)
-- Archive extraction with security validation (zip bomb detection, path sanitization, symlink rejection)
-- Basic Express server with health check
+**Rationale:** This is the hard infrastructure prerequisite. Nothing else is testable without a working Docker image containing dotnet, CVC5, Z3, and the cs-fv published DLL. Docker architecture decisions (which base image, SDK vs runtime, NuGet pre-seeding strategy, HOME directory for non-root user) are expensive to undo. These must be made and implemented first.
 
-**Addresses features:**
-- File upload with drag-and-drop (table stakes)
-- File size limit display (table stakes)
-- Browser-local validation (table stakes)
+**Delivers:** Working Docker image with `dotnet` binary (runtime, not SDK), CVC5 binary, Z3 binary, cs-fv published DLL at `/usr/local/lib/cs-fv/`, pre-seeded NuGet package cache, `nodejs` user with writable `/home/nodejs`
 
-**Avoids pitfalls:**
-- Zip bomb / decompression bomb
-- Path traversal via archive entries
-- Symlink attacks via extraction
+**Addresses:** Table-stakes feature: C# FV tool can actually execute
 
-**Research flag:** Standard patterns (file upload well-documented). No additional research needed.
+**Avoids:** C# Pitfalls 1 (image bloat), 2 (NuGet cache race — pre-seed architecture), 3 (non-root user HOME), 6 (timeout constant raised to 180000), 9 (network-dependent restore)
+
+**Research flag:** SKIP — Docker multi-stage pattern is well-documented; Java FV Dockerfile is a working reference for the pattern. Confirm cs-fv `dotnet publish` command from `cs-fv/global.json` and `CsFv.Cli.csproj` before writing the stage.
 
 ---
 
-### Phase 2: Process Execution & Sandboxing (Security Critical)
-**Rationale:** Tool execution is highest security risk (arbitrary code execution, resource exhaustion). Sandboxing must be architected from start—adding isolation later to running processes is nearly impossible. Dependency blocker for streaming (need process output to stream).
+### Phase 2: Wrapper Script + Tool Registry Activation
 
-**Delivers:**
-- CLI Process Spawner (child_process.spawn with stream piping)
-- Process isolation/sandboxing (gVisor, cgroups, privilege dropping)
-- Resource limits enforcement (CPU/memory/timeout per process)
-- Process lifecycle management (zombie prevention, cleanup handlers)
-- Job queue with concurrency limits (CPU core count max)
-- Per-IP rate limiting
+**Rationale:** With the Docker image available, the wrapper script can be written and tested interactively inside the container. Flipping `available: true` in the registry exposes the tool through the existing execution pipeline with zero changes to executionService or routes.
 
-**Uses stack:**
-- child_process.spawn() native API
-- cgroups for resource limits
-- node-cron for cleanup scheduling
+**Delivers:** `hupyy-csharp-verify` at `/usr/local/bin/`, `toolRegistry.ts` with `available: true` and `maxExecutionTimeMs: 180000`, `tools.ts` with `status: 'available'`, per-job `NUGET_PACKAGES` isolation, `.csproj` validation with actionable error, `--verbosity minimal --nologo --tl:off --no-restore` flags
 
-**Implements architecture:**
-- Process Spawner component
-- Cleanup Scheduler component
-- Stream-driven output pattern (foundation)
+**Uses:** Existing execa subprocess pattern, existing SSE streaming — no changes needed to those systems
 
-**Avoids pitfalls:**
-- Arbitrary code execution via malicious files
-- Resource exhaustion / denial of service
-- Process leaks / zombie processes
-- Temp cleanup failures / race conditions
+**Avoids:** C# Pitfalls 4 (MSBuild verbosity), 5 (exit code 0 on Warning severity — `TreatWarningsAsErrors` in `.csproj`), 7 (obj/bin isolation per concurrent job), 8 (missing `.csproj` check)
 
-**Research flag:** **Needs research** — Sandboxing strategies (gVisor vs microVMs vs Docker), cgroup configuration, Linux security profiles (seccomp/apparmor). Domain-specific (formal verification tool hardening).
+**Research flag:** SKIP — wrapper script is a direct copy/adaptation of `hupyy-java-verify.sh`; all decision points are documented in PITFALLS.md.
 
 ---
 
-### Phase 3: Real-Time Output Streaming (Complex Integration)
-**Rationale:** Most architecturally complex component. Requires working upload + process flow to test effectively. Depends on Phase 2 process spawning to have output to stream. SSE chosen over WebSocket (simpler for unidirectional streaming).
+### Phase 3: C# FV Example Projects
 
-**Delivers:**
-- SSE server setup (better-sse or native implementation)
-- Process stdout/stderr to SSE connection piping
-- Type-based message routing (stdout/stderr/exit/error/status)
-- Connection lifecycle management (cleanup on disconnect, heartbeat)
-- Reconnection handling (client-side)
+**Rationale:** Example content development can begin in parallel with Phase 1/2, but the contract attribute syntax (`[Requires]`/`[Ensures]`) must be confirmed against the actual cs-fv source before the examples are finalized. The existing example stubs in `packages/server/examples/csharp-verification/` have no FV contracts — cs-fv produces "No methods with contracts found" output on them as-is.
 
-**Uses stack:**
-- Server-Sent Events (SSE) via better-sse
-- Type-based message pattern with TypeScript discriminated unions
+**Delivers:** Three example directories, each with 2-3 `.cs` files with FV contracts, a `.csproj` referencing the Hupyy C# FV analyzer, and a `README.md`:
+- `null-safe-repository/` — passes verification (null safety, nullable reference types)
+- `order-processing-records/` — passes with diagnostics (records, pattern matching, switch exhaustiveness)
+- `bank-account-invariant/` — fails verification with exit code 1 (UnsafeWithdrawal.cs triggers balance invariant violation)
 
-**Implements architecture:**
-- SSE/WebSocket Server component
-- Type-Based Message Routing pattern (Pattern 3)
+**Addresses:** Differentiator features: progressive complexity, modern C# idioms (C# 12/13), intentional failure example showing "Build FAILED" output
 
-**Addresses features:**
-- Real-time execution progress (table stakes)
-- Streaming output logs (differentiator)
+**Avoids:** ARCHITECTURE anti-pattern 5 (examples without FV contracts produce no interesting output)
 
-**Avoids pitfalls:**
-- WebSocket memory leaks / connection handling
-
-**Research flag:** Standard patterns (SSE/WebSocket well-documented). No additional research needed.
+**Research flag:** NEEDS VALIDATION — before writing examples, read `cs-fv/USAGE.md` to confirm: (1) exact NuGet package name for `<PackageReference>`, (2) contract attribute namespace (`using CsFv.Contracts;` or different), (3) `[Requires]`/`[Ensures]` attribute syntax, (4) actual diagnostic IDs for E2E assertions on the failure case.
 
 ---
 
-### Phase 4: Frontend Terminal & Download UI
-**Rationale:** UI can develop after APIs are stable. Terminal component needs working SSE stream to test effectively. Lower risk than backend phases, can iterate based on user feedback.
+### Phase 4: E2E Tests
 
-**Delivers:**
-- React frontend with Vite 7 build
-- Terminal/console component (render streamed output with ANSI support)
-- Upload interface (drag-and-drop, progress indicators)
-- Tool selection interface (8 tools with descriptions)
-- Download interface (button, status, zip trigger)
-- Output preview with syntax highlighting (Prism.js)
+**Rationale:** E2E tests verify the full integration end-to-end and are the quality gate before v1.3 is declared complete. They depend on all prior phases: Docker image running, wrapper installed, examples loadable. The known-bad project test (bank account) is mandatory — without it, the exit-code 0 on Warning-severity diagnostic bug would go undetected.
 
-**Uses stack:**
-- React 19.2 + Vite 7
-- Tailwind CSS + shadcn/ui components
-- Prism.js for syntax highlighting
+**Delivers:** Playwright E2E tests (reusing existing helpers from `e2e/fixtures/helpers.ts`) covering: load C# FV example, execute, verify streaming output appears, `status: 'completed'` on null-safe repository, `status: 'failed'` on bank account example, helpful error on `.cs`-only zip upload (no `.csproj`)
 
-**Implements architecture:**
-- Frontend State Manager (React hooks)
-- Terminal Component, Upload Component, Download Component
+**Avoids:** C# Pitfall 5 (silent verification failure — only caught by E2E test on known-bad project)
 
-**Addresses features:**
-- Output preview/display (table stakes)
-- Downloadable results (table stakes)
-- Tool selection interface (table stakes)
-- Responsive layout (table stakes)
-
-**Research flag:** Standard patterns (React + Vite well-documented). No additional research needed.
-
----
-
-### Phase 5: Error Handling & UX Polish
-**Rationale:** Error handling can iterate based on user feedback but core patterns should be established early. Graceful degradation critical before production load.
-
-**Delivers:**
-- Error classification (user vs system vs tool limitation)
-- Actionable error messages with examples
-- Graceful degradation under load (queue vs crash)
-- Circuit breaker pattern for dependencies
-- User-friendly progress indicators with time estimates
-- Execution metrics display (time, file counts, stats)
-
-**Implements architecture:**
-- Error handling in layered architecture (routes vs services)
-
-**Addresses features:**
-- Basic error handling (table stakes)
-- Execution metrics display (differentiator)
-
-**Avoids pitfalls:**
-- Inadequate error context for users
-- No graceful degradation under load
-
-**Research flag:** Standard patterns (error handling well-documented). No additional research needed.
-
----
-
-### Phase 6: Landing Page & Examples (Launch Readiness)
-**Rationale:** Marketing/onboarding features come after core functionality proven. Example gallery drives adoption but can be minimal at launch (1-2 examples per tool).
-
-**Delivers:**
-- Landing page with tool comparison grid
-- Example/template gallery (3-5 per tool)
-- Tool descriptions and documentation
-- Shareable links/permalinks (serialize tool + input hash)
-- Sales narrative integration (AI code verification positioning)
-
-**Addresses features:**
-- Landing page comparison grid (differentiator)
-- Example gallery (table stakes)
-- Shareable links (table stakes)
-- Sales narrative integration (differentiator)
-
-**Research flag:** Standard patterns (landing page design well-documented). No additional research needed.
+**Research flag:** SKIP — E2E test patterns established from Java FV test suite; Playwright helpers already in place.
 
 ---
 
 ### Phase Ordering Rationale
 
-**Dependency-driven order:**
-- Phase 1 unblocks Phase 2 (need workspaces to run processes)
-- Phase 2 unblocks Phase 3 (need process output to stream)
-- Phase 3 unblocks Phase 4 (need SSE for terminal component)
-- Phases 4-6 can partially parallelize (frontend, error handling, landing page)
-
-**Security-driven order:**
-- Phase 1 and 2 address CRITICAL pitfalls that require architectural decisions
-- Deferring sandboxing (Phase 2) to later would require rewriting process execution
-- File validation (Phase 1) easier to add early than retrofit to production
-
-**Value-driven order:**
-- Phases 1-3 deliver core workflow (upload → process → stream)
-- Phase 4 makes it usable (UI)
-- Phases 5-6 make it production-ready (error handling, onboarding)
-
-**Validation points:**
-- Phase 1 complete: Can upload zip and extract safely
-- Phase 2 complete: Can execute CLI tools with resource limits
-- Phase 3 complete: Can see real-time output streaming
-- Phase 4 complete: End-to-end UI workflow functional
-- Phase 5 complete: Error scenarios handled gracefully
-- Phase 6 complete: Launch-ready with onboarding
+- Docker (Phase 1) is the hard prerequisite: `dotnet` binary must exist before any wrapper, example, or E2E testing
+- Wrapper + registry (Phase 2) closes the execution pipeline; the tool becomes invocable via the portal
+- Examples (Phase 3) can be drafted in parallel but contract syntax must be verified against cs-fv source before final implementation
+- E2E tests (Phase 4) always come last — they test the assembled stack and serve as the acceptance gate
+- The Java FV integration (v1.1) provides a working reference for every phase, reducing uncertainty across all phases
 
 ### Research Flags
 
-**Phases needing deeper research during planning:**
-- **Phase 2 (Process Execution/Sandboxing):** Complex domain-specific research needed—gVisor vs microVMs vs Docker isolation strategies, cgroup v2 configuration, Linux security profiles (seccomp-bpf, apparmor), formal verification tool-specific hardening. High security stakes justify dedicated research-phase.
+**Phases needing deeper research (before or during planning):**
+- **Phase 3 (Examples):** The Hupyy C# FV NuGet package name, contract attribute namespace and syntax, and diagnostic ID format are not publicly documented. Read `cs-fv/USAGE.md` and inspect `cs-fv/src/CsFv.Contracts/` before writing example projects. This is the primary unresolved gap.
 
-**Phases with standard patterns (skip research-phase):**
-- **Phase 1 (File Upload/Validation):** File upload + zip extraction well-documented, OWASP guidance comprehensive, Multer/Archiver/Unzipper have clear docs
-- **Phase 3 (Real-Time Streaming):** SSE/WebSocket patterns well-established, multiple guides available, better-sse library documented
-- **Phase 4 (Frontend Terminal UI):** React + Vite standard stack, terminal emulator components available (react-console-emulator), syntax highlighting (Prism.js) solved problem
-- **Phase 5 (Error Handling/UX):** Error handling patterns standard, graceful degradation well-documented in distributed systems literature
-- **Phase 6 (Landing Page/Examples):** Landing page design standard web development, example galleries follow known patterns (Pulumi, playgrounds)
+**Phases with standard patterns (skip research during planning):**
+- **Phase 1 (Docker):** .NET multi-stage Docker patterns are well-documented; Java FV Dockerfile is a direct reference; `dotnet publish` is standard
+- **Phase 2 (Wrapper Script):** Direct adaptation of `hupyy-java-verify.sh`; all decision points documented in PITFALLS.md
+- **Phase 4 (E2E Tests):** Established Playwright fixtures from Java FV E2E suite; test patterns are known
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | **HIGH** | All recommendations verified with official documentation and releases. Node.js v24 LTS official, Express 5 production-ready Jan 2025, React 19 stable, Vite 7 current. Version compatibility matrix researched. |
-| Features | **MEDIUM** | Table stakes validated across Compiler Explorer, Rust Playground, developer portal research. Differentiators based on SaaS comparison trends and template gallery patterns. Domain-specific formal verification UX less researched (extrapolated from general developer tools). |
-| Architecture | **HIGH** | Patterns consistent across multiple sources (stream-driven processing, ephemeral workspaces, layered architecture). Child process management official Node.js docs. SSE vs WebSocket trade-offs well-documented. Build order derived from dependency analysis. |
-| Pitfalls | **HIGH** | Critical vulnerabilities verified with CVE databases and security advisories (zip bomb, path traversal, vm2 CVE-2026-22709). Prevention strategies validated across OWASP, security research, production guides. Process management pitfalls from official Node.js docs. |
+| Stack | HIGH | Core .NET/Docker facts from official Microsoft docs; .NET 10 LTS confirmed from support policy page; CVC5/Z3 Linux compatibility gap confirmed from NuGet cache inspection of actual installed package; dotnet flags (`--tl:off`, `--no-restore`, `--verbosity minimal`) from official `dotnet build` docs |
+| Features | MEDIUM-HIGH | Portal integration pattern (from Java FV v1.1) is HIGH; MSBuild diagnostic output format is HIGH from official docs; Hupyy C# FV NuGet package name, contract attribute syntax, and diagnostic IDs are LOW — not publicly documented, must be obtained from cs-fv source |
+| Architecture | HIGH | First-party codebase sources: `toolRegistry.ts`, `executionService.ts`, `hupyy-java-verify.sh`, `Dockerfile`, `cs-fv/src/CsFv.Verification/Z3StrategyFactory.cs`, `RealCvc5Runner.cs`; data flow verified against working Java FV integration |
+| Pitfalls | HIGH | C# pitfalls sourced from official bug trackers (NuGet/Home #8129 concurrency bug, dotnet-docker #78/#84 non-root user), official MSBuild docs for verbosity, and direct NuGet cache inspection for Z3 Linux compatibility |
 
-**Overall confidence: HIGH**
-
-Research grounded in official documentation (Node.js, TypeScript, Express, React), security advisories (CVEs, OWASP), and production guides. Formal verification-specific UX patterns extrapolated from general developer tools (MEDIUM confidence area) but core technical stack and security recommendations are HIGH confidence.
+**Overall confidence:** HIGH for infrastructure (Docker, wrapper, registry, timeout); MEDIUM for C# FV-specific example content (depends on cs-fv contract syntax from source)
 
 ### Gaps to Address
 
-**Gap 1: Formal verification tool-specific UX patterns**
-- **Issue:** Limited research on best practices for displaying formal verification results (proofs, counterexamples, verification traces). Most findings extrapolated from general code playgrounds.
-- **Mitigation:** Start with syntax-highlighted text preview (works for all tools), iterate based on user feedback. Consider tool-specific output renderers in v2 (e.g., proof tree visualizations).
+- **Hupyy C# FV NuGet package name** — `Hupyy.CSharp.Verification` is a placeholder inferred from naming conventions. Confirm the actual published NuGet ID from cs-fv project source or project owner before writing the wrapper script's dummy restore csproj and example `.csproj` files. If not yet published to nuget.org, the Docker pre-seeding strategy needs adjustment (local path feed or bundle the analyzer DLL directly).
 
-**Gap 2: Transpiler output visualization**
-- **Issue:** No research found on best practices for displaying transpiler results (C++ → C, C++ → Rust). Unclear if side-by-side diff view, unified view, or separate tabs preferred.
-- **Mitigation:** Begin with separate tabs (original vs transpiled), add side-by-side diff if user feedback requests. Syntax highlighting differentiates from raw text.
+- **cs-fv contract attribute namespace and syntax** — `using CsFv.Contracts;` and `[Requires]`/`[Ensures]` are inferred from `cs-fv/USAGE.md` citation in ARCHITECTURE.md and architecture research notes. Confirm against `cs-fv/src/CsFv.Contracts/` directory before writing examples. Wrong namespace or attribute name means examples compile but produce no FV output.
 
-**Gap 3: Interactive CLI tool handling**
-- **Issue:** SSE recommended for unidirectional streaming, but if any of the 8 tools require user input during execution (interactive prompts), SSE won't work.
-- **Mitigation:** Validate tool interactivity during Phase 2. If interactive tools found, switch to WebSocket or pty.js (pseudo-terminal). Research flag: investigate tool interactivity requirements.
+- **cs-fv diagnostic ID format** — The exact diagnostic IDs (e.g., `CSFV001`, `HUPYY001`) matter for E2E assertions on the bank account failure case. Obtain from cs-fv source or USAGE.md. Without these, E2E tests can only assert on exit code, not on specific diagnostic messages.
 
-**Gap 4: Sandboxing strategy selection**
-- **Issue:** Research identifies multiple isolation options (gVisor, microVMs, Docker, Linux namespaces) but doesn't definitively recommend one for this specific use case (5-20 concurrent users, formal verification tools, Digital Ocean VPS).
-- **Mitigation:** Dedicated research during Phase 2 planning to evaluate gVisor (security vs performance), Docker (ease of deployment vs isolation strength), microVMs (isolation vs overhead). Trade-offs depend on threat model and deployment environment.
+- **Docker image size measurement** — Research recommends Alpine-based SDK for the builder stage and runtime-only in production. Actual compressed image size should be measured after Phase 1 and compared against the 800 MB warning threshold documented in PITFALLS.md. Adjust if Alpine is not viable for the build.
 
-**Gap 5: Tool-specific timeout/resource tuning**
-- **Issue:** Research recommends timeouts (30-60s) and resource limits but formal verification tools have widely varying performance characteristics (some fast, some exponential). Single timeout may be too restrictive or too lenient.
-- **Mitigation:** Start with conservative global timeout (60s for demo), instrument execution times per tool, adjust per-tool limits based on telemetry. Research flag: profile each tool's resource usage during integration.
+- **Execution timeout validation** — 180s is a conservative estimate. Measure actual `dotnet build` duration on example projects with pre-seeded NuGet cache in the container (not on the host) after Phase 1. Adjust `maxExecutionTimeMs` based on measured P95 timing with a 2x safety margin.
 
 ## Sources
 
-### Primary (HIGH confidence — official documentation and releases)
+### Primary (HIGH confidence)
+- First-party codebase: `scripts/hupyy-java-verify.sh`, `Dockerfile`, `packages/server/src/config/toolRegistry.ts`, `packages/server/src/services/executionService.ts` — Java FV integration reference pattern
+- First-party: `cs-fv/src/CsFv.Verification/Z3StrategyFactory.cs`, `cs-fv/src/CsFv.Verification/RealCvc5Runner.cs` — solver invocation pattern (library-first, CLI fallback)
+- First-party: `~/.nuget/packages/microsoft.z3/4.12.2/runtimes/` — confirmed no Linux native library (only `osx-x64`, `win-x64`)
+- [mcr.microsoft.com/dotnet/sdk — Microsoft Artifact Registry](https://mcr.microsoft.com/en-us/product/dotnet/sdk/about) — .NET 10 Noble image confirmed
+- [.NET Support Policy — dotnet.microsoft.com](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core) — LTS EOL dates: .NET 10 EOL Nov 2028, .NET 8/9 EOL Nov 2026
+- [dotnet build command — Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build) — `--tl:off`, `--verbosity`, `--no-restore`, exit codes
+- [NuGet Analyzer Conventions — Microsoft Learn](https://learn.microsoft.com/en-us/nuget/guides/analyzers-conventions) — `IncludeAssets=analyzers`, `PrivateAssets=all` pattern
+- [Default .NET container tags now use Ubuntu — Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/compatibility/containers/10.0/default-images-use-ubuntu) — Noble as default for .NET 10, Debian discontinued
+- [MSBuild Diagnostic Format — Microsoft Learn](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-diagnostic-format-for-tasks) — `File.cs(line,col): severity CODE: message` format
+- [Code Analysis in .NET — Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview) — Roslyn severity levels, Warning vs Error distinction
 
-**Stack:**
-- Node.js v24 LTS Release — https://nodejs.org/en/about/previous-releases
-- TypeScript Releases — https://github.com/microsoft/typescript/releases
-- Express 5 Release & Migration Guide — https://github.com/expressjs/express/releases, https://expressjs.com/en/guide/migrating-5.html
-- React 19.2 Release — https://react.dev/blog/2025/10/01/react-19-2
-- Vite 7 Release — https://vite.dev/blog/announcing-vite7
-- Node.js Child Process API — https://nodejs.org/api/child_process.html
-- Multer GitHub (Official Express middleware) — https://github.com/expressjs/multer
+### Secondary (MEDIUM confidence)
+- [NuGet/Home #8129](https://github.com/NuGet/Home/issues/8129) — NuGet cache concurrency race condition (confirmed open bug)
+- [dotnet/dotnet-docker #78](https://github.com/dotnet/dotnet-docker/issues/78), [#84](https://github.com/dotnet/dotnet-docker/issues/84) — non-root user NuGet permission failures in Docker
+- [dotnet/roslyn #16535](https://github.com/dotnet/roslyn/issues/16535) — `TreatWarningsAsErrors` vs `CodeAnalysisTreatWarningsAsErrors` behavior difference
+- cs-fv project: `cs-fv/USAGE.md`, `cs-fv/global.json`, `cs-fv/src/CsFv.Cli/CsFv.Cli.csproj` — CLI interface, build target, runtime target
+- [Roslyn Analyzers Overview — Microsoft Learn](https://learn.microsoft.com/en-us/visualstudio/code-quality/roslyn-analyzers-overview) — NuGet delivery, severity levels, IDE/CA diagnostic ID formats
+- [Nullable Reference Types — Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references) — C# nullable flow analysis for example design
 
-**Architecture:**
-- Node.js Child Process Documentation (v25.6.1) — https://nodejs.org/api/child_process.html
-- Unzipper npm package docs — https://www.npmjs.com/package/unzipper
-
-**Pitfalls (CVEs and Security Advisories):**
-- Critical vm2 Node.js Flaw (CVE-2026-22709, CVSS 9.8) — https://thehackernews.com/2026/01/critical-vm2-nodejs-flaw-allows-sandbox.html
-- Node.js January 2026 Security Releases — https://nodesource.com/blog/nodejs-security-release-january-2026
-- OWASP File Upload Cheat Sheet — https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html
-- Node.js async_hooks DoS Vulnerability — https://nodejs.org/en/blog/vulnerability/january-2026-dos-mitigation-async-hooks
-
-### Secondary (MEDIUM confidence — community consensus, multiple sources)
-
-**Stack:**
-- Express 5.0 Released (InfoQ analysis) — https://www.infoq.com/news/2025/01/express-5-released/
-- SSE vs WebSockets Comparison (SoftwareMill) — https://softwaremill.com/sse-vs-websockets-comparing-real-time-communication-protocols/
-- Fastify vs Express vs Hono Framework Comparison — https://medium.com/@arifdewi/fastify-vs-express-vs-hono-choosing-the-right-node-js-framework-for-your-project-da629adebd4e
-- shadcn/ui Official Website — https://ui.shadcn.com/
-
-**Features:**
-- Compiler Explorer (godbolt.org) — Feature inspection via WebFetch
-- GitHub: compiler-explorer/compiler-explorer — https://github.com/compiler-explorer/compiler-explorer
-- Rust Playground — https://play.rust-lang.org/
-- Uploadcare: File uploader UX best practices — https://uploadcare.com/blog/file-uploader-ux-best-practices/
-- UserGuiding: Progress trackers and indicators — https://userguiding.com/blog/progress-trackers-and-indicators
-- Evil Martians: Developer tools 2026 adoption — https://evilmartians.com/chronicles/six-things-developer-tools-must-have-to-earn-trust-and-adoption
-- Pulumi Developer Portal Gallery — https://www.pulumi.com/blog/developer-portal-gallery/
-- SaaSFrame: SaaS comparison page patterns — https://www.saasframe.io/categories/comparison-page
-
-**Architecture:**
-- Building real-time applications with WebSockets (Render) — https://render.com/articles/building-real-time-applications-with-websockets
-- Realtime at Scale with Node.js (Medium) — https://medium.com/@bhagyarana80/realtime-at-scale-with-node-js-websocket-sse-74fd7f3e79ed
-- How To Launch Child Processes in Node.js (DigitalOcean) — https://www.digitalocean.com/community/tutorials/how-to-launch-child-processes-in-node-js
-- Node.js File System Production Guide 2026 — https://thelinuxcode.com/nodejs-file-system-in-practice-a-production-grade-guide-for-2026/
-- How to Use WebSockets in React — https://oneuptime.com/blog/post/2026-01-15-websockets-react-real-time-applications/view
-- How To Work With Zip Files in Node.js (DigitalOcean) — https://www.digitalocean.com/community/tutorials/how-to-work-with-zip-files-in-node-js
-
-**Pitfalls:**
-- What is a Zip Bomb? (Mimecast) — https://www.mimecast.com/content/what-is-a-zip-bomb/
-- Attacks with Zip Files and Mitigations — https://thesecurityvault.com/attacks-with-zip-files-and-mitigations/
-- Zip Slip Path Traversal (pnpm Advisory) — https://github.com/pnpm/pnpm/security/advisories/GHSA-6pfh-p556-v868
-- Securing ZIP File Operations (Medium) — https://medium.com/@contactomyna/securing-zip-file-operations-understanding-and-preventing-path-traversal-attacks-74d79f696c46
-- Symlink Attacks: When File Operations Betray Your Trust — https://medium.com/@instatunnel/symlink-attacks-when-file-operations-betray-your-trust-986d5c761388
-- How to sandbox AI agents in 2026: MicroVMs, gVisor — https://northflank.com/blog/how-to-sandbox-ai-agents
-- 5 Tips for Cleaning Orphaned Node.js Processes — https://medium.com/@arunangshudas/5-tips-for-cleaning-orphaned-node-js-processes-196ceaa6d85e
-- Graceful Degradation: Handling Errors Without Disrupting UX — https://medium.com/@satyendra.jaiswal/graceful-degradation-handling-errors-without-disrupting-user-experience-fd4947a24011
-
-### Tertiary (LOW confidence — needs validation)
-
-- Real-time State Management in React Using WebSockets — https://moldstud.com/articles/p-real-time-state-management-in-react-using-websockets-boost-your-apps-performance (LOW confidence, needs validation during implementation)
+### Tertiary (LOW confidence — needs validation during Phase 3)
+- Hupyy C# FV NuGet package name (`Hupyy.CSharp.Verification`) — inferred from naming conventions, not confirmed
+- cs-fv contract attribute syntax (`[Requires]`/`[Ensures]`, `using CsFv.Contracts;`) — inferred from architecture research, must be confirmed from cs-fv source
+- Diagnostic ID format (`HFVCS001`) — illustrative placeholder; actual diagnostic IDs emitted by the Hupyy analyzer are unknown
 
 ---
-
-*Research completed: 2026-02-12*
+*Research completed: 2026-02-20*
 *Ready for roadmap: yes*

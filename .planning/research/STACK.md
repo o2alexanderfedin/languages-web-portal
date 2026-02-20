@@ -1,545 +1,288 @@
-# Technology Stack Research
+# Stack Research
 
-**Project:** Hapyy Languages Web Portal
-**Domain:** CLI-based formal verification demo web portal
-**Researched:** 2026-02-12
-**Overall Confidence:** HIGH
-
-## Executive Summary
-
-For a TypeScript + Node.js full-stack web portal with file upload, real-time CLI process streaming, and ephemeral project management, the recommended stack is:
-
-- **Runtime:** Node.js v24 LTS (Krypton) with TypeScript 5.9/6.0
-- **Backend Framework:** Express.js 5.x (newly released, production-ready)
-- **Frontend:** React 19.2 + Vite 7+ + Tailwind CSS + shadcn/ui
-- **Real-time Communication:** Server-Sent Events (SSE) for unidirectional stdout streaming (simpler than WebSocket for this use case)
-- **File Handling:** Multer for uploads, Archiver for creating zips, Unzipper/AdmZip for extracting zips
-- **Process Management:** Native Node.js child_process.spawn() with stream piping
-- **Temporary Storage:** tmp package for ephemeral directory management
-
-This stack prioritizes:
-1. **Stability:** LTS versions and production-proven libraries
-2. **TypeScript-first:** Strong typing throughout the stack
-3. **Developer Experience:** Modern tooling with hot reload and fast builds
-4. **Simplicity:** Minimal dependencies, avoiding over-engineering for 5-20 concurrent users
-5. **Deployment-ready:** Docker-compatible, suitable for Digital Ocean
+**Domain:** C# Formal Verification tool integration — .NET SDK + Roslyn analyzer added to existing Java FV portal
+**Researched:** 2026-02-20
+**Confidence:** HIGH (core .NET/Docker facts from official sources); MEDIUM (wrapper script pattern inferred from Java FV analogy + dotnet build docs)
 
 ---
 
-## Recommended Stack
+## Context: What Already Exists (Do NOT Re-research)
 
-### Core Technologies
+The portal already has a proven integration pattern from Java FV (v1.1):
 
-| Technology | Version | Purpose | Why Recommended | Confidence |
-|------------|---------|---------|-----------------|------------|
-| **Node.js** | v24 (Krypton) LTS | Runtime environment | Current Active LTS (released May 2025), 30-month support guarantee, production-stable. v22 (Jod) is acceptable if already deployed but v24 is preferred for new projects. | **HIGH** - Official Node.js documentation |
-| **TypeScript** | 5.9.3 (stable) or 6.0 beta | Type system | TypeScript 5.9.3 is current stable release. TypeScript 6.0 beta was announced Feb 2026 as the final JS-based release before TS 7.0 (Go rewrite). Use 5.9.3 for maximum stability, 6.0 beta if you want latest features. | **HIGH** - Official releases |
-| **Express.js** | 5.x | Backend web framework | Express 5.0.0 released Jan 2025 after 10 years, now production-ready with improved async error handling, security fixes (path-to-regexp 8.x), and automatic error forwarding. Mature ecosystem, 200M+ weekly downloads. Note: slightly slower than Express 4 in raw throughput but acceptable for 5-20 users. | **HIGH** - Official documentation and benchmarks |
-| **React** | 19.2.4 | Frontend UI library | Current stable (Jan 26, 2026), includes Activity component for conditional rendering, DoS mitigations, DevTools improvements. Ecosystem fully supports React 19. | **HIGH** - Official React documentation |
-| **Vite** | 7.x+ | Frontend build tool | Vite 7 is stable (Vite 8 in beta as of Feb 2026). 40x faster builds than CRA, first-class TypeScript support, HMR with state preservation, ESM-native. Use Vite 7 for stability or 8 beta for cutting-edge (uses Rolldown/Oxc). | **HIGH** - Official Vite releases |
+| Existing Capability | File | Notes |
+|---------------------|------|-------|
+| 3-stage Docker build | `Dockerfile` | Stage 1: node-builder, Stage 2: java-builder, Stage 3: eclipse-temurin:25-jre-noble production |
+| Wrapper script pattern | `scripts/hupyy-java-verify.sh` | `exec` replaces shell; `--input <path>` interface; validates inputs; collects files |
+| Tool registry entry | `packages/server/src/config/toolRegistry.ts` | `csharp-verification` entry already declared with `available: false` |
+| execa subprocess + SSE streaming | `packages/server/src/services/executionService.ts` | No changes needed; works with any CLI that writes to stdout/stderr |
 
-### Backend Framework & Middleware
-
-| Library | Version | Purpose | When to Use | Confidence |
-|---------|---------|---------|-------------|------------|
-| **Multer** | 1.4.5-lts.1 | Multipart file upload | Always - de facto standard for handling multipart/form-data in Node.js. Built on busboy for efficiency. Has TypeScript types via @types/multer. | **HIGH** - Express official middleware |
-| **Archiver** | Latest (7.x+) | ZIP file creation | Always - streaming-based zip creation for downloadable results. Low memory footprint, handles large files via streams. | **HIGH** - Widely adopted, 3M+ weekly downloads |
-| **Unzipper** or **AdmZip** | Latest | ZIP extraction | Always - for extracting uploaded zip files. Unzipper is stream-based (better for large files), AdmZip is simpler API (better for small files <100MB). Use Unzipper for this project. | **MEDIUM** - Multiple options available |
-| **cors** | Latest | CORS middleware | Always - enables cross-origin requests if frontend served separately | **HIGH** - Express standard |
-| **helmet** | Latest | Security headers | Always - sets security-related HTTP headers | **HIGH** - Express standard |
-| **express-rate-limit** | Latest | Rate limiting | Recommended - prevents abuse of file upload/CLI execution endpoints | **MEDIUM** - Best practice for public APIs |
-
-### Real-Time Communication
-
-| Technology | Purpose | Why Chosen | When NOT to Use | Confidence |
-|------------|---------|------------|-----------------|------------|
-| **Server-Sent Events (SSE)** | Streaming CLI stdout to browser | Simpler than WebSocket for unidirectional server-to-client streaming. Native HTTP/S, automatic reconnection, lower overhead. Use native Node.js implementation or `better-sse` library. | Don't use if you need bidirectional communication (client sending commands during execution). For this project, commands are initiated by HTTP POST, then stdout streams via SSE. | **HIGH** - Architecture pattern match |
-| **WebSocket (ws library)** | Alternative for bidirectional communication | If you need to support interactive CLI tools (user input during execution), use `ws` (low-level, 3KB per connection) instead of SSE. | Overkill for unidirectional stdout streaming. Adds complexity. | **MEDIUM** - Alternative path |
-| **Socket.IO** | Higher-level WebSocket wrapper | Only if you need automatic reconnection, room-based broadcasting, and fallback mechanisms. Much heavier (15KB per connection vs ws 3KB). | Overkill for this project's requirements. Use SSE or ws instead. | **HIGH** - Explicit anti-recommendation for this use case |
-
-**Recommendation:** Use **SSE** for streaming CLI stdout. It's the simplest solution that meets requirements.
-
-### Frontend Stack
-
-| Library | Version | Purpose | Why Recommended | Confidence |
-|---------|---------|---------|-----------------|------------|
-| **Tailwind CSS** | v4+ | Utility-first CSS | Industry standard for rapid UI development. v4 released 2025, smaller runtime, improved performance. | **HIGH** - Ecosystem standard |
-| **shadcn/ui** | Latest | Component library | Copy-paste components (not npm dependency), built on Radix UI + Tailwind. Full code ownership, customizable, accessible. Updated for React 19 and Tailwind v4. | **HIGH** - Best practice for modern React |
-| **Radix UI** | Latest | Headless UI primitives | Unstyled, accessible components. Dependency of shadcn/ui but can also be used directly. | **HIGH** - Accessibility foundation |
-| **React Router** or **TanStack Router** | Latest | Client-side routing | React Router is stable standard. TanStack Router is newer, type-safe alternative. Either works; use React Router for familiarity. | **MEDIUM** - Multiple good options |
-| **TanStack Query** | Latest | Server state management | Optional but recommended for managing API calls, caching, and invalidation. Especially useful for polling job status. | **MEDIUM** - Quality of life improvement |
-| **Zod** | Latest | Runtime validation | TypeScript-first schema validation for API requests/responses. Pairs well with Express and React Hook Form. | **HIGH** - Best practice for type-safe APIs |
-
-### Process & File Management
-
-| Library | Purpose | Implementation Notes | Confidence |
-|---------|---------|---------------------|------------|
-| **child_process.spawn()** | Execute CLI tools | Native Node.js module. Use spawn() not exec() because spawn() provides stream-based stdout/stderr access without buffering. Listen to 'data' events on stdout/stderr streams. | **HIGH** - Native Node.js API |
-| **tmp** | Ephemeral directories | Create temporary directories for uploaded projects. Configure cleanup policies: age-based expiration, size caps. Use `tmp.dir()` with `unsafeCleanup: true` for recursive deletion. | **HIGH** - 5.8K projects using it |
-| **fs.promises** | File system operations | Native Node.js module. Use promises API for async/await syntax. For writing CLI output to files before zipping. | **HIGH** - Native Node.js API |
-
-### Development Tools
-
-| Tool | Purpose | Configuration Notes | Confidence |
-|------|---------|---------------------|------------|
-| **ESLint** | Code linting | Use ESLint 9+ with flat config (eslint.config.js). Include @typescript-eslint/parser and @typescript-eslint/eslint-plugin. | **HIGH** - TypeScript standard |
-| **Prettier** | Code formatting | Integrate with ESLint via eslint-config-prettier (disables conflicting rules) and eslint-plugin-prettier. | **HIGH** - Ecosystem standard |
-| **tsx** | TypeScript execution | Development runtime for running TypeScript directly. Faster than ts-node. Use for dev scripts. | **MEDIUM** - Modern alternative to ts-node |
-| **Vitest** | Testing framework | Vite-native test runner. Fast, ESM-first, compatible with Jest API. Use for both unit and integration tests. | **HIGH** - Vite ecosystem standard |
-| **Playwright** | E2E testing | Browser automation for testing full workflows (upload → stream → download). Better DX than Selenium. | **MEDIUM** - Best practice for E2E |
-| **Docker** | Containerization | Multi-stage builds: build stage (compile TS) + production stage (Node 24 Alpine, compiled JS only). Use node:24-alpine base image. | **HIGH** - Production deployment standard |
+This research covers ONLY the new additions required for v1.3.
 
 ---
 
-## Installation
+## Recommended Stack — New Additions Only
 
-### Backend
+### Core Technologies (New)
 
-```bash
-# Core dependencies
-npm install express@5 cors helmet express-rate-limit
-npm install multer archiver unzipper
-npm install zod
+| Technology | Version | Purpose | Why Recommended |
+|------------|---------|---------|-----------------|
+| .NET SDK | **10.0** (`mcr.microsoft.com/dotnet/sdk:10.0-noble`) | `dotnet build` runtime that triggers Roslyn analyzers | .NET 10 is the current LTS (released Nov/Dec 2025, supported until Nov 2028). .NET 8 EOL Nov 2026 — only 9 months away. .NET 9 STS also EOL Nov 2026. .NET 10 gives maximum runway. Ubuntu Noble is the new default for .NET 10 Docker images (Debian dropped). The existing production stage uses `eclipse-temurin:25-jre-noble` (Ubuntu Noble) — same OS, so COPY of `/usr/share/dotnet` between stages is safe. |
+| `dotnet build` CLI | Built into .NET 10 SDK | Trigger Roslyn analyzer execution against user-uploaded C# source | Roslyn analyzers run automatically as part of `dotnet build`. No separate invocation needed. Exits with code 1 when analyzer reports error-severity diagnostics. `--nologo`, `--tl:off`, `--verbosity minimal` flags clean up output for SSE streaming. |
+| NuGet `PackageReference` (csproj) | SDK-included | Reference the Hupyy C# FV analyzer package inside the generated temp `.csproj` | Standard Roslyn analyzer distribution mechanism. With `IncludeAssets=analyzers` and `PrivateAssets=all`, the package activates during build without becoming a runtime output dependency. |
 
-# Real-time streaming (choose one)
-npm install better-sse  # For SSE approach (recommended)
-# npm install ws @types/ws  # For WebSocket approach (if needed)
+### Supporting Environment Variables and Flags
 
-# Temporary file management
-npm install tmp
+| Addition | Value | Purpose | When Required |
+|----------|-------|---------|---------------|
+| `DOTNET_NOLOGO` env var | `1` | Suppress .NET welcome banner in streaming output | Always — keeps SSE console output clean for users |
+| `DOTNET_CLI_TELEMETRY_OPTOUT` env var | `1` | Prevent network calls to Microsoft telemetry during `dotnet build` | Always in Docker — avoids latency and DNS failures in isolated containers |
+| `NUGET_PACKAGES` env var | `/usr/local/share/nuget/packages` | Pin global NuGet cache to a known path for Docker layer pre-warming | Set at Docker build time so `dotnet restore` caches the analyzer package into an image layer; not a per-user home directory |
+| `--tl:off` dotnet flag | (flag) | Disable Terminal Logger (fancy ANSI progress bars emitted by .NET 8+) | Required in non-TTY contexts. Without it, .NET 8+ emits ANSI escape codes that corrupt SSE text output in the browser console. |
+| `--verbosity minimal` dotnet flag | (flag) | Reduce MSBuild output to warnings and errors only | Default `normal` verbosity emits dozens of target evaluation lines irrelevant to verification results |
+| `--no-restore` dotnet flag | (flag) | Skip NuGet restore (use pre-warmed cache from image layer) | Use in the wrapper script — avoids network calls at user-request time; packages must be pre-warmed during `docker build` |
+| `CodeAnalysisTreatWarningsAsErrors=true` csproj property | (MSBuild property) | Analyzer-reported diagnostics cause exit code 1; ordinary compiler warnings do not | Use this instead of `TreatWarningsAsErrors=true` — the latter also escalates unrelated compiler warnings in user code, causing false failures |
 
-# TypeScript and types
-npm install -D typescript @types/node @types/express @types/multer
-npm install -D @types/cors @types/tmp
+### Development Tools (No New npm Packages Needed)
 
-# Development tools
-npm install -D tsx nodemon
-npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
-npm install -D prettier eslint-config-prettier eslint-plugin-prettier
-npm install -D vitest @vitest/ui
+| Tool | Purpose | Notes |
+|------|---------|-------|
+| `bash` wrapper script `hupyy-csharp-verify.sh` | Bridge `--input <path>` portal interface to `dotnet build` | Same pattern as `hupyy-java-verify.sh`; generates temp `.csproj`, invokes `dotnet build`, cleans up |
+| `mktemp -d` | Create isolated temp build directory per invocation | Prevents cross-contamination between concurrent portal users; each build gets its own `.csproj` + output dir |
+| `trap 'rm -rf "$TEMP_DIR"' EXIT` | Guarantee temp directory cleanup on script exit (success or failure) | Critical — portal sessions are ephemeral; DigitalOcean disk space is finite |
+
+---
+
+## Docker Integration Design
+
+The existing 3-stage Dockerfile becomes **4-stage**. A new `.NET SDK pre-warmer` stage downloads the SDK and pre-warms the analyzer NuGet package into a named cache layer. Only the dotnet binary and the package cache are COPY'd into the production stage — not the full SDK (~800MB).
+
+### New Stage: `dotnet-warmer`
+
+```dockerfile
+# Stage 3: .NET SDK NuGet pre-warmer (new for v1.3)
+# Purpose: Download the Hupyy C# FV analyzer NuGet package into a named
+# Docker layer so dotnet build never makes network calls at request time.
+FROM mcr.microsoft.com/dotnet/sdk:10.0-noble AS dotnet-warmer
+
+ENV DOTNET_NOLOGO=1
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+ENV NUGET_PACKAGES=/usr/local/share/nuget/packages
+
+# Generate a minimal dummy project referencing the analyzer,
+# restore it (downloads the package into $NUGET_PACKAGES),
+# discard the project. Only the package cache layer is retained.
+RUN mkdir /tmp/dummy-csharp && \
+    cat > /tmp/dummy-csharp/dummy.csproj <<'EOF'
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Hupyy.CSharp.Verification" Version="*">
+      <IncludeAssets>analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
+EOF
+RUN echo '<cs />' > /tmp/dummy-csharp/dummy.cs && \
+    dotnet restore /tmp/dummy-csharp/dummy.csproj && \
+    rm -rf /tmp/dummy-csharp
 ```
 
-### Frontend
+### Changes to Existing Production Stage
 
-```bash
-# Create Vite project
-npm create vite@latest frontend -- --template react-ts
+Add after the Java FV jar COPY, before the Node.js install:
 
-cd frontend
+```dockerfile
+# Copy .NET runtime from dotnet-warmer (not the full SDK — runtime only)
+COPY --from=dotnet-warmer /usr/share/dotnet /usr/share/dotnet
+RUN ln -sf /usr/share/dotnet/dotnet /usr/local/bin/dotnet
 
-# Core dependencies
-npm install react@19 react-dom@19 react-router-dom
-npm install @tanstack/react-query zod
+# Copy pre-warmed NuGet package cache (analyzer package already downloaded)
+COPY --from=dotnet-warmer /usr/local/share/nuget/packages /usr/local/share/nuget/packages
 
-# UI dependencies
-npm install tailwindcss@latest postcss autoprefixer
-npm install @radix-ui/react-dialog @radix-ui/react-dropdown-menu  # etc.
-
-# Development tools (should be included by Vite template)
-npm install -D @vitejs/plugin-react
-npm install -D eslint eslint-plugin-react-hooks eslint-plugin-react-refresh
-npm install -D prettier
-npm install -D vitest @vitest/ui
-npm install -D playwright @playwright/test
+# Install C# FV wrapper script
+COPY languages-web-portal/scripts/hupyy-csharp-verify.sh /usr/local/bin/hupyy-csharp-verify
+RUN chmod +x /usr/local/bin/hupyy-csharp-verify
 ```
 
-### Monorepo Option (Optional)
+**Why COPY the full dotnet from SDK image rather than installing the runtime package?**
+The production stage is Ubuntu Noble (same as `dotnet/sdk:10.0-noble`). COPY from the SDK image gives both the runtime and the `dotnet` host binary needed to invoke `dotnet build`. Installing `dotnet-runtime-10.0` via apt requires configuring Microsoft's apt feed — extra curl/gpg steps that add image-build complexity and a dependency on Microsoft's apt infrastructure.
 
-If you want backend + frontend in one repo:
+---
+
+## Wrapper Script Pattern
+
+The `hupyy-csharp-verify` script follows the identical structure as `hupyy-java-verify.sh`:
 
 ```bash
-# Use npm workspaces
-# package.json root:
+#!/bin/bash
+set -euo pipefail
+
+# Wrapper for C# FV — bridges portal interface to dotnet build + Roslyn analyzer
+# Interface: hupyy-csharp-verify --input <projectPath>
+# Invokes:   dotnet build <temp-project> (with Hupyy.CSharp.Verification analyzer)
+
+DOTNET_BIN="${DOTNET_CMD:-/usr/local/bin/dotnet}"
+ANALYZER_PKG="${CSHARP_FV_PACKAGE:-Hupyy.CSharp.Verification}"
+ANALYZER_VER="${CSHARP_FV_VERSION:-*}"
+
+export DOTNET_NOLOGO=1
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+export NUGET_PACKAGES="${NUGET_PACKAGES:-/usr/local/share/nuget/packages}"
+
+# Parse arguments (same contract as hupyy-java-verify)
+if [[ "$#" -ne 2 ]] || [[ "$1" != "--input" ]]; then
+  echo "Usage: hupyy-csharp-verify --input <projectPath>" >&2
+  exit 1
+fi
+
+PROJECT_PATH="$2"
+
+if [[ ! -d "$PROJECT_PATH" ]]; then
+  echo "Error: Project path does not exist: $PROJECT_PATH" >&2
+  exit 1
+fi
+
+if ! find "$PROJECT_PATH" -name "*.cs" -type f | grep -q .; then
+  echo "Error: No .cs files found in $PROJECT_PATH" >&2
+  echo "C# verification requires at least one .cs source file" >&2
+  exit 1
+fi
+
+# Create isolated temp dir; always clean up on exit
+TEMP_DIR="$(mktemp -d)"
+trap 'rm -rf "$TEMP_DIR"' EXIT
+
+# Generate .csproj that compiles user's .cs files with the analyzer
+cat > "$TEMP_DIR/verify.csproj" <<EOF
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$PROJECT_PATH/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="$ANALYZER_PKG" Version="$ANALYZER_VER">
+      <IncludeAssets>analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
+EOF
+
+# Execute dotnet build — stdout/stderr stream automatically via execa (SSE picks it up)
+# exec replaces the shell process for clean signal propagation (same as Java FV wrapper)
+exec "$DOTNET_BIN" build "$TEMP_DIR/verify.csproj" \
+  --tl:off \
+  --verbosity minimal \
+  --no-restore \
+  --output "$TEMP_DIR/out"
+```
+
+**Key design decisions in wrapper:**
+
+| Decision | Rationale |
+|----------|-----------|
+| `exec` replaces shell | Same clean signal handling as Java FV wrapper; no zombie shell process |
+| `--no-restore` | Uses pre-warmed NuGet cache from Docker image layer; no network at request time |
+| `CodeAnalysisTreatWarningsAsErrors=true` | Analyzer diagnostics escalate to error/exit-1; ordinary C# compiler warnings in user code do not block build |
+| `<Compile Include="$PROJECT_PATH/**/*.cs" />` | Collects all uploaded .cs files; no solution file required from user |
+| `--output "$TEMP_DIR/out"` | Build artifacts stay in temp dir; auto-cleaned on exit via `trap` |
+| `--tl:off` | Disables ANSI terminal logger (required for non-TTY execa subprocess); .NET 8+ emits ANSI by default |
+| `TEMP_DIR` per invocation | Concurrent portal users each get an isolated build context; no cross-contamination |
+
+---
+
+## toolRegistry.ts Change Required
+
+The existing `csharp-verification` entry already exists. Two values change:
+
+```typescript
+// Current (available: false, 60s timeout):
 {
-  "workspaces": ["backend", "frontend"]
+  id: 'csharp-verification',
+  command: '/usr/local/bin/hupyy-csharp-verify',
+  defaultArgs: ['--input'],
+  maxExecutionTimeMs: 60000,
+  available: false,
+}
+
+// Required for v1.3 (available: true, 180s timeout):
+{
+  id: 'csharp-verification',
+  command: process.env.CSHARP_FV_CMD ?? '/usr/local/bin/hupyy-csharp-verify',
+  defaultArgs: ['--input'],
+  maxExecutionTimeMs: 180000,
+  available: true,
 }
 ```
+
+**Why 180000ms (3 minutes)?** `dotnet build` with a Roslyn analyzer involves MSBuild startup, C# compilation, and analyzer execution. Even with pre-warmed NuGet packages, first invocation on a cold Docker container typically takes 60-120 seconds due to MSBuild initialization overhead. Java FV uses 120s; dotnet build is heavier. 180s gives a safety margin.
 
 ---
 
 ## Alternatives Considered
 
-| Category | Recommended | Alternative | When to Use Alternative | Confidence |
-|----------|-------------|-------------|------------------------|------------|
-| **Backend Framework** | Express 5 | **Fastify** | If raw performance is critical (Fastify handles 40K+ req/s vs Express ~30K). But Express has larger ecosystem and your use case (5-20 users) won't hit limits. | **HIGH** |
-| **Backend Framework** | Express 5 | **Hono** | If deploying to edge (Cloudflare Workers, Deno Deploy). Hono is cross-runtime and lightweight. Not needed for Digital Ocean VPS. | **MEDIUM** |
-| **Backend Framework** | Express 5 | **NestJS** | If building large-scale enterprise application with 100+ endpoints. NestJS enforces architecture but adds complexity. Overkill for this project. | **HIGH** |
-| **Real-time** | SSE | **WebSocket (ws)** | If CLI tools require interactive input (user types during execution). Your tools are non-interactive, so SSE is simpler. | **HIGH** |
-| **Real-time** | SSE | **Socket.IO** | Never for this project. Too heavy, unnecessary features. Only use if you need room-based broadcasting to multiple users. | **HIGH** |
-| **ZIP Creation** | Archiver | **JSZip** | If you need to create zips in browser (client-side). JSZip works in browser + Node. Archiver is Node-only but better streaming. | **MEDIUM** |
-| **ZIP Extraction** | Unzipper | **AdmZip** | If all uploaded zips are small (<100MB). AdmZip has simpler API but loads entire zip into memory. Unzipper is stream-based. | **MEDIUM** |
-| **Frontend Framework** | React 19 | **Vue 3** or **Svelte** | Personal preference. React has largest ecosystem and job market. Vue is gentler learning curve. Svelte has smallest bundle size. | **MEDIUM** |
-| **Build Tool** | Vite 7 | **Webpack** | Never for new projects. Vite is 40x faster and has better DX. Only use Webpack if maintaining legacy project. | **HIGH** |
-| **CSS Framework** | Tailwind CSS | **vanilla CSS** or **CSS Modules** | If you prefer full control and don't mind writing more CSS. Tailwind accelerates development. | **MEDIUM** |
-| **Component Library** | shadcn/ui | **Material UI (MUI)** | If you need pre-built complex components (data grids, date pickers). MUI is heavier but has more batteries included. shadcn/ui is lighter and more customizable. | **MEDIUM** |
-| **Component Library** | shadcn/ui | **Chakra UI** | If you prefer component props API over Tailwind utility classes. Chakra is more opinionated. | **LOW** |
-| **Temp Directory** | tmp | **fs.mkdtemp** | If you want zero dependencies and don't mind manual cleanup logic. `tmp` handles cleanup automatically. | **MEDIUM** |
+| Recommended | Alternative | Why Not |
+|-------------|-------------|---------|
+| `dotnet/sdk:10.0-noble` | `dotnet/sdk:8.0-noble` (.NET 8 LTS) | .NET 8 EOL Nov 2026 — 9 months away at time of research; .NET 10 LTS gives 3 more years |
+| `dotnet/sdk:10.0-noble` | `dotnet/sdk:9.0` (.NET 9 STS) | STS, EOL Nov 2026 — same short runway as .NET 8, no advantage |
+| Generate temp `.csproj` in wrapper | Require user-provided `.csproj` | Users upload raw .cs files; requiring a csproj breaks "zero local setup" value proposition |
+| `<Compile Include=".../**/*.cs" />` glob in csproj | `dotnet-script` / Roslyn scripting API | `dotnet build` is the canonical Roslyn analyzer trigger; custom host would require reimplementing MSBuild integration without benefit |
+| COPY dotnet binary from SDK image | `apt-get install dotnet-runtime-10.0` | Requires Microsoft apt feed configuration in production stage (extra curl/gpg steps); COPY from official MCR image is simpler |
+| Pre-warm NuGet in Docker build stage | Download NuGet at request time | Network calls inside `dotnet build` during user requests add 5-30s latency and can fail if nuget.org is unreachable |
+| `CodeAnalysisTreatWarningsAsErrors=true` | `TreatWarningsAsErrors=true` | The latter escalates all compiler warnings including unrelated ones in user code, causing false build failures |
 
 ---
 
-## What NOT to Use
+## What NOT to Add
 
-| Avoid | Why | Use Instead | Confidence |
-|-------|-----|-------------|------------|
-| **Create React App (CRA)** | Deprecated by React team in 2023. Slow builds (40x slower than Vite), outdated dependencies. | **Vite** or **Next.js** (but Next.js is overkill for this project) | **HIGH** |
-| **ts-node** (for development) | Slow. Transpiles on every run. | **tsx** - faster, better caching | **MEDIUM** |
-| **body-parser** (standalone) | Now built into Express 5. Redundant dependency. | **express.json()** and **express.urlencoded()** middleware (built-in) | **HIGH** |
-| **Express 4** | Superseded by Express 5 (Jan 2025). Missing async error handling improvements. | **Express 5** | **HIGH** |
-| **request** (HTTP client) | Deprecated since 2020. | **node-fetch** or **axios** (if you need HTTP client for external APIs) | **HIGH** |
-| **Socket.IO** (for this project) | Overkill. 5x larger memory footprint than ws, unnecessary features for unidirectional streaming. | **SSE** (simpler) or **ws** (if bidirectional needed) | **HIGH** |
-| **PM2** (in Docker) | Docker already provides process management and restarts. Adding PM2 is redundant. | **Docker restart policies** (restart: unless-stopped) | **MEDIUM** |
-| **Webpack** | Slow builds, complex configuration. | **Vite** | **HIGH** |
-| **Bootstrap** | Dated design language, jQuery legacy, heavier than modern alternatives. | **Tailwind CSS + shadcn/ui** | **MEDIUM** |
-| **Gulp/Grunt** | Task runners from 2014. Replaced by npm scripts and build tools. | **npm scripts** + **Vite** | **HIGH** |
-| **Mocha/Chai** | Older testing frameworks. Vitest has better TypeScript support and speed. | **Vitest** | **MEDIUM** |
+| Avoid | Why | Use Instead |
+|-------|-----|-------------|
+| `dotnet-sdk` via `apt-get` in production stage | Requires Microsoft apt repo setup (extra complexity); apt feed availability is an external dependency | COPY `/usr/share/dotnet` from `dotnet/sdk:10.0-noble` stage |
+| Full `.NET SDK` image as new production base | Would replace `eclipse-temurin:25-jre-noble` — Java FV requires the JRE; can't use both bases | Add dotnet binary into existing Java-based production stage |
+| `shell: true` in execa for dotnet invocation | Command injection risk (documented security constraint in `executionService.ts`) | No change needed; dotnet binary path is not user-controlled |
+| `dotnet-script` or `csi.exe` | Different execution model from Roslyn analyzer build; inconsistent with how C# FV works | `dotnet build` with generated csproj |
+| `Microsoft.Build` / Buildalyzer in Node.js server | Adds significant native dependency surface to the TypeScript server | bash wrapper script — keeps pattern identical to Java FV |
+| Separate `dotnet restore` call in wrapper script | Makes wrapper stateful and slower (two child processes) | Pre-warm in Docker image; `--no-restore` in wrapper |
+| Roslyn APIs directly via Node.js FFI | No mature FFI binding for Roslyn; Microsoft.CodeAnalysis is .NET-only | `dotnet build` CLI invocation |
 
 ---
 
-## Stack Patterns by Variant
+## Version Compatibility
 
-### Monorepo Pattern
-
-**If you want backend + frontend in one repository:**
-
-```
-languages-web-portal/
-├── backend/
-│   ├── src/
-│   ├── package.json
-│   ├── tsconfig.json
-├── frontend/
-│   ├── src/
-│   ├── package.json
-│   ├── tsconfig.json
-├── package.json (workspace root)
-├── docker-compose.yml
-└── .github/workflows/
-```
-
-- Use **npm workspaces** (native, no tools needed)
-- Shared TypeScript types in `backend/src/types` exported to frontend
-- Single Docker Compose with backend + frontend services
-- Pros: Atomic commits, shared types, unified CI/CD
-- Cons: Larger repo, tighter coupling
-
-### Separate Repos Pattern
-
-**If you want backend and frontend in separate repositories:**
-
-```
-languages-web-portal-backend/
-└── (backend code)
-
-languages-web-portal-frontend/
-└── (frontend code)
-```
-
-- Separate package.json, separate deployments
-- Share types via npm package or API schema (OpenAPI)
-- Independent versioning and CI/CD
-- Pros: Team separation, independent deploy cadence
-- Cons: Type sync overhead, more repos to manage
-
-**Recommendation for this project:** **Monorepo** - you're solo developer, shared types are valuable, simpler deployment.
+| Component | Requirement | Compatible With | Notes |
+|-----------|-------------|-----------------|-------|
+| `mcr.microsoft.com/dotnet/sdk:10.0-noble` | Ubuntu 24.04 "Noble Numbat" | `eclipse-temurin:25-jre-noble` production base | Same OS — COPY of `/usr/share/dotnet` is safe; same libc version |
+| `net10.0` TargetFramework in temp csproj | .NET 10 SDK | SDK `10.0-noble` image | Must match SDK installed in Docker stage; mismatching causes "framework not found" error |
+| `TreatWarningsAsErrors=false` + `CodeAnalysisTreatWarningsAsErrors=true` | .NET 5+ | Any .NET SDK version | `CodeAnalysisTreatWarningsAsErrors` is the analyzer-specific override; available since .NET 5 |
+| `--tl:off` flag | .NET 8 SDK+ | `10.0` | Not available in .NET 7 or earlier; required for non-TTY processes to suppress ANSI escape codes |
+| `--no-restore` flag | All .NET SDK versions | `10.0` | Works when NUGET_PACKAGES dir already contains the required packages |
+| `IncludeAssets=analyzers`, `PrivateAssets=all` | NuGet PackageReference | All .NET SDK versions | Standard convention for analyzer-only packages per NuGet Analyzer Conventions docs |
 
 ---
 
-## Version Compatibility Matrix
+## Sources
 
-| Package | Version | Compatible With | Notes |
-|---------|---------|-----------------|-------|
-| Node.js | v24 LTS | TypeScript 5.9+, Express 5.x | Recommended for production |
-| Node.js | v22 LTS | TypeScript 5.9+, Express 5.x | Acceptable if already deployed |
-| TypeScript | 5.9.3 | All listed packages | Current stable |
-| TypeScript | 6.0 beta | All listed packages | Beta release, testing phase |
-| Express | 5.x | Node.js 18+ | Requires migration from Express 4 |
-| React | 19.2.4 | Vite 7+, TypeScript 5+ | Current stable |
-| Vite | 7.x | React 19, TypeScript 5+ | Production-ready |
-| Vite | 8.x beta | React 19, TypeScript 5+ | Beta with Rolldown/Oxc |
-| Tailwind CSS | v4 | Vite 7+, PostCSS 8 | Latest, smaller runtime |
-| shadcn/ui | Latest | React 19, Tailwind v4, Radix UI | Updated for latest dependencies |
-| ESLint | 9.x | TypeScript 5+ | Requires flat config migration |
-
-### Known Compatibility Issues
-
-- **Express 5 + @types/express**: Ensure @types/express version matches Express 5. Some types may lag behind.
-- **ESLint 9**: Plugin ecosystem still catching up to flat config. Some plugins may not support ESLint 9 yet. Check plugin compatibility before upgrading.
-- **Tailwind v4**: PostCSS configuration changed. Use `@theme` directive instead of tailwind.config.js.
+- [mcr.microsoft.com/dotnet/sdk — Microsoft Artifact Registry](https://mcr.microsoft.com/en-us/product/dotnet/sdk/about) — Image tag `10.0-noble` confirmed (HIGH confidence)
+- [Default .NET container tags now use Ubuntu — Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/compatibility/containers/10.0/default-images-use-ubuntu) — Noble as default, Debian discontinued for .NET 10 (HIGH confidence, official docs)
+- [dotnet build command — Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-build) — `--tl:off`, `--nologo`, `--no-restore`, `--verbosity minimal`, exit codes documented (HIGH confidence, updated 2025-12-17)
+- [.NET Compiler Platform Analyzer Formats for NuGet — Microsoft Learn](https://learn.microsoft.com/en-us/nuget/guides/analyzers-conventions) — `IncludeAssets=analyzers`, `PrivateAssets=all` pattern (HIGH confidence, official docs)
+- [.NET Support Policy — dotnet.microsoft.com](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core) — .NET 10 LTS EOL Nov 2028, .NET 8/9 EOL Nov 2026 (HIGH confidence)
+- [.NET 10.0 Container Images Now Available — dotnet/dotnet-docker Discussion #6801](https://github.com/dotnet/dotnet-docker/discussions/6801) — GA confirmed (HIGH confidence)
+- [TreatWarningsAsErrors vs CodeAnalysisTreatWarningsAsErrors — dotnet/roslyn Issue #16535](https://github.com/dotnet/roslyn/issues/16535) — Behavior distinction for analyzer diagnostics (MEDIUM confidence, GitHub issue)
+- Existing `Dockerfile` and `scripts/hupyy-java-verify.sh` in this repo — wrapper script and Docker stage pattern basis (HIGH confidence, first-party)
 
 ---
 
-## Production Deployment Configuration
-
-### Docker Multi-Stage Build
-
-**Dockerfile (Backend)**
-
-```dockerfile
-# Build stage
-FROM node:24-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build  # Compile TypeScript to /dist
-
-# Production stage
-FROM node:24-alpine
-WORKDIR /app
-
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
-
-# Copy compiled code and production dependencies
-COPY --from=builder /app/dist ./dist
-COPY package*.json ./
-RUN npm ci --production
-
-# Security: run as non-root
-USER nodejs
-
-EXPOSE 3000
-CMD ["node", "dist/index.js"]
-```
-
-**Dockerfile (Frontend)**
-
-```dockerfile
-# Build stage
-FROM node:24-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build  # Vite build to /dist
-
-# Production stage (serve via nginx)
-FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-### Digital Ocean Deployment
-
-**Droplet Size:**
-- Start with **1GB RAM / 1 CPU** ($6/month) for 5-20 users
-- Upgrade to **2GB RAM / 2 CPU** ($12/month) if running multiple CLI processes concurrently
-
-**Services:**
-- Backend: Node.js app on port 3000
-- Frontend: Nginx serving static files on port 80/443
-- Reverse proxy: Nginx forwarding `/api/*` to backend
-
-**Environment Variables:**
-```bash
-NODE_ENV=production
-PORT=3000
-UPLOAD_LIMIT=50mb
-TMP_DIR=/tmp/hapyy-projects
-MAX_CONCURRENT_JOBS=5
-CORS_ORIGIN=https://yourdomain.com
-```
-
----
-
-## Security Considerations
-
-### File Upload Security
-
-1. **File size limits:** Use Multer limits (max 50MB recommended)
-2. **File type validation:** Whitelist .zip only, validate magic bytes
-3. **Zip bomb protection:** Limit extraction size, timeout extraction after 30s
-4. **Path traversal:** Sanitize filenames in uploaded zips, reject `../` paths
-5. **Temporary file cleanup:** Auto-delete project directories after 1 hour or on job completion
-
-### Process Execution Security
-
-1. **Command injection:** Never interpolate user input into shell commands. Use spawn() with argument array.
-2. **Resource limits:** Set timeouts (5 min max per CLI execution), memory limits via Docker
-3. **Sandboxing:** Consider running CLI tools in Docker containers (container-in-container) for isolation
-4. **Rate limiting:** Max 10 job submissions per IP per hour
-
-### Network Security
-
-1. **CORS:** Whitelist frontend origin only
-2. **Helmet:** Enable CSP, HSTS, X-Frame-Options
-3. **HTTPS:** Use Let's Encrypt SSL certificate (free via Certbot)
-4. **Rate limiting:** Apply to upload and execute endpoints
-
----
-
-## Performance Optimization
-
-### Backend
-
-- **Streaming:** Use stream-based processing for files (Archiver, Unzipper) to keep memory low
-- **Concurrency:** Queue CLI jobs if >5 concurrent executions (use `p-queue` library)
-- **Caching:** Cache CLI tool binaries in Docker image, don't download at runtime
-- **Compression:** Enable gzip middleware for API responses
-
-### Frontend
-
-- **Code splitting:** Vite automatically splits by route
-- **Lazy loading:** Use React.lazy() for heavy components (file preview)
-- **Bundle size:** shadcn/ui is tree-shakeable, only bundle used components
-- **CDN:** Serve static assets from Digital Ocean Spaces (S3-compatible) if needed
-
-### Database (Optional)
-
-This project doesn't require a database (ephemeral workloads), but if you add job history:
-
-- **SQLite:** Simplest, file-based, no separate server needed. Use `better-sqlite3` library.
-- **PostgreSQL:** If you need multi-user job tracking, persistence. Deploy via Digital Ocean Managed Database.
-
----
-
-## Monitoring & Logging
-
-### Logging
-
-- **Backend:** Use `pino` (fast, structured JSON logs)
-- **Frontend:** Use `console.error()` with error boundaries, send to backend via `/api/errors` endpoint
-- **Docker:** Logs to stdout/stderr, collected by Docker logs
-
-### Monitoring
-
-- **Health checks:** Add `/health` endpoint (GET /api/health returns 200 OK)
-- **Metrics:** Optional - Prometheus + Grafana if you want graphs
-- **Uptime:** UptimeRobot (free, pings /health every 5 minutes)
-- **Errors:** Sentry (optional, tracks frontend + backend errors)
-
----
-
-## CI/CD Pipeline
-
-### GitHub Actions
-
-```yaml
-name: CI/CD
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run test
-      - run: npm run build
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to Digital Ocean
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DO_HOST }}
-          username: ${{ secrets.DO_USER }}
-          key: ${{ secrets.DO_SSH_KEY }}
-          script: |
-            cd /opt/hapyy
-            git pull
-            docker compose build
-            docker compose up -d
-```
-
----
-
-## Migration Paths
-
-### If Starting from Express 4
-
-See [Express 5 Migration Guide](https://expressjs.com/en/guide/migrating-5.html). Key changes:
-- `req.acceptsCharset()` → `req.acceptsCharsets()`
-- `res.json()` rejects non-objects (use `res.send()` for primitives)
-- Regex route patterns now use path-to-regexp v8 (security improvement)
-
-### If Starting from Create React App
-
-1. Create new Vite project: `npm create vite@latest -- --template react-ts`
-2. Copy `src/` components
-3. Update imports: `import.meta.env` instead of `process.env`
-4. Remove `react-scripts` dependencies
-5. Update `package.json` scripts to use `vite` commands
-
----
-
-## Sources & References
-
-### High Confidence (Official Documentation & Releases)
-
-- [Node.js v24 LTS Release](https://nodejs.org/en/about/previous-releases) - Official Node.js releases page
-- [TypeScript Releases](https://github.com/microsoft/typescript/releases) - Official TypeScript GitHub releases
-- [Express 5 Release](https://github.com/expressjs/express/releases) - Official Express.js releases
-- [Express 5 Migration Guide](https://expressjs.com/en/guide/migrating-5.html) - Official migration documentation
-- [React 19.2 Release](https://react.dev/blog/2025/10/01/react-19-2) - Official React blog
-- [Vite 7 Release](https://vite.dev/blog/announcing-vite7) - Official Vite blog
-- [Socket.IO v4 Documentation](https://socket.io/docs/v4/) - Official Socket.IO docs
-- [Node.js Child Process API](https://nodejs.org/api/child_process.html) - Official Node.js documentation
-- [Multer GitHub](https://github.com/expressjs/multer) - Official Express middleware
-
-### Medium Confidence (Community & Comparison Guides)
-
-- [Best TypeScript Backend Frameworks in 2026](https://encore.dev/articles/best-typescript-backend-frameworks) - Framework comparison
-- [Express 5.0 Released, Focuses on Stability and Security](https://www.infoq.com/news/2025/01/express-5-released/) - InfoQ analysis
-- [SSE vs WebSockets: Comparing Real-Time Communication Protocols](https://softwaremill.com/sse-vs-websockets-comparing-real-time-communication-protocols/) - Protocol comparison
-- [Archiver vs JSZip vs AdmZip](https://npm-compare.com/adm-zip,archiver,jszip,zip-local) - Library comparison
-- [Fastify vs Express vs Hono: Choosing the Right Node.js Framework](https://medium.com/@arifdewi/fastify-vs-express-vs-hono-choosing-the-right-node-js-framework-for-your-project-da629adebd4e) - Framework comparison
-- [React + Vite + TypeScript Best Practices 2026](https://medium.com/@robinviktorsson/complete-guide-to-setting-up-react-with-typescript-and-vite-2025-468f6556aaf2) - Setup guide
-- [shadcn/ui Official Website](https://ui.shadcn.com/) - Component library documentation
-- [ESLint 9 Flat Config Tutorial](https://medium.com/@madhan.gannarapu/how-to-set-up-eslint-9-with-prettier-in-node-js-flat-config-typescript-0eb1755f83cd) - Configuration guide
-- [Docker Multi-Stage Builds for Node.js + TypeScript](https://medium.com/@robinviktorsson/containerizing-a-typescript-node-js-application-with-docker-a-step-by-step-guide-be7fc87191f8) - Docker guide
-
-### Ecosystem Discovery (WebSearch Verified)
-
-- [Node.js File System Production Guide 2026](https://thelinuxcode.com/nodejs-file-system-in-practice-a-production-grade-guide-for-2026/) - Temporary file management
-- [Real-Time Data Streaming with SSE](https://medium.com/@serifcolakel/real-time-data-streaming-with-server-sent-events-sse-9424c933e094) - SSE implementation
-- [Benchmarking Express 4 vs Express 5](https://www.repoflow.io/blog/express-4-vs-express-5-benchmark-node-18-24) - Performance comparison
-
----
-
-## Confidence Assessment Summary
-
-| Area | Confidence Level | Rationale |
-|------|------------------|-----------|
-| **Node.js Runtime** | HIGH | Official LTS documentation, clear versioning policy |
-| **TypeScript Version** | HIGH | Official releases, clear migration path |
-| **Backend Framework (Express 5)** | HIGH | Production release Jan 2025, official migration guide, benchmarks available |
-| **Frontend Stack (React + Vite)** | HIGH | Both at stable major versions, widespread adoption |
-| **Real-time (SSE)** | HIGH | Well-established protocol, perfect fit for unidirectional streaming use case |
-| **File Upload (Multer)** | HIGH | De facto Express standard, 8M+ weekly downloads |
-| **ZIP Handling** | MEDIUM | Multiple good options (Archiver/JSZip/AdmZip), no clear winner, choice depends on constraints |
-| **Component Library (shadcn/ui)** | HIGH | Rapidly growing adoption, React 19 + Tailwind v4 support confirmed |
-| **Development Tools (ESLint 9, Prettier)** | MEDIUM | ESLint 9 flat config is new (2025), plugin ecosystem catching up |
-| **Deployment (Docker)** | HIGH | Standard practice, well-documented patterns for Node.js + TypeScript |
-
----
-
-## Open Questions & Future Research Needs
-
-1. **Interactive CLI Tools:** If any of the 8 tools require user input during execution, SSE won't work. Will need to research WebSocket implementation or pty.js for terminal emulation.
-
-2. **Heavy CLI Output:** If CLI tools output >100MB of logs, streaming may overwhelm browser. May need pagination or log truncation strategy.
-
-3. **Concurrent Job Limits:** For >20 concurrent users, need job queue (Bull/BullMQ with Redis). Research needed if scaling beyond 20 users.
-
-4. **CLI Tool Isolation:** If tools have conflicting dependencies, Docker-in-Docker or Kubernetes pods may be needed. Research sandboxing strategies if required.
-
-5. **Persistent Job History:** If adding user accounts and job history, need to choose database (SQLite, PostgreSQL) and design schema. Not needed for MVP.
-
----
-
-*Stack research for: Hapyy Languages Web Portal*
-*Researched: 2026-02-12*
-*Researcher: GSD Project Researcher (gsd-project-researcher)*
-*Quality Gate: All versions verified with official documentation or releases*
+*Stack research for: C# Formal Verification tool integration (v1.3 milestone)*
+*Researched: 2026-02-20*
