@@ -5,7 +5,8 @@ set -euo pipefail
 # Interface: hupyy-java-verify --input <path>
 # Invokes: java -jar /usr/local/lib/java-fv-cli.jar verify <path>
 
-JAR_PATH="/usr/local/lib/java-fv-cli.jar"
+JAR_PATH="${JAVA_FV_JAR:-/usr/local/lib/java-fv-cli.jar}"
+JAVA_BIN="${JAVA_HOME:+$JAVA_HOME/bin/}java"
 
 # Parse arguments
 if [[ "$#" -ne 2 ]] || [[ "$1" != "--input" ]]; then
@@ -37,4 +38,4 @@ done < <(find "$PROJECT_PATH" -name "*.java" -type f -print0)
 # Execute Java FV CLI with verify command, passing individual files
 # Output streams to stdout/stderr automatically (real-time for executionService)
 # Exit code propagates naturally
-exec java -jar "$JAR_PATH" verify "${JAVA_FILES[@]}"
+exec "$JAVA_BIN" -jar "$JAR_PATH" verify "${JAVA_FILES[@]}"

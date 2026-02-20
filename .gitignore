@@ -45,3 +45,7 @@ Thumbs.db
 tmp/
 temp/
 *.tmp
+
+# Generated Java FV artifacts (created during verification runs)
+*.acsl
+uploads/

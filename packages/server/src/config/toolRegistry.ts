@@ -26,7 +26,7 @@ const toolExecutionConfigs: ToolExecutionConfig[] = [
   },
   {
     id: 'java-verification',
-    command: '/usr/local/bin/hupyy-java-verify',
+    command: process.env.JAVA_FV_CMD ?? '/usr/local/bin/hupyy-java-verify',
     defaultArgs: ['--input'],
     maxExecutionTimeMs: 120000,
     available: true,
