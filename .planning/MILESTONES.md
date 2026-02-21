@@ -55,3 +55,24 @@
 
 ---
 
+
+## v1.3 C# Formal Verification (Shipped: 2026-02-21)
+
+**Phases completed:** 4 phases (20-23), 10 plans
+**Timeline:** 2 days (2026-02-20 → 2026-02-21)
+**Stats:** 69 files changed, +8,701 / -2,042 lines, 16/16 requirements satisfied
+
+**Key accomplishments:**
+1. Extended Docker image with .NET runtime-8.0, CVC5 1.3.2 + Z3 4.16.0 solver binaries, cs-fv DLL, and offline NuGet cache (1546 MB accepted)
+2. Created `hupyy-csharp-verify` bash wrapper bridging portal's `--input <dir>` interface to per-file cs-fv CLI with OVERALL_EXIT aggregation and dual stderr+stdout error output for SSE capture
+3. Activated C# Formal Verification as the second live tool (status: available, 180s timeout for MSBuild + CVC5 cold-start)
+4. Three C# FV example projects using modern features (records, nullable ref types, pattern matching, switch expressions) with FV contracts — including `bank-account-invariant` with intentional `Ensures("balance > 0")` violation (SMT counterexample: amount == balance → balance == 0)
+5. Playwright E2E suite covering: example loading via ExampleSelector, C# FV execution with SSE streaming, output file tree display, and known-bad violation detection (E2E-04 quality gate: FAILED badge visible + output panel absent)
+6. `TreatWarningsAsErrors=true` in all example `.csproj` files satisfies Roslyn Warning-severity exit-code requirement (CSFV-04)
+
+**Tech debt:** Docker image 1546 MB vs 800 MB estimate (NuGet/Roslyn cache 333 MB, cs-fv DLL 75 MB); java-builder uses pre-built jar (FormulaAdapter missing from source)
+
+**Archives:** [Roadmap](milestones/v1.3-ROADMAP.md) | [Requirements](milestones/v1.3-REQUIREMENTS.md) | [Audit](milestones/v1.3-MILESTONE-AUDIT.md)
+
+---
+

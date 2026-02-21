@@ -8,23 +8,14 @@ A public demo web portal for Hupyy's formal verification tools and transpilers. 
 
 Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
 
-## Current Milestone: v1.3 C# Formal Verification
-
-**Goal:** Add C# Formal Verification as the second live tool — Docker image with .NET SDK, wrapper script bridging dotnet build + Roslyn analyzer to portal interface, C# example projects, and E2E test coverage.
-
-**Target features:**
-- C# FV tool integration (Docker + wrapper script)
-- C# example projects (modern features + FV contracts)
-- E2E tests for C# verification flow
-
 ## Current State
 
-**Shipped:** v1.2 Comprehensive E2E Testing (2026-02-20)
-**Codebase:** ~9,000 LOC TypeScript/React (server + client) + 3,480 LOC TypeScript (e2e/)
+**Shipped:** v1.3 C# Formal Verification (2026-02-21)
+**Codebase:** ~12,694 LOC TypeScript/React/JS (server + client + e2e)
 **Tech stack:** TypeScript, Node.js 22, Express, React 18.3, Vite, Tailwind CSS v4, shadcn/ui, Redux Toolkit, RTK Query, Playwright
-**Tests:** 190+ unit tests (Vitest) + 78 E2E test cases × 9 browser/viewport projects (~700 test runs)
-**Deployment:** Docker multi-stage build (JDK 25 + Node.js 22), ready for Digital Ocean
-**Live tools:** Java Formal Verification (available, 120s timeout)
+**Tests:** 190+ unit tests (Vitest) + E2E test cases × 9 browser/viewport projects (~700+ test runs)
+**Deployment:** Docker 4-stage multi-arch build (JDK 25 + .NET runtime-8.0 + CVC5/Z3 + Node.js 22), ready for Digital Ocean
+**Live tools:** Java Formal Verification (available, 120s timeout) + C# Formal Verification (available, 180s timeout)
 
 ## Requirements
 
@@ -59,15 +50,16 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 - ✓ Theme toggle E2E coverage (light/dark/system) — v1.2
 - ✓ Error states E2E coverage (404, server errors, network failures) — v1.2
 - ✓ Edge cases E2E coverage (tool switching, browser back/forward) — v1.2
+- ✓ C# FV tool available and executable in the portal — v1.3
+- ✓ Docker image includes .NET runtime-8.0 + CVC5/Z3 solver binaries + cs-fv DLL + offline NuGet cache — v1.3
+- ✓ Wrapper script (`hupyy-csharp-verify`) bridging C# FV to portal `--input` interface — v1.3
+- ✓ Three C# FV example projects (null-safe-repository, bank-account-invariant, calculator-contracts) with modern features + FV contracts — v1.3
+- ✓ C# FV tool metadata updated (status → Available, timeout 180s) in tool registry and UI — v1.3
+- ✓ E2E tests covering C# FV example loading, execution streaming, output display, and known-bad violation detection — v1.3
 
 ### Active
 
-- [ ] C# FV tool available and executable in the portal — v1.3
-- [ ] Docker image includes .NET SDK for `dotnet build` with Roslyn analyzer — v1.3
-- [ ] Wrapper script (`hupyy-csharp-verify`) bridging C# FV to portal `--input` interface — v1.3
-- [ ] Example C# projects for demo (modern features + FV contracts/invariants) — v1.3
-- [ ] Updated tool metadata (C# FV status → Available) in UI — v1.3
-- [ ] E2E tests covering C# verification user flow — v1.3
+_(next milestone requirements go here)_
 
 ### Out of Scope
 
@@ -142,6 +134,14 @@ All tools are CLI-based: take input directory/files, produce output directory/fi
 | Docker guard (top-level throw before defineConfig) | Aborts test run with actionable error if E2E_BASE_URL not set | ✓ Good |
 | git mv to e2e/archive/ for legacy spec retirement | Preserves full git history while removing from default test run | ✓ Good |
 | POM contract for all landing page navigations | All spec files use LandingPage.goto() — no raw page.goto('/') calls | ✓ Good |
+| Docker 4-stage build with .NET runtime-8.0 | Ubuntu Noble built-in apt feed for dotnet-runtime (no MS feed); sdk in builder only | ✓ Good |
+| solver-builder stage (CVC5+Z3) without --platform | TARGETARCH selects URL; dotnet-builder uses --platform=$BUILDPLATFORM (avoids QEMU on Apple Silicon) | ✓ Good |
+| NuGet offline pre-seeded cache | NUGET_PACKAGES per-job in wrapper (NuGet/Home #8129 concurrency bug); eliminates 60-90s cold restore | ✓ Good |
+| C# FV wrapper OVERALL_EXIT aggregation | Cannot use exec in a loop; dual stderr+stdout output for portal SSE capture | ✓ Good |
+| TreatWarningsAsErrors=true in example .csproj | Roslyn Warning-severity exits 0; .csproj flag converts to error, wrapper passthrough handles exit code | ✓ Good |
+| bank-account-invariant as known-bad example | Ensures("balance > 0") on Withdraw; SMT counterexample: amount==balance yields balance==0 | ✓ Good |
+| E2E-04 quality gate pattern | FAILED badge visible + output panel NOT visible — gates on ExecutionPanel status === 'completed' | ✓ Good |
+| java-builder pre-built jar (tech debt) | FormulaAdapter.adaptForIncremental() undefined in source; jar tracked in git — maintenance risk | ⚠️ Revisit |
 
 ---
-*Last updated: 2026-02-20 after v1.3 milestone start*
+*Last updated: 2026-02-21 after v1.3 C# Formal Verification milestone*
