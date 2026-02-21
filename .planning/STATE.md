@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 20 of 23 (Docker Image — .NET Runtime + Solver Binaries)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-02-20 — v1.3 roadmap created (phases 20-23)
+Plan: 1 of TBD in current phase
+Status: In progress
+Last activity: 2026-02-21 — Phase 20 Plan 01 complete (solver-builder + dotnet-builder stages added to Dockerfile)
 
 Progress: [████████████████░░░░] 82% (19/23 phases complete across all milestones)
 
@@ -59,6 +59,9 @@ Recent decisions affecting current work:
 - v1.3 research: NUGET_PACKAGES must be set per-job in wrapper (NuGet/Home #8129 concurrency bug)
 - v1.3 research: TreatWarningsAsErrors=true required in .csproj — Roslyn defaults Warning severity (exit 0)
 - v1.3 research: maxExecutionTimeMs: 180000 — MSBuild cold-start + CVC5 solving needs extra margin
+- Phase 20-01: solver-builder uses ubuntu:noble WITHOUT --platform (TARGETARCH selects URL only); dotnet-builder uses --platform=$BUILDPLATFORM (prevents QEMU on Apple Silicon)
+- Phase 20-01: CVC5 1.3.2 (static, native arm64+x86_64) and Z3 4.16.0 (dynamic, glibc-2.38/2.39) pinned; both from GitHub releases
+- Phase 20-01: -p:MinVerSkip=true required in Docker dotnet publish (no .git history in build context)
 
 ### Pending Todos
 
@@ -72,10 +75,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: v1.3 roadmap created — phases 20-23 written to ROADMAP.md
+Last session: 2026-02-21
+Stopped at: Phase 20 Plan 01 complete — solver-builder + dotnet-builder stages in Dockerfile
 Resume file: None
-Next step: /gsd:plan-phase 20 — plan the Docker Image phase
+Next step: /gsd:execute-phase 20 plan 02 — production stage extensions (.NET runtime, COPY solver binaries, COPY cs-fv DLL, NuGet cache)
 
 ---
 *State initialized: 2026-02-12*

@@ -128,7 +128,7 @@ Plans:
 | 17. Edge Cases & Polish | v1.2 | 2/2 | Complete | 2026-02-18 |
 | 18. Documentation Drift Fix | v1.2 | 1/1 | Complete | 2026-02-19 |
 | 19. Test Infrastructure Cleanup | v1.2 | 2/2 | Complete | 2026-02-20 |
-| 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | 0/2 | Not started | - |
+| 20. Docker Image — .NET Runtime + Solver Binaries | 1/2 | In Progress|  | - |
 | 21. Wrapper Script + Tool Registry Activation | v1.3 | 0/TBD | Not started | - |
 | 22. C# Example Projects | v1.3 | 0/TBD | Not started | - |
 | 23. E2E Tests | v1.3 | 0/TBD | Not started | - |
