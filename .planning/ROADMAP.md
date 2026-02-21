@@ -51,7 +51,7 @@
 **Milestone Goal:** Add C# Formal Verification as the second live tool — Docker image with .NET runtime + solver binaries, wrapper script bridging dotnet build + Roslyn analyzer to the portal interface, three C# example projects with FV contracts, and E2E test coverage verifying the full user flow.
 
 - [x] **Phase 20: Docker Image — .NET Runtime + Solver Binaries** - Extend Docker build to include .NET runtime, CVC5, Z3, and the cs-fv published DLL with pre-seeded NuGet cache
-- [ ] **Phase 21: Wrapper Script + Tool Registry Activation** - Implement `hupyy-csharp-verify` wrapper script and activate C# FV tool in the registry
+- [x] **Phase 21: Wrapper Script + Tool Registry Activation** - Implement `hupyy-csharp-verify` wrapper script and activate C# FV tool in the registry (completed 2026-02-21)
 - [ ] **Phase 22: C# Example Projects** - Three C# example projects with FV contracts demonstrating progressive complexity and intentional failure
 - [ ] **Phase 23: E2E Tests** - Playwright E2E tests covering the full C# FV user flow including the known-bad example
 
@@ -132,7 +132,7 @@ Plans:
 | 18. Documentation Drift Fix | v1.2 | 1/1 | Complete | 2026-02-19 |
 | 19. Test Infrastructure Cleanup | v1.2 | 2/2 | Complete | 2026-02-20 |
 | 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | Complete    | 2026-02-21 | 2026-02-21 |
-| 21. Wrapper Script + Tool Registry Activation | v1.3 | 0/TBD | Not started | - |
+| 21. Wrapper Script + Tool Registry Activation | 2/2 | Complete   | 2026-02-21 | - |
 | 22. C# Example Projects | v1.3 | 0/TBD | Not started | - |
 | 23. E2E Tests | v1.3 | 0/TBD | Not started | - |
 

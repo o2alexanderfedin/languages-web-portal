@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 
 ## Current Position
 
-Phase: 20 of 23 (Docker Image — .NET Runtime + Solver Binaries)
+Phase: 21 of 23 (Wrapper Script + Tool Registry Activation)
 Plan: 2 of 2 in current phase (phase complete)
 Status: Complete
-Last activity: 2026-02-21 — Phase 20 Plan 02 complete (production stage extended, all four DOCKER requirements verified)
+Last activity: 2026-02-21 — Phase 21 Plan 02 complete (csharp-verification activated: status available, 180s timeout)
 
 Progress: [████████████████░░░░] 87% (20/23 phases complete across all milestones)
 
@@ -65,6 +65,7 @@ Recent decisions affecting current work:
 - Phase 20-02: Ubuntu Noble built-in apt feed for dotnet-runtime-8.0 (no Microsoft feed — supports amd64+arm64); image size 1546MB accepted (800MB estimate was unrealistic given dotnet-runtime + NuGet cache)
 - Phase 20-02: java-builder uses pre-built jar (java-fv Maven source has FormulaAdapter.adaptForIncremental() undefined — cannot compile from scratch)
 - Phase 20-02: dotnet --version is SDK-only command; runtime verification uses dotnet --list-runtimes (shows 8.0.24)
+- Phase 21-02: csharp-verification maxExecutionTimeMs set to 180000 (3 min) — MSBuild cold-start + NuGet restore + CVC5 solving requires extra margin over default 60s
 
 ### Pending Todos
 
@@ -79,9 +80,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Phase 20 Plan 02 complete — production stage extensions verified, all four DOCKER requirements passing
+Stopped at: Phase 21 Plan 02 complete — csharp-verification activated in tool registry and shared constants
 Resume file: None
-Next step: /gsd:execute-phase 21 — C# FV API endpoint
+Next step: /gsd:execute-phase 22 — C# FV examples (blocker: confirm NuGet package name and contract attribute namespace from cs-fv source)
 
 ---
 *State initialized: 2026-02-12*

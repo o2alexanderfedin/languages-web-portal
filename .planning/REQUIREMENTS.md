@@ -17,9 +17,9 @@ Requirements for v1.3 C# Formal Verification milestone. Each maps to roadmap pha
 ### C# FV Integration
 
 - [ ] **CSFV-01**: `hupyy-csharp-verify` wrapper script accepts `--input <dir>`, enumerates `.cs` files, runs cs-fv via `exec dotnet`, streams output to portal SSE
-- [ ] **CSFV-02**: C# Formal Verification tool status updated to `available` in tool registry and UI tool grid
-- [ ] **CSFV-03**: C# FV tool timeout set to 180,000ms (MSBuild + dotnet startup needs extra margin vs Java FV's 120s)
-- [ ] **CSFV-04**: Wrapper script handles Roslyn `Warning`-severity exit code 0 via `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` in example `.csproj` files
+- [x] **CSFV-02**: C# Formal Verification tool status updated to `available` in tool registry and UI tool grid
+- [x] **CSFV-03**: C# FV tool timeout set to 180,000ms (MSBuild + dotnet startup needs extra margin vs Java FV's 120s)
+- [x] **CSFV-04**: Wrapper script handles Roslyn `Warning`-severity exit code 0 via `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` in example `.csproj` files
 
 ### C# Example Projects
 
@@ -75,9 +75,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DOCKER-03 | Phase 20 | Complete |
 | DOCKER-04 | Phase 20 | Complete |
 | CSFV-01 | Phase 21 | Pending |
-| CSFV-02 | Phase 21 | Pending |
-| CSFV-03 | Phase 21 | Pending |
-| CSFV-04 | Phase 21 | Pending |
+| CSFV-02 | Phase 21 | Complete |
+| CSFV-03 | Phase 21 | Complete |
+| CSFV-04 | Phase 21 | Complete |
 | EXAMPLE-01 | Phase 22 | Pending |
 | EXAMPLE-02 | Phase 22 | Pending |
 | EXAMPLE-03 | Phase 22 | Pending |
