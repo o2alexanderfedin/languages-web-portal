@@ -79,7 +79,11 @@
   4. Changing `CSHARP_FV_CMD` in `.env` changes which command the tool registry invokes; removing it falls back to `/usr/local/bin/hupyy-csharp-verify`
   5. The `.env` file documents and sets `CSHARP_FV_CMD`, `CS_FV_DLL`, `JAVA_HOME`, and `CVC5_PATH` to correct local paths
 
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 24-01-PLAN.md — Make C# FV command env-configurable in toolRegistry; fix .env local paths
+- [ ] 24-02-PLAN.md — Add root npm run dev script with concurrently for server + client
+- [ ] 24-03-PLAN.md — Pre-flight checks + human E2E verification of local C# FV execution
 
 ### Phase 25: Developer README
 
@@ -123,9 +127,9 @@
 | 21. Wrapper Script + Tool Registry Activation | v1.3 | 3/3 | Complete | 2026-02-21 |
 | 22. C# Example Projects | v1.3 | 3/3 | Complete | 2026-02-21 |
 | 23. E2E Tests | v1.3 | 2/2 | Complete | 2026-02-21 |
-| 24. Local Dev Setup & C# FV Configuration | v1.4 | 0/? | Not started | - |
+| 24. Local Dev Setup & C# FV Configuration | v1.4 | 0/3 | Not started | - |
 | 25. Developer README | v1.4 | 0/1 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-21 — v1.4 Local Development Experience milestone started (Phases 24-25, 9 requirements)*
+*Last updated: 2026-02-21 — Phase 24 planned (3 plans: toolRegistry config, concurrently dev script, E2E verification)*
