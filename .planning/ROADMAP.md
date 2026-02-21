@@ -111,7 +111,10 @@ Plans:
   2. A test explicitly loads each C# example and verifies the ExampleSelector UI reflects the correct tool selection and example description
   3. A test verifies that executing the bank-account-invariant example produces `status: failed` in the portal UI — this is the quality gate for the exit-code correctness fix
   4. A test verifies that output file tree and streaming console are populated after a successful C# FV execution (null-safe-repository example)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 23-01-PLAN.md — POM extension (failedStatusBadge) + C# FV examples spec (E2E-01) + execution-errors C# FV addition
+- [ ] 23-02-PLAN.md — C# FV execution spec (E2E-02, E2E-04) + output spec (E2E-03)
 
 ## Progress
 
