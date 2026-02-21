@@ -20,27 +20,14 @@ COPY languages-web-portal/packages/ ./packages/
 RUN npm run build
 
 # Stage 2: Java Builder
+# Note: java-fv source currently has a compilation issue (FormulaAdapter.adaptForIncremental
+# missing). Use the pre-built jar directly from the repository.
 FROM eclipse-temurin:25-jdk AS java-builder
 
 WORKDIR /build
 
-# Install Maven
-RUN apt-get update && \
-    apt-get install -y maven && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy Java FV parent POM and all modules
-COPY java-fv/pom.xml /build/pom.xml
-COPY java-fv/compiler-plugin /build/compiler-plugin
-
-# Install root POM to local Maven repo so sub-modules can resolve parent
-# (Sub-modules declare java-fv-parent as parent but relativePath resolves to
-# compiler-plugin-parent; installing root POM fixes resolution)
-RUN mvn install -N
-
-# Build Java FV CLI jar (skip tests for faster Docker build)
-RUN mvn clean package -pl compiler-plugin/cli -am -DskipTests
+# Copy pre-built Java FV CLI jar (jar-with-dependencies, built separately from java-fv project)
+COPY java-fv/compiler-plugin/cli/target/cli-1.1.0-jar-with-dependencies.jar /build/cli-1.1.0-jar-with-dependencies.jar
 
 # Stage 3: Solver Builder
 FROM ubuntu:noble AS solver-builder
@@ -121,7 +108,7 @@ COPY languages-web-portal/scripts/hupyy-java-verify.sh /usr/local/bin/hupyy-java
 RUN chmod +x /usr/local/bin/hupyy-java-verify
 
 # Copy Java FV CLI jar from java-builder stage
-COPY --from=java-builder /build/compiler-plugin/cli/target/cli-1.1.0-jar-with-dependencies.jar /usr/local/lib/java-fv-cli.jar
+COPY --from=java-builder /build/cli-1.1.0-jar-with-dependencies.jar /usr/local/lib/java-fv-cli.jar
 
 # Copy package files for all packages
 COPY languages-web-portal/package*.json ./

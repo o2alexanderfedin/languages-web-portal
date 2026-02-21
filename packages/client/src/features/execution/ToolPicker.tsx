@@ -51,7 +51,6 @@ export function ToolPicker({ selectedToolId, onSelectTool, disabled }: ToolPicke
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="tool-picker">
       {tools.map((tool) => {
         const isSelected = selectedToolId === tool.id;
-        const isSelectable = isToolSelectable(tool);
         const isComingSoon = tool.status === 'coming-soon';
         const isDisabledByPanel = disabled && tool.status !== 'coming-soon';
 
