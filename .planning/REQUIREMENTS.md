@@ -9,8 +9,8 @@ Requirements for v1.4 Local Development Experience milestone. Each maps to roadm
 
 ### Startup
 
-- [ ] **START-01**: `npm run dev` at project root starts both server (port 3000) and client dev server (port 5173) with a single command
-- [ ] **START-02**: Server and client output is shown concurrently in the same terminal with labeled prefixes ([server]/[client])
+- [x] **START-01**: `npm run dev` at project root starts both server (port 3000) and client dev server (port 5173) with a single command
+- [x] **START-02**: Server and client output is shown concurrently in the same terminal with labeled prefixes ([server]/[client])
 
 ### Tool Configuration
 
@@ -49,8 +49,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| START-01 | Phase 24 | Pending |
-| START-02 | Phase 24 | Pending |
+| START-01 | Phase 24 | Complete |
+| START-02 | Phase 24 | Complete |
 | CONF-01 | Phase 24 | Complete |
 | CONF-02 | Phase 24 | Complete |
 | CONF-03 | Phase 24 | Complete |

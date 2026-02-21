@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Milestone v1.4 Local Development Experience — IN PROGRESS
-Phase: 24 (Local Dev Setup & C# FV Configuration) — Plan 01 complete
-Status: Plan 24-01 executed — env-driven CSHARP_FV_CMD and .env local paths configured
-Last activity: 2026-02-21 — Phase 24 Plan 01 completed (toolRegistry env-configurable, .env updated)
+Phase: 24 (Local Dev Setup & C# FV Configuration) — Plan 02 complete
+Status: Plan 24-02 executed — root npm run dev starts server and client concurrently via concurrently ^9.2.1
+Last activity: 2026-02-21 — Phase 24 Plan 02 completed (concurrently dev script, labeled [server]/[client] output)
 
 Progress: [--------------------] 0% (v1.4 phases pending)
 
@@ -40,6 +40,7 @@ Progress: [--------------------] 0% (v1.4 phases pending)
 | 11-19. E2E v1.2 | 17 | ~1.5h total | ~5min |
 | 20-23. C# FV v1.3 | 10 | ~5h | ~30min |
 | Phase 24 P01 | 57s | 2 tasks | 2 files |
+| Phase 24 P02 | 2min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -47,6 +48,7 @@ Progress: [--------------------] 0% (v1.4 phases pending)
 
 All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 24]: CSHARP_FV_CMD env var with nullish coalescing fallback mirrors java-verification pattern
+- [Phase 24]: Use concurrently with --kill-others-on-fail to prevent zombie processes when one service crashes
 
 ### Pending Todos
 
@@ -66,10 +68,10 @@ All decisions logged in PROJECT.md Key Decisions table.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 24-01-PLAN.md
+Stopped at: Completed 24-02-PLAN.md
 Resume file: None
-Next step: Execute Phase 24 Plan 02 (if exists) or Phase 25
+Next step: Execute Phase 24 Plan 03 (if exists) or Phase 25
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-21 — Phase 24 Plan 01 complete (env-driven CSHARP_FV_CMD, .env updated)*
+*Last updated: 2026-02-21 — Phase 24 Plan 02 complete (concurrently root dev script, one-command local stack startup)*
