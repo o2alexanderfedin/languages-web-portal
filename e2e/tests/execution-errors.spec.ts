@@ -93,3 +93,40 @@ test.describe('Execution Error Scenarios', () => {
     await expect(exec.executeButton).toBeEnabled({ timeout: 5_000 });
   });
 });
+
+/**
+ * C# FV Wrapper Validation Errors — no-.csproj scenario.
+ *
+ * The hupyy-csharp-verify.sh wrapper exits 2 if no .csproj is found.
+ * This triggers a portal error message via the SSE error event.
+ *
+ * sample.zip contains only main.cpp (no .csproj), so uploading it with
+ * tool=csharp-verification exercises the wrapper's pre-flight validation.
+ */
+test.describe('C# FV Wrapper Validation Errors', () => {
+  test.skip(({ isMobile }) => isMobile, 'Execution tests run on desktop only');
+
+  test('C# FV shows error when uploaded zip contains no .csproj file', async ({ page }) => {
+    const exec = new ExecutionPage(page);
+
+    // Navigate with C# FV pre-selected, upload the sample zip (no .csproj = wrapper exit 2)
+    await exec.goto('tool=csharp-verification');
+    await exec.page.locator('input[type="file"]').setInputFiles(SAMPLE_ZIP_PATH);
+    await exec.page.getByTestId('upload-success').waitFor({ state: 'visible', timeout: 10_000 });
+    await expect(exec.executeButton).toBeEnabled({ timeout: 5_000 });
+
+    await exec.executeButton.click();
+
+    // Wrapper exits 2 → portal surfaces error message or FAILED status badge
+    const errorLocator = page
+      .locator('[data-testid="execution-error"], [role="alert"]')
+      .filter({ hasText: /error|failed|something went wrong|csproj/i });
+    const failedBadge = exec.failedStatusBadge;
+
+    // Either the error alert or the FAILED status badge must appear
+    await Promise.race([
+      expect(errorLocator).toBeVisible({ timeout: 30_000 }),
+      expect(failedBadge).toBeVisible({ timeout: 30_000 }),
+    ]);
+  });
+});
