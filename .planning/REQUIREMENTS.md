@@ -23,7 +23,7 @@ Requirements for v1.3 C# Formal Verification milestone. Each maps to roadmap pha
 
 ### C# Example Projects
 
-- [ ] **EXAMPLE-01**: Three C# example projects with `.csproj` files referencing the Hupyy FV analyzer NuGet package
+- [x] **EXAMPLE-01**: Three C# example projects with `.csproj` files referencing the Hupyy FV analyzer NuGet package
 - [ ] **EXAMPLE-02**: Examples demonstrate modern C# features (records, pattern matching, nullable reference types) with FV contracts/invariants (progressive complexity)
 - [ ] **EXAMPLE-03**: At least one example contains intentional FV contract violations (demonstrates the tool finding real issues — mirrors Java FV pattern)
 - [ ] **EXAMPLE-04**: Examples visible and loadable via ExampleSelector UI with name + description (same pattern as Java FV examples)
@@ -78,7 +78,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CSFV-02 | Phase 21 | Complete |
 | CSFV-03 | Phase 21 | Complete |
 | CSFV-04 | Phase 22 | Pending |
-| EXAMPLE-01 | Phase 22 | Pending |
+| EXAMPLE-01 | Phase 22 | Complete |
 | EXAMPLE-02 | Phase 22 | Pending |
 | EXAMPLE-03 | Phase 22 | Pending |
 | EXAMPLE-04 | Phase 22 | Pending |

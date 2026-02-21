@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** v1.3 C# Formal Verification — Phase 21: C# FV API Endpoint
+**Current focus:** v1.3 C# Formal Verification — Phase 22: C# Example Projects
 
 ## Current Position
 
-Phase: 21 of 23 (Wrapper Script + Tool Registry Activation)
-Plan: 2 of 2 in current phase (phase complete)
-Status: Complete
-Last activity: 2026-02-21 — Phase 21 Plan 02 complete (csharp-verification activated: status available, 180s timeout)
+Phase: 22 of 23 (C# Example Projects)
+Plan: 1 of 3 in current phase (plan 01 complete — DLL path and verify behavior confirmed)
+Status: In Progress
+Last activity: 2026-02-21 — Phase 22 Plan 01 complete (CsFv.Contracts.dll confirmed; cs-fv verify resolves types internally)
 
 Progress: [████████████████░░░░] 87% (20/23 phases complete across all milestones)
 
@@ -70,6 +70,10 @@ Recent decisions affecting current work:
 - [Phase 21-wrapper-script-tool-registry-activation]: Dual-output error messages (stderr+stdout) for portal SSE capture; exit 2 for wrapper validation; OVERALL_EXIT aggregation loop; 2>&1 merge for cs-fv output; file discovery scoped per .csproj via PROJ_DIR
 - [Phase 21-03]: CSFV-04 split delivery: Phase 21 wrapper exit-code passthrough complete; Phase 22 must deliver example .csproj with TreatWarningsAsErrors=true
 - [Phase 21-03]: Accurate requirement tracking: premature [x] marking causes downstream phases to miss deliverables — REQUIREMENTS.md must reflect actual split
+- [Phase 22-01]: CsFv.Contracts.dll IS present at /usr/local/lib/cs-fv/CsFv.Contracts.dll — confirmed from dotnet publish output; CsFv.Contracts is direct ProjectReference of CsFv.Cli
+- [Phase 22-01]: cs-fv verify resolves CsFv.Contracts types internally — <Reference HintPath> in .csproj is IDE-only; cs-fv takes individual .cs files, not .csproj
+- [Phase 22-01]: Wrapper uses .csproj for pre-flight check and .cs file scoping only — .csproj not passed to cs-fv CLI
+- [Phase 22-01]: examples.test.ts references old example names (null-check, array-bounds, division-safety) — Plan 02 must update these tests
 
 ### Pending Todos
 
@@ -78,15 +82,17 @@ None yet.
 ### Blockers/Concerns
 
 **Active:**
-- Phase 22 (Examples): Hupyy C# FV NuGet package name, contract attribute namespace (`using CsFv.Contracts;`?), and diagnostic ID format are not publicly documented — must be confirmed from cs-fv source before writing examples
 - CVC5/Yices/Bitwuzla not available on linux-aarch64 in Docker — Z3 only (acceptable for current tools)
+
+**Resolved:**
+- Phase 22 (Examples): CsFv.Contracts.dll path confirmed; cs-fv verify resolves types internally — resolved in Phase 22 Plan 01
 
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Phase 21 Plan 02 complete — csharp-verification activated in tool registry and shared constants
+Stopped at: Phase 22 Plan 01 complete — DLL path and cs-fv verify behavior confirmed
 Resume file: None
-Next step: /gsd:execute-phase 22 — C# FV examples (blocker: confirm NuGet package name and contract attribute namespace from cs-fv source)
+Next step: /gsd:execute-phase 22 — execute Plan 02 (write three example projects)
 
 ---
 *State initialized: 2026-02-12*
