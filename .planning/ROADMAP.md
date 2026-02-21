@@ -6,6 +6,7 @@
 - **v1.1 Java FV Integration** — Phases 8-10 (shipped 2026-02-16) — [Details](milestones/v1.1-ROADMAP.md)
 - **v1.2 Comprehensive E2E Testing** — Phases 11-19 (shipped 2026-02-20) — [Details](milestones/v1.2-ROADMAP.md)
 - **v1.3 C# Formal Verification** — Phases 20-23 (shipped 2026-02-21) — [Details](milestones/v1.3-ROADMAP.md)
+- **v1.4 Local Development Experience** — Phases 24-25 (in progress)
 
 ## Phases
 
@@ -56,6 +57,45 @@
 
 </details>
 
+### v1.4 Local Development Experience
+
+- [ ] **Phase 24: Local Dev Setup & C# FV Configuration** — Wire root dev script, env-based tool config, and verify C# FV works end-to-end locally
+- [ ] **Phase 25: Developer README** — Document prerequisites and local setup so any developer can onboard without prior context
+
+## Phase Details
+
+### Phase 24: Local Dev Setup & C# FV Configuration
+
+**Goal**: A developer can clone the repo, set environment variables, run `npm run dev`, and execute C# Formal Verification end-to-end in the browser — all locally without Docker.
+
+**Depends on**: Nothing new (builds on existing codebase)
+
+**Requirements**: START-01, START-02, CONF-01, CONF-02, CONF-03, CONF-04, E2E-01, E2E-02
+
+**Success Criteria** (what must be TRUE):
+  1. Running `npm run dev` at project root starts both server (port 3000) and client (port 5173) in one terminal with labeled `[server]` and `[client]` prefixes
+  2. The C# FV tool shows "Available" status in the portal UI when accessed at `http://localhost:5173` with local env vars set
+  3. Uploading a C# zip (e.g. `null-safe-repository`) and clicking Execute produces real-time streaming verification output in the browser console — no Docker required
+  4. Changing `CSHARP_FV_CMD` in `.env` changes which command the tool registry invokes; removing it falls back to `/usr/local/bin/hupyy-csharp-verify`
+  5. The `.env` file documents and sets `CSHARP_FV_CMD`, `CS_FV_DLL`, `JAVA_HOME`, and `CVC5_PATH` to correct local paths
+
+**Plans**: TBD
+
+### Phase 25: Developer README
+
+**Goal**: Any developer can read `README.md` at project root and go from zero to a running local portal without asking questions.
+
+**Depends on**: Phase 24 (local setup must be working before it can be accurately documented)
+
+**Requirements**: DOC-01
+
+**Success Criteria** (what must be TRUE):
+  1. `README.md` exists at project root and lists all prerequisites (Node.js version, .NET version, Java version, CVC5, Z3) with installation hints
+  2. A developer following only the README steps (clone, install prerequisites, set env vars, `npm run dev`) can reach the running portal in their browser
+  3. The README covers both the one-time setup and the daily start command — no supplemental knowledge required
+
+**Plans**: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -83,7 +123,9 @@
 | 21. Wrapper Script + Tool Registry Activation | v1.3 | 3/3 | Complete | 2026-02-21 |
 | 22. C# Example Projects | v1.3 | 3/3 | Complete | 2026-02-21 |
 | 23. E2E Tests | v1.3 | 2/2 | Complete | 2026-02-21 |
+| 24. Local Dev Setup & C# FV Configuration | v1.4 | 0/? | Not started | - |
+| 25. Developer README | v1.4 | 0/1 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-21 — v1.3 C# Formal Verification milestone complete (Phases 20-23, 10 plans, 16/16 requirements)*
+*Last updated: 2026-02-21 — v1.4 Local Development Experience milestone started (Phases 24-25, 9 requirements)*

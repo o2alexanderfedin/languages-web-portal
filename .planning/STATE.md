@@ -5,20 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** Planning next milestone (v1.4)
+**Current focus:** v1.4 Local Development Experience — Phase 24
 
 ## Current Position
 
-Milestone v1.3 C# Formal Verification — COMPLETE (archived 2026-02-21)
-Status: Between milestones — ready for `/gsd:new-milestone`
-Last activity: 2026-02-21 — v1.3 milestone archived (4 phases, 10 plans, 16/16 requirements satisfied)
+Milestone v1.4 Local Development Experience — IN PROGRESS
+Phase: 24 (Local Dev Setup & C# FV Configuration) — Not started
+Status: Roadmap created, ready for `/gsd:plan-phase 24`
+Last activity: 2026-02-21 — v1.4 roadmap created (2 phases, 9 requirements mapped)
 
-Progress: [████████████████████] 100% (all v1.3 phases complete)
+Progress: [--------------------] 0% (v1.4 phases pending)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 34
+- Total plans completed: 34 (through v1.3)
 - Average duration: ~35 min per plan
 - Total execution time: ~20 hours
 
@@ -47,7 +48,8 @@ All decisions logged in PROJECT.md Key Decisions table.
 
 ### Pending Todos
 
-None.
+- [ ] Plan and execute Phase 24: Local Dev Setup & C# FV Configuration
+- [ ] Plan and execute Phase 25: Developer README
 
 ### Blockers/Concerns
 
@@ -56,13 +58,16 @@ None.
 - java-builder uses pre-built jar (FormulaAdapter.adaptForIncremental() undefined in source) — maintenance risk if java-fv source diverges
 - Docker image 1546 MB vs 800 MB target (NuGet/Roslyn cache primary driver) — acceptable for demo portal
 
+**v1.4 specific:**
+- Local `.env` must set `CSHARP_FV_CMD`, `CS_FV_DLL`, `JAVA_HOME`, `CVC5_PATH` to machine-specific paths — verify current `.env` state before Phase 24 planning
+
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: v1.3 milestone complete and archived
+Stopped at: v1.4 roadmap created
 Resume file: None
-Next step: `/gsd:new-milestone` — start v1.4 planning
+Next step: `/gsd:plan-phase 24`
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-21 — v1.3 milestone archived*
+*Last updated: 2026-02-21 — v1.4 roadmap created (Phases 24-25, 9 requirements)*
