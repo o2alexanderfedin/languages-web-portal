@@ -96,7 +96,11 @@ Plans:
   2. Executing the null-safe-repository example completes with `status: completed` and streaming output shows verification passing
   3. Executing the bank-account-invariant example completes with `status: failed` and streaming output contains a diagnostic message identifying the invariant violation — the tool demonstrably finds real issues
   4. All three examples use modern C# features visible in their source (records, pattern matching, nullable reference types, or primary constructors)
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 22-01-PLAN.md — Verify Docker DLL path and cs-fv verify command behavior
+- [ ] 22-02-PLAN.md — Create three C# FV example projects (replace old placeholders)
+- [ ] 22-03-PLAN.md — Update requirements tracking (mark CSFV-04, EXAMPLE-01..04 complete)
 
 ### Phase 23: E2E Tests
 **Goal**: Playwright E2E tests verify the complete C# FV user flow end-to-end against a running Docker container, including example loading, execution with streaming, output inspection, and a mandatory test that asserts the known-bad example produces a failed status
@@ -134,9 +138,9 @@ Plans:
 | 19. Test Infrastructure Cleanup | v1.2 | 2/2 | Complete | 2026-02-20 |
 | 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | Complete    | 2026-02-21 | 2026-02-21 |
 | 21. Wrapper Script + Tool Registry Activation | 3/3 | Complete    | 2026-02-21 | - |
-| 22. C# Example Projects | v1.3 | 0/TBD | Not started | - |
+| 22. C# Example Projects | v1.3 | 0/3 | In Progress | - |
 | 23. E2E Tests | v1.3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-21 — Phase 20 complete (2/2 plans done, all four DOCKER requirements verified)*
+*Last updated: 2026-02-21 — Phase 22 planned (3 plans: Docker verification, example creation, tracking update)*
