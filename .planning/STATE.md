@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** v1.4 Local Development Experience — Phase 25 COMPLETE
+**Current focus:** Between milestones — v1.4 shipped, planning next milestone
 
 ## Current Position
 
-Milestone v1.4 Local Development Experience — COMPLETE
-Phase: 25 (Developer README) — ALL 1 PLANS COMPLETE
-Status: Plan 25-01 executed — README.md written and human-verified; packages/server/.env.example committed; DOC-01 satisfied
-Last activity: 2026-02-21 — Phase 25 Plan 01 completed (human approved README as complete and accurate)
+Milestone v1.4 Local Development Experience — SHIPPED (2026-02-21)
+Phase: — (all phases complete, milestone archived)
+Status: v1.4 archived to milestones/; git tagged v1.4; ready for /gsd:new-milestone
+Last activity: 2026-02-21 — v1.4 milestone completed and archived
 
-Progress: [====================] Phase 25 complete — v1.4 milestone fully delivered
+Progress: [====================] 100% (v1.4 complete)
 
 ## Performance Metrics
 
@@ -80,4 +80,4 @@ Next step: None — v1.4 milestone complete
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-21 — Phase 25 complete: README.md written and human-verified, .env.example committed, DOC-01 satisfied; v1.4 milestone fully delivered*
+*Last updated: 2026-02-21 — v1.4 milestone archived: 2 phases (24-25), 4 plans, 9/9 requirements satisfied; git tagged v1.4*

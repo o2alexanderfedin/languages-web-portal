@@ -10,12 +10,13 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 
 ## Current State
 
-**Shipped:** v1.3 C# Formal Verification (2026-02-21)
+**Shipped:** v1.4 Local Development Experience (2026-02-21)
 **Codebase:** ~12,694 LOC TypeScript/React/JS (server + client + e2e)
 **Tech stack:** TypeScript, Node.js 22, Express, React 18.3, Vite, Tailwind CSS v4, shadcn/ui, Redux Toolkit, RTK Query, Playwright
 **Tests:** 190+ unit tests (Vitest) + E2E test cases × 9 browser/viewport projects (~700+ test runs)
 **Deployment:** Docker 4-stage multi-arch build (JDK 25 + .NET runtime-8.0 + CVC5/Z3 + Node.js 22), ready for Digital Ocean
 **Live tools:** Java Formal Verification (available, 120s timeout) + C# Formal Verification (available, 180s timeout)
+**Local dev:** `npm run dev` starts full stack; C# FV works locally via env vars; README documents full onboarding
 
 ## Requirements
 
@@ -57,12 +58,14 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 - ✓ C# FV tool metadata updated (status → Available, timeout 180s) in tool registry and UI — v1.3
 - ✓ E2E tests covering C# FV example loading, execution streaming, output display, and known-bad violation detection — v1.3
 
+- ✓ `npm run dev` at root starts server + client together with one command — v1.4
+- ✓ C# FV tool command configurable via `CSHARP_FV_CMD` env var (no hardcoded Docker paths) — v1.4
+- ✓ C# FV works end-to-end locally (upload zip → streaming verification output) — v1.4
+- ✓ README.md with prerequisites and local setup steps — v1.4
+
 ### Active
 
-- [ ] `npm run dev` at root starts server + client together with one command — v1.4
-- [ ] C# FV tool command configurable via `CSHARP_FV_CMD` env var (no hardcoded Docker paths) — v1.4
-- [ ] C# FV works end-to-end locally (upload zip → streaming verification output) — v1.4
-- [ ] README.md with prerequisites and local setup steps — v1.4
+(none — next milestone not yet defined)
 
 ### Out of Scope
 
@@ -145,6 +148,10 @@ All tools are CLI-based: take input directory/files, produce output directory/fi
 | bank-account-invariant as known-bad example | Ensures("balance > 0") on Withdraw; SMT counterexample: amount==balance yields balance==0 | ✓ Good |
 | E2E-04 quality gate pattern | FAILED badge visible + output panel NOT visible — gates on ExecutionPanel status === 'completed' | ✓ Good |
 | java-builder pre-built jar (tech debt) | FormulaAdapter.adaptForIncremental() undefined in source; jar tracked in git — maintenance risk | ⚠️ Revisit |
+| `CSHARP_FV_CMD` env var with nullish coalescing | `process.env.CSHARP_FV_CMD ?? '/usr/local/bin/hupyy-csharp-verify'` — mirrors JAVA_FV_CMD pattern; preserves Docker behavior when unset | ✓ Good |
+| concurrently for root dev script | `--kill-others-on-fail --prefix "[{name}]"` — prevents zombie processes, labeled output with color-coded prefixes | ✓ Good |
+| packages/server/.env.example committed as template | Machine-local `.env` gitignored; `.env.example` with placeholder paths committed — standard Node.js onboarding pattern | ✓ Good |
+| CVC5 1.3.2 installed to `~/bin/cvc5` (not system) | Not in Homebrew; static binary from GitHub releases; user-writable path avoids sudo | ✓ Good |
 
 ---
-*Last updated: 2026-02-21 — v1.4 Local Development Experience started*
+*Last updated: 2026-02-21 — v1.4 Local Development Experience shipped*

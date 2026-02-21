@@ -76,3 +76,22 @@
 
 ---
 
+
+## v1.4 Local Development Experience (Shipped: 2026-02-21)
+
+**Phases completed:** 2 phases (24-25), 4 plans
+**Timeline:** 1 day (2026-02-21)
+**Stats:** 14 files changed, +1,043 / -42 lines, 9/9 requirements satisfied
+
+**Key accomplishments:**
+1. `CSHARP_FV_CMD` env var added to toolRegistry (with fallback to `/usr/local/bin/hupyy-csharp-verify`) — C# FV command now configurable without code changes, Docker behavior preserved
+2. `packages/server/.env` updated with all four local paths: `CSHARP_FV_CMD`, `CS_FV_DLL`, `JAVA_HOME` (jdk-21, fixing stale jdk-22), `CVC5_PATH` — C# FV runs locally without Docker
+3. Root `npm run dev` via `concurrently` starts both server (port 3000) and client (port 5173) in a single terminal with `[server]`/`[client]` labeled, color-coded output and `--kill-others-on-fail`
+4. Human-verified end-to-end: C# FV shows Available at `http://localhost:5173`, C# zip upload + Execute produces real-time streaming verification output — no Docker involved
+5. `README.md` written at project root — complete onboarding guide (prerequisites, CVC5 static binary install, cs-fv build, env setup, `npm run dev`) — any developer can go from zero to running portal following only the README
+6. `packages/server/.env.example` committed as a safe template with placeholder paths for all four FV env vars
+
+**Archives:** [Roadmap](milestones/v1.4-ROADMAP.md) | [Requirements](milestones/v1.4-REQUIREMENTS.md)
+
+---
+
