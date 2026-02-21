@@ -67,7 +67,10 @@
   3. Running `docker run --network=none <image> dotnet build <cs-project>` succeeds without any network calls — NuGet packages are pre-seeded in the image layer
   4. The `nodejs` user (non-root) can write to its home directory and NuGet package paths — no permission denied errors when dotnet tooling runs
   5. Docker image size does not exceed the 800 MB warning threshold (builder stage uses SDK, production stage uses runtime-only)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 20-01-PLAN.md — Add solver-builder and dotnet-builder stages to Dockerfile
+- [ ] 20-02-PLAN.md — Extend production stage, build and verify Docker image
 
 ### Phase 21: Wrapper Script + Tool Registry Activation
 **Goal**: The C# FV tool is invocable through the portal — the `hupyy-csharp-verify` wrapper script adapts the portal's `--input <dir>` interface to `dotnet cs-fv.dll verify <files...>`, and the tool registry marks the tool as available with the correct 180s timeout
@@ -125,11 +128,11 @@
 | 17. Edge Cases & Polish | v1.2 | 2/2 | Complete | 2026-02-18 |
 | 18. Documentation Drift Fix | v1.2 | 1/1 | Complete | 2026-02-19 |
 | 19. Test Infrastructure Cleanup | v1.2 | 2/2 | Complete | 2026-02-20 |
-| 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | 0/TBD | Not started | - |
+| 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | 0/2 | Not started | - |
 | 21. Wrapper Script + Tool Registry Activation | v1.3 | 0/TBD | Not started | - |
 | 22. C# Example Projects | v1.3 | 0/TBD | Not started | - |
 | 23. E2E Tests | v1.3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-20 — v1.3 milestone roadmap added (phases 20-23)*
+*Last updated: 2026-02-20 — Phase 20 planned (2 plans)*
