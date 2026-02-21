@@ -53,7 +53,7 @@
 - [x] **Phase 20: Docker Image — .NET Runtime + Solver Binaries** - Extend Docker build to include .NET runtime, CVC5, Z3, and the cs-fv published DLL with pre-seeded NuGet cache
 - [x] **Phase 21: Wrapper Script + Tool Registry Activation** - Implement `hupyy-csharp-verify` wrapper script and activate C# FV tool in the registry (completed 2026-02-21)
 - [x] **Phase 22: C# Example Projects** - Three C# example projects with FV contracts demonstrating progressive complexity and intentional failure (completed 2026-02-21)
-- [ ] **Phase 23: E2E Tests** - Playwright E2E tests covering the full C# FV user flow including the known-bad example
+- [x] **Phase 23: E2E Tests** - Playwright E2E tests covering the full C# FV user flow including the known-bad example (completed 2026-02-21)
 
 ## Phase Details
 
@@ -142,7 +142,7 @@ Plans:
 | 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | Complete    | 2026-02-21 | 2026-02-21 |
 | 21. Wrapper Script + Tool Registry Activation | 3/3 | Complete    | 2026-02-21 | - |
 | 22. C# Example Projects | 3/3 | Complete    | 2026-02-21 | 2026-02-21 |
-| 23. E2E Tests | 1/2 | In Progress|  | - |
+| 23. E2E Tests | 2/2 | Complete   | 2026-02-21 | - |
 
 ---
 *Roadmap created: 2026-02-12*

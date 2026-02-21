@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 23 of 23 (E2E Tests)
-Plan: 1 of 3 in current phase (plan 01 complete)
+Plan: 2 of 3 in current phase (plan 02 complete)
 Status: In Progress
-Last activity: 2026-02-20 — Phase 23 Plan 01 complete (ExecutionPage POM extended, csharp-fv-examples.spec.ts created, C# FV error scenario added)
+Last activity: 2026-02-21 — Phase 23 Plan 02 complete (csharp-fv-execution.spec.ts E2E-02/E2E-04, csharp-fv-output.spec.ts E2E-03)
 
 Progress: [█████████████████░░░] 91% (21/23 phases complete across all milestones)
 
@@ -81,6 +81,9 @@ Recent decisions affecting current work:
 - [Phase 23-01]: sample.zip (main.cpp only, no .csproj) used directly for C# FV no-.csproj test — no route interception needed since sample.zip already lacks .csproj
 - [Phase 23-01]: C# FV error test uses Promise.race between error alert and failedStatusBadge — covers both SSE error event path and FAILED status badge path
 - [Phase 23-01]: csharp-fv-examples.spec.ts outer describe has no isMobile skip — runs on all 9 Playwright matrix projects per E2E-01 requirement
+- [Phase 23-02]: null-safe-repository used as known-pass example in output spec — FAILED status (bank-account-invariant) does not render output panel, so E2E-03 must use a COMPLETED example
+- [Phase 23-02]: E2E-04 quality gate pattern: failedStatusBadge visible + outputPanel NOT visible — confirms ExecutionPanel.tsx gates on status === 'completed'
+- [Phase 23-02]: Flexible regex used for cs-fv console assertions to avoid coupling to exact CLI output format
 
 ### Pending Todos
 
@@ -96,11 +99,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: Phase 23 Plan 01 complete — ExecutionPage POM extended, csharp-fv-examples.spec.ts created, C# FV error scenario added
+Last session: 2026-02-21
+Stopped at: Phase 23 Plan 02 complete — csharp-fv-execution.spec.ts (E2E-02, E2E-04) and csharp-fv-output.spec.ts (E2E-03) created
 Resume file: None
-Next step: Execute Phase 23 Plan 02 — C# FV execution E2E tests (Docker required)
+Next step: Execute Phase 23 Plan 03 — final plan in Phase 23 E2E Tests
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-20 — Phase 23 Plan 01 complete*
+*Last updated: 2026-02-21 — Phase 23 Plan 02 complete*
