@@ -81,10 +81,11 @@ Plans:
   2. Uploading a valid C# project zip and clicking Execute starts real-time streaming output in the browser console — the tool runs end-to-end through the portal
   3. The wrapper script exits non-zero and surfaces an actionable error message when the uploaded zip contains `.cs` files but no `.csproj` file
   4. A C# FV execution that produces verification failures exits with code 1 (not 0), causing the portal to display `status: failed` — Roslyn Warning-severity diagnostics are treated as errors
-**Plans**: 2 plans
+**Plans**: 3 plans
 Plans:
-- [ ] 21-01-PLAN.md — Wrapper script (hupyy-csharp-verify.sh) + Dockerfile installation
-- [ ] 21-02-PLAN.md — Tool registry activation (status available, 180s timeout)
+- [x] 21-01-PLAN.md — Wrapper script (hupyy-csharp-verify.sh) + Dockerfile installation
+- [x] 21-02-PLAN.md — Tool registry activation (status available, 180s timeout)
+- [ ] 21-03-PLAN.md — Gap closure: correct CSFV-04 tracking in REQUIREMENTS.md (pending until Phase 22 delivers example .csproj files)
 
 ### Phase 22: C# Example Projects
 **Goal**: Three ready-to-run C# example projects are available in the portal ExampleSelector, each with proper `.csproj` files referencing the Hupyy C# FV analyzer, FV contract annotations, and progressive complexity from simple null safety to an intentional invariant violation
