@@ -21,8 +21,8 @@ const toolExecutionConfigs: ToolExecutionConfig[] = [
     id: 'csharp-verification',
     command: '/usr/local/bin/hupyy-csharp-verify',
     defaultArgs: ['--input'],
-    maxExecutionTimeMs: 60000,
-    available: false,
+    maxExecutionTimeMs: 180000,
+    available: true,
   },
   {
     id: 'java-verification',

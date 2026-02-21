@@ -23,7 +23,7 @@ export const TOOLS: Tool[] = [
     id: 'csharp-verification',
     name: 'C# Verification',
     description: 'Formal verification for C# code',
-    status: 'in-development',
+    status: 'available',
     category: 'verification',
     sourceLanguage: 'csharp',
   },
