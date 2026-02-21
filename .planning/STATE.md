@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** v1.3 C# Formal Verification — Phase 20: Docker Image
+**Current focus:** v1.3 C# Formal Verification — Phase 21: C# FV API Endpoint
 
 ## Current Position
 
 Phase: 20 of 23 (Docker Image — .NET Runtime + Solver Binaries)
-Plan: 1 of TBD in current phase
-Status: In progress
-Last activity: 2026-02-21 — Phase 20 Plan 01 complete (solver-builder + dotnet-builder stages added to Dockerfile)
+Plan: 2 of 2 in current phase (phase complete)
+Status: Complete
+Last activity: 2026-02-21 — Phase 20 Plan 02 complete (production stage extended, all four DOCKER requirements verified)
 
-Progress: [████████████████░░░░] 82% (19/23 phases complete across all milestones)
+Progress: [████████████████░░░░] 87% (20/23 phases complete across all milestones)
 
 ## Performance Metrics
 
@@ -62,6 +62,9 @@ Recent decisions affecting current work:
 - Phase 20-01: solver-builder uses ubuntu:noble WITHOUT --platform (TARGETARCH selects URL only); dotnet-builder uses --platform=$BUILDPLATFORM (prevents QEMU on Apple Silicon)
 - Phase 20-01: CVC5 1.3.2 (static, native arm64+x86_64) and Z3 4.16.0 (dynamic, glibc-2.38/2.39) pinned; both from GitHub releases
 - Phase 20-01: -p:MinVerSkip=true required in Docker dotnet publish (no .git history in build context)
+- Phase 20-02: Ubuntu Noble built-in apt feed for dotnet-runtime-8.0 (no Microsoft feed — supports amd64+arm64); image size 1546MB accepted (800MB estimate was unrealistic given dotnet-runtime + NuGet cache)
+- Phase 20-02: java-builder uses pre-built jar (java-fv Maven source has FormulaAdapter.adaptForIncremental() undefined — cannot compile from scratch)
+- Phase 20-02: dotnet --version is SDK-only command; runtime verification uses dotnet --list-runtimes (shows 8.0.24)
 
 ### Pending Todos
 
@@ -76,9 +79,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Phase 20 Plan 01 complete — solver-builder + dotnet-builder stages in Dockerfile
+Stopped at: Phase 20 Plan 02 complete — production stage extensions verified, all four DOCKER requirements passing
 Resume file: None
-Next step: /gsd:execute-phase 20 plan 02 — production stage extensions (.NET runtime, COPY solver binaries, COPY cs-fv DLL, NuGet cache)
+Next step: /gsd:execute-phase 21 — C# FV API endpoint
 
 ---
 *State initialized: 2026-02-12*

@@ -50,7 +50,7 @@
 
 **Milestone Goal:** Add C# Formal Verification as the second live tool — Docker image with .NET runtime + solver binaries, wrapper script bridging dotnet build + Roslyn analyzer to the portal interface, three C# example projects with FV contracts, and E2E test coverage verifying the full user flow.
 
-- [ ] **Phase 20: Docker Image — .NET Runtime + Solver Binaries** - Extend Docker build to include .NET runtime, CVC5, Z3, and the cs-fv published DLL with pre-seeded NuGet cache
+- [x] **Phase 20: Docker Image — .NET Runtime + Solver Binaries** - Extend Docker build to include .NET runtime, CVC5, Z3, and the cs-fv published DLL with pre-seeded NuGet cache
 - [ ] **Phase 21: Wrapper Script + Tool Registry Activation** - Implement `hupyy-csharp-verify` wrapper script and activate C# FV tool in the registry
 - [ ] **Phase 22: C# Example Projects** - Three C# example projects with FV contracts demonstrating progressive complexity and intentional failure
 - [ ] **Phase 23: E2E Tests** - Playwright E2E tests covering the full C# FV user flow including the known-bad example
@@ -69,8 +69,8 @@
   5. Docker image size does not exceed the 800 MB warning threshold (builder stage uses SDK, production stage uses runtime-only)
 **Plans**: 2 plans
 Plans:
-- [ ] 20-01-PLAN.md — Add solver-builder and dotnet-builder stages to Dockerfile
-- [ ] 20-02-PLAN.md — Extend production stage, build and verify Docker image
+- [x] 20-01-PLAN.md — Add solver-builder and dotnet-builder stages to Dockerfile
+- [x] 20-02-PLAN.md — Extend production stage, build and verify Docker image
 
 ### Phase 21: Wrapper Script + Tool Registry Activation
 **Goal**: The C# FV tool is invocable through the portal — the `hupyy-csharp-verify` wrapper script adapts the portal's `--input <dir>` interface to `dotnet cs-fv.dll verify <files...>`, and the tool registry marks the tool as available with the correct 180s timeout
@@ -128,11 +128,11 @@ Plans:
 | 17. Edge Cases & Polish | v1.2 | 2/2 | Complete | 2026-02-18 |
 | 18. Documentation Drift Fix | v1.2 | 1/1 | Complete | 2026-02-19 |
 | 19. Test Infrastructure Cleanup | v1.2 | 2/2 | Complete | 2026-02-20 |
-| 20. Docker Image — .NET Runtime + Solver Binaries | 1/2 | In Progress|  | - |
+| 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | 2/2 | Complete | 2026-02-21 |
 | 21. Wrapper Script + Tool Registry Activation | v1.3 | 0/TBD | Not started | - |
 | 22. C# Example Projects | v1.3 | 0/TBD | Not started | - |
 | 23. E2E Tests | v1.3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-20 — Phase 20 planned (2 plans)*
+*Last updated: 2026-02-21 — Phase 20 complete (2/2 plans done, all four DOCKER requirements verified)*

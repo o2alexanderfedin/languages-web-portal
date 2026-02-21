@@ -10,9 +10,9 @@ Requirements for v1.3 C# Formal Verification milestone. Each maps to roadmap pha
 ### Docker Infrastructure
 
 - [x] **DOCKER-01**: Docker image includes a `dotnet-builder` stage that builds and publishes the cs-fv CLI DLL
-- [ ] **DOCKER-02**: Docker production image includes .NET runtime for executing `dotnet cs-fv.dll`
+- [x] **DOCKER-02**: Docker production image includes .NET runtime for executing `dotnet cs-fv.dll`
 - [x] **DOCKER-03**: Docker production image includes `cvc5` and `z3` as system binaries (required by cs-fv on Linux — Z3 NuGet package only ships osx-x64/win-x64 native libs)
-- [ ] **DOCKER-04**: NuGet packages are pre-seeded during Docker build (no network calls at runtime — prevents 60-90s cold restore latency)
+- [x] **DOCKER-04**: NuGet packages are pre-seeded during Docker build (no network calls at runtime — prevents 60-90s cold restore latency)
 
 ### C# FV Integration
 
@@ -71,9 +71,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | DOCKER-01 | Phase 20 | Complete |
-| DOCKER-02 | Phase 20 | Pending |
+| DOCKER-02 | Phase 20 | Complete |
 | DOCKER-03 | Phase 20 | Complete |
-| DOCKER-04 | Phase 20 | Pending |
+| DOCKER-04 | Phase 20 | Complete |
 | CSFV-01 | Phase 21 | Pending |
 | CSFV-02 | Phase 21 | Pending |
 | CSFV-03 | Phase 21 | Pending |
