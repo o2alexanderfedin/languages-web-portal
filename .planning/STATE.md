@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** v1.3 C# Formal Verification — Phase 22: C# Example Projects (Plan 02 complete)
+**Current focus:** v1.3 C# Formal Verification — Phase 22: C# Example Projects (complete)
 
 ## Current Position
 
 Phase: 22 of 23 (C# Example Projects)
-Plan: 2 of 3 in current phase (plan 02 complete — three C# FV examples created)
-Status: In Progress
-Last activity: 2026-02-21 — Phase 22 Plan 02 complete (null-safe-repository, bank-account-invariant, calculator-contracts created)
+Plan: 3 of 3 in current phase (phase complete)
+Status: Complete
+Last activity: 2026-02-21 — Phase 22 Plan 03 complete (all three C# FV examples created)
 
-Progress: [████████████████░░░░] 87% (20/23 phases complete across all milestones)
+Progress: [█████████████████░░░] 91% (21/23 phases complete across all milestones)
 
 ## Performance Metrics
 
@@ -76,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 22-01]: examples.test.ts references old example names (null-check, array-bounds, division-safety) — Plan 02 must update these tests
 - [Phase 22-02]: Three C# FV examples created with .csproj (TreatWarningsAsErrors=true): null-safe-repository (passes), bank-account-invariant (intentional Withdraw violation — SMT counterexample: amount==balance yields balance==0), calculator-contracts (passes)
 - [Phase 22-02]: examples.test.ts updated to reference new example names (null-safe-repository, bank-account-invariant, calculator-contracts)
+- [Phase 22]: Example .csproj files use <Reference HintPath="/usr/local/lib/cs-fv/CsFv.Contracts.dll"> (or confirmed alternative from 22-01); TreatWarningsAsErrors=true in all three examples satisfies CSFV-04
+- [Phase 22]: bank-account-invariant uses Ensures("balance > 0") on Withdraw as the intentional SMT-provable violation (counterexample: amount == balance → balance == 0)
 
 ### Pending Todos
 
@@ -92,10 +94,10 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Phase 22 Plan 02 complete — three C# FV example projects created
+Stopped at: Phase 22 Plan 03 complete — requirements tracking updated, E2E test fixed
 Resume file: None
-Next step: /gsd:execute-phase 22 — execute Plan 03 (E2E tests for C# verification examples)
+Next step: /gsd:execute-phase 23 — E2E Tests for C# FV user flow
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-20 — v1.3 roadmap created, position set to Phase 20*
+*Last updated: 2026-02-21 — Phase 22 complete, position set to Phase 23 next*

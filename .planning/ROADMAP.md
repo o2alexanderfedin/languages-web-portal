@@ -52,7 +52,7 @@
 
 - [x] **Phase 20: Docker Image — .NET Runtime + Solver Binaries** - Extend Docker build to include .NET runtime, CVC5, Z3, and the cs-fv published DLL with pre-seeded NuGet cache
 - [x] **Phase 21: Wrapper Script + Tool Registry Activation** - Implement `hupyy-csharp-verify` wrapper script and activate C# FV tool in the registry (completed 2026-02-21)
-- [ ] **Phase 22: C# Example Projects** - Three C# example projects with FV contracts demonstrating progressive complexity and intentional failure
+- [x] **Phase 22: C# Example Projects** - Three C# example projects with FV contracts demonstrating progressive complexity and intentional failure (completed 2026-02-21)
 - [ ] **Phase 23: E2E Tests** - Playwright E2E tests covering the full C# FV user flow including the known-bad example
 
 ## Phase Details
@@ -85,7 +85,7 @@ Plans:
 Plans:
 - [x] 21-01-PLAN.md — Wrapper script (hupyy-csharp-verify.sh) + Dockerfile installation
 - [x] 21-02-PLAN.md — Tool registry activation (status available, 180s timeout)
-- [ ] 21-03-PLAN.md — Gap closure: correct CSFV-04 tracking in REQUIREMENTS.md (pending until Phase 22 delivers example .csproj files)
+- [x] 21-03-PLAN.md — Gap closure: correct CSFV-04 tracking in REQUIREMENTS.md (complete — Phase 22 delivered example .csproj files)
 
 ### Phase 22: C# Example Projects
 **Goal**: Three ready-to-run C# example projects are available in the portal ExampleSelector, each with proper `.csproj` files referencing the Hupyy C# FV analyzer, FV contract annotations, and progressive complexity from simple null safety to an intentional invariant violation
@@ -98,9 +98,9 @@ Plans:
   4. All three examples use modern C# features visible in their source (records, pattern matching, nullable reference types, or primary constructors)
 **Plans**: 3 plans
 Plans:
-- [ ] 22-01-PLAN.md — Verify Docker DLL path and cs-fv verify command behavior
-- [ ] 22-02-PLAN.md — Create three C# FV example projects (replace old placeholders)
-- [ ] 22-03-PLAN.md — Update requirements tracking (mark CSFV-04, EXAMPLE-01..04 complete)
+- [x] 22-01-PLAN.md — Verify Docker DLL path and cs-fv verify behavior
+- [x] 22-02-PLAN.md — Create three C# FV example projects
+- [x] 22-03-PLAN.md — Update requirements tracking and fix stale E2E test
 
 ### Phase 23: E2E Tests
 **Goal**: Playwright E2E tests verify the complete C# FV user flow end-to-end against a running Docker container, including example loading, execution with streaming, output inspection, and a mandatory test that asserts the known-bad example produces a failed status
@@ -138,9 +138,9 @@ Plans:
 | 19. Test Infrastructure Cleanup | v1.2 | 2/2 | Complete | 2026-02-20 |
 | 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | Complete    | 2026-02-21 | 2026-02-21 |
 | 21. Wrapper Script + Tool Registry Activation | 3/3 | Complete    | 2026-02-21 | - |
-| 22. C# Example Projects | 2/3 | In Progress|  | - |
+| 22. C# Example Projects | v1.3 | 3/3 | Complete | 2026-02-21 |
 | 23. E2E Tests | v1.3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-21 — Phase 22 planned (3 plans: Docker verification, example creation, tracking update)*
+*Last updated: 2026-02-21 — Phase 22 complete (3/3 plans done, all five EXAMPLE+CSFV-04 requirements verified)*
