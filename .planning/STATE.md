@@ -44,6 +44,7 @@ Progress: [████████████████░░░░] 87% (20
 - Trend: Stable (fast execution)
 
 *Updated after v1.3 roadmap creation*
+| Phase 21-wrapper-script-tool-registry-activation P03 | 1 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - Phase 20-02: dotnet --version is SDK-only command; runtime verification uses dotnet --list-runtimes (shows 8.0.24)
 - Phase 21-02: csharp-verification maxExecutionTimeMs set to 180000 (3 min) — MSBuild cold-start + NuGet restore + CVC5 solving requires extra margin over default 60s
 - [Phase 21-wrapper-script-tool-registry-activation]: Dual-output error messages (stderr+stdout) for portal SSE capture; exit 2 for wrapper validation; OVERALL_EXIT aggregation loop; 2>&1 merge for cs-fv output; file discovery scoped per .csproj via PROJ_DIR
+- [Phase 21-03]: CSFV-04 split delivery: Phase 21 wrapper exit-code passthrough complete; Phase 22 must deliver example .csproj with TreatWarningsAsErrors=true
+- [Phase 21-03]: Accurate requirement tracking: premature [x] marking causes downstream phases to miss deliverables — REQUIREMENTS.md must reflect actual split
 
 ### Pending Todos
 
