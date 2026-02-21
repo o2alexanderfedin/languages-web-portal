@@ -44,6 +44,9 @@ export class ExecutionPage {
    */
   readonly statusBadge: Locator;
 
+  /** Status badge — visible with FAILED text once execution finishes with non-zero exit code */
+  readonly failedStatusBadge: Locator;
+
   constructor(page: Page) {
     this.page = page;
     this.executionPanel = page.getByTestId('execution-panel');
@@ -60,6 +63,9 @@ export class ExecutionPage {
     this.statusBadge = page
       .locator('.bg-green-100.text-green-800, .dark\\:bg-green-900')
       .filter({ hasText: /COMPLETED/i });
+    this.failedStatusBadge = page
+      .locator('.bg-red-100.text-red-800, .dark\\:bg-red-900')
+      .filter({ hasText: /FAILED/i });
   }
 
   /**
