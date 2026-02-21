@@ -52,7 +52,7 @@ test.describe('Landing Page Content', () => {
     const expectedStatuses: Record<string, string> = {
       'cpp-to-c-transpiler': 'In Development',
       'cpp-to-rust-transpiler': 'In Development',
-      'csharp-verification': 'In Development',
+      'csharp-verification': 'Available',
       'java-verification': 'Available',
       'rust-verification': 'In Development',
       'python-linter': 'Coming Soon',
