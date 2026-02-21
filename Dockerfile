@@ -42,7 +42,65 @@ RUN mvn install -N
 # Build Java FV CLI jar (skip tests for faster Docker build)
 RUN mvn clean package -pl compiler-plugin/cli -am -DskipTests
 
-# Stage 3: Production
+# Stage 3: Solver Builder
+FROM ubuntu:noble AS solver-builder
+ARG TARGETARCH
+
+RUN apt-get update && \
+    apt-get install -y curl unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+# CVC5 1.3.2 — static binary, no dynamic deps
+RUN case "$TARGETARCH" in \
+      amd64) CVC5_ARCH=x86_64 ;; \
+      arm64) CVC5_ARCH=arm64  ;; \
+      *) echo "Unsupported TARGETARCH: $TARGETARCH" && exit 1 ;; \
+    esac && \
+    curl -fsSL \
+      "https://github.com/cvc5/cvc5/releases/download/cvc5-1.3.2/cvc5-Linux-${CVC5_ARCH}-static.zip" \
+      -o /tmp/cvc5.zip && \
+    unzip -q /tmp/cvc5.zip -d /tmp/cvc5 && \
+    install -m 0755 \
+      "/tmp/cvc5/cvc5-Linux-${CVC5_ARCH}-static/bin/cvc5" \
+      /usr/local/bin/cvc5 && \
+    rm -rf /tmp/cvc5.zip /tmp/cvc5
+
+# Z3 4.16.0 — dynamic binary; glibc 2.38 (arm64) / 2.39 (x64) — both satisfied by Noble
+RUN case "$TARGETARCH" in \
+      amd64) Z3_ARCH=x64;   Z3_GLIBC=glibc-2.39 ;; \
+      arm64) Z3_ARCH=arm64; Z3_GLIBC=glibc-2.38  ;; \
+      *) echo "Unsupported TARGETARCH: $TARGETARCH" && exit 1 ;; \
+    esac && \
+    curl -fsSL \
+      "https://github.com/Z3Prover/z3/releases/download/z3-4.16.0/z3-4.16.0-${Z3_ARCH}-${Z3_GLIBC}.zip" \
+      -o /tmp/z3.zip && \
+    unzip -q /tmp/z3.zip -d /tmp/z3 && \
+    install -m 0755 \
+      "/tmp/z3/z3-4.16.0-${Z3_ARCH}-${Z3_GLIBC}/bin/z3" \
+      /usr/local/bin/z3 && \
+    rm -rf /tmp/z3.zip /tmp/z3
+
+# Stage 4: .NET Builder
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0-noble AS dotnet-builder
+ARG TARGETARCH
+
+# Copy cs-fv source (build context is monorepo root /hapyy/)
+COPY cs-fv/ /build/cs-fv/
+WORKDIR /build/cs-fv
+
+# NuGet global packages location (will be COPYed to production)
+ENV NUGET_PACKAGES=/nuget-packages
+
+# MinVer requires git tags; skip in Docker context
+# Publish framework-dependent net8.0 binary
+RUN dotnet publish src/CsFv.Cli/CsFv.Cli.csproj \
+      --configuration Release \
+      --framework net8.0 \
+      --output /publish/cs-fv \
+      --no-self-contained \
+      -p:MinVerSkip=true
+
+# Stage 5: Production
 FROM eclipse-temurin:25-jre-noble AS production
 
 WORKDIR /app
