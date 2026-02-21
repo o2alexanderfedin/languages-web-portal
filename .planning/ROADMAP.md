@@ -59,7 +59,7 @@
 
 ### v1.4 Local Development Experience
 
-- [ ] **Phase 24: Local Dev Setup & C# FV Configuration** — Wire root dev script, env-based tool config, and verify C# FV works end-to-end locally
+- [x] **Phase 24: Local Dev Setup & C# FV Configuration** — Wire root dev script, env-based tool config, and verify C# FV works end-to-end locally — completed 2026-02-21
 - [ ] **Phase 25: Developer README** — Document prerequisites and local setup so any developer can onboard without prior context
 
 ## Phase Details
@@ -81,9 +81,9 @@
 
 **Plans**: 3 plans
 Plans:
-- [ ] 24-01-PLAN.md — Make C# FV command env-configurable in toolRegistry; fix .env local paths
-- [ ] 24-02-PLAN.md — Add root npm run dev script with concurrently for server + client
-- [ ] 24-03-PLAN.md — Pre-flight checks + human E2E verification of local C# FV execution
+- [x] 24-01-PLAN.md — Make C# FV command env-configurable in toolRegistry; fix .env local paths
+- [x] 24-02-PLAN.md — Add root npm run dev script with concurrently for server + client
+- [x] 24-03-PLAN.md — Pre-flight checks + human E2E verification of local C# FV execution
 
 ### Phase 25: Developer README
 

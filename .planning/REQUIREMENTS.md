@@ -21,8 +21,8 @@ Requirements for v1.4 Local Development Experience milestone. Each maps to roadm
 
 ### End-to-End
 
-- [ ] **E2E-01**: C# Formal Verification tool shows "Available" in the portal UI when running locally with `npm run dev`
-- [ ] **E2E-02**: Uploading a C# zip (e.g. null-safe-repository) and clicking Execute produces real-time streaming verification output in the browser
+- [x] **E2E-01**: C# Formal Verification tool shows "Available" in the portal UI when running locally with `npm run dev`
+- [x] **E2E-02**: Uploading a C# zip (e.g. null-safe-repository) and clicking Execute produces real-time streaming verification output in the browser
 
 ### Documentation
 
@@ -55,8 +55,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONF-02 | Phase 24 | Complete |
 | CONF-03 | Phase 24 | Complete |
 | CONF-04 | Phase 24 | Complete |
-| E2E-01 | Phase 24 | Pending |
-| E2E-02 | Phase 24 | Pending |
+| E2E-01 | Phase 24 | Complete |
+| E2E-02 | Phase 24 | Complete |
 | DOC-01 | Phase 25 | Pending |
 
 **Coverage:**
