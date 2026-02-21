@@ -133,7 +133,7 @@ Plans:
 | 18. Documentation Drift Fix | v1.2 | 1/1 | Complete | 2026-02-19 |
 | 19. Test Infrastructure Cleanup | v1.2 | 2/2 | Complete | 2026-02-20 |
 | 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | Complete    | 2026-02-21 | 2026-02-21 |
-| 21. Wrapper Script + Tool Registry Activation | 3/3 | Complete   | 2026-02-21 | - |
+| 21. Wrapper Script + Tool Registry Activation | 3/3 | Complete    | 2026-02-21 | - |
 | 22. C# Example Projects | v1.3 | 0/TBD | Not started | - |
 | 23. E2E Tests | v1.3 | 0/TBD | Not started | - |
 
