@@ -130,7 +130,7 @@ Plans:
 | 22. C# Example Projects | v1.3 | 3/3 | Complete | 2026-02-21 |
 | 23. E2E Tests | v1.3 | 2/2 | Complete | 2026-02-21 |
 | 24. Local Dev Setup & C# FV Configuration | v1.4 | 3/3 | Complete | 2026-02-21 |
-| 25. Developer README | 1/1 | Complete   | 2026-02-21 | - |
+| 25. Developer README | 1/1 | Complete    | 2026-02-21 | - |
 
 ---
 *Roadmap created: 2026-02-12*
