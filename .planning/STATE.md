@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** v1.3 C# Formal Verification — Phase 22: C# Example Projects
+**Current focus:** v1.3 C# Formal Verification — Phase 22: C# Example Projects (Plan 02 complete)
 
 ## Current Position
 
 Phase: 22 of 23 (C# Example Projects)
-Plan: 1 of 3 in current phase (plan 01 complete — DLL path and verify behavior confirmed)
+Plan: 2 of 3 in current phase (plan 02 complete — three C# FV examples created)
 Status: In Progress
-Last activity: 2026-02-21 — Phase 22 Plan 01 complete (CsFv.Contracts.dll confirmed; cs-fv verify resolves types internally)
+Last activity: 2026-02-21 — Phase 22 Plan 02 complete (null-safe-repository, bank-account-invariant, calculator-contracts created)
 
 Progress: [████████████████░░░░] 87% (20/23 phases complete across all milestones)
 
@@ -74,6 +74,8 @@ Recent decisions affecting current work:
 - [Phase 22-01]: cs-fv verify resolves CsFv.Contracts types internally — <Reference HintPath> in .csproj is IDE-only; cs-fv takes individual .cs files, not .csproj
 - [Phase 22-01]: Wrapper uses .csproj for pre-flight check and .cs file scoping only — .csproj not passed to cs-fv CLI
 - [Phase 22-01]: examples.test.ts references old example names (null-check, array-bounds, division-safety) — Plan 02 must update these tests
+- [Phase 22-02]: Three C# FV examples created with .csproj (TreatWarningsAsErrors=true): null-safe-repository (passes), bank-account-invariant (intentional Withdraw violation — SMT counterexample: amount==balance yields balance==0), calculator-contracts (passes)
+- [Phase 22-02]: examples.test.ts updated to reference new example names (null-safe-repository, bank-account-invariant, calculator-contracts)
 
 ### Pending Todos
 
@@ -90,9 +92,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Phase 22 Plan 01 complete — DLL path and cs-fv verify behavior confirmed
+Stopped at: Phase 22 Plan 02 complete — three C# FV example projects created
 Resume file: None
-Next step: /gsd:execute-phase 22 — execute Plan 02 (write three example projects)
+Next step: /gsd:execute-phase 22 — execute Plan 03 (E2E tests for C# verification examples)
 
 ---
 *State initialized: 2026-02-12*

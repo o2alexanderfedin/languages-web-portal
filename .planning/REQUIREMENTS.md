@@ -19,14 +19,14 @@ Requirements for v1.3 C# Formal Verification milestone. Each maps to roadmap pha
 - [x] **CSFV-01**: `hupyy-csharp-verify` wrapper script accepts `--input <dir>`, enumerates `.cs` files, runs cs-fv via `exec dotnet`, streams output to portal SSE
 - [x] **CSFV-02**: C# Formal Verification tool status updated to `available` in tool registry and UI tool grid
 - [x] **CSFV-03**: C# FV tool timeout set to 180,000ms (MSBuild + dotnet startup needs extra margin vs Java FV's 120s)
-- [ ] **CSFV-04**: Wrapper script handles Roslyn `Warning`-severity exit code 0 via `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` in example `.csproj` files _(Phase 21 delivered wrapper exit-code passthrough; Phase 22 must deliver example `.csproj` files with this property)_
+- [x] **CSFV-04**: Wrapper script handles Roslyn `Warning`-severity exit code 0 via `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` in example `.csproj` files _(Phase 21 delivered wrapper exit-code passthrough; Phase 22 must deliver example `.csproj` files with this property)_
 
 ### C# Example Projects
 
 - [x] **EXAMPLE-01**: Three C# example projects with `.csproj` files referencing the Hupyy FV analyzer NuGet package
-- [ ] **EXAMPLE-02**: Examples demonstrate modern C# features (records, pattern matching, nullable reference types) with FV contracts/invariants (progressive complexity)
-- [ ] **EXAMPLE-03**: At least one example contains intentional FV contract violations (demonstrates the tool finding real issues — mirrors Java FV pattern)
-- [ ] **EXAMPLE-04**: Examples visible and loadable via ExampleSelector UI with name + description (same pattern as Java FV examples)
+- [x] **EXAMPLE-02**: Examples demonstrate modern C# features (records, pattern matching, nullable reference types) with FV contracts/invariants (progressive complexity)
+- [x] **EXAMPLE-03**: At least one example contains intentional FV contract violations (demonstrates the tool finding real issues — mirrors Java FV pattern)
+- [x] **EXAMPLE-04**: Examples visible and loadable via ExampleSelector UI with name + description (same pattern as Java FV examples)
 
 ### E2E Testing
 
@@ -77,11 +77,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CSFV-01 | Phase 21 | Complete |
 | CSFV-02 | Phase 21 | Complete |
 | CSFV-03 | Phase 21 | Complete |
-| CSFV-04 | Phase 22 | Pending |
+| CSFV-04 | Phase 22 | Complete |
 | EXAMPLE-01 | Phase 22 | Complete |
-| EXAMPLE-02 | Phase 22 | Pending |
-| EXAMPLE-03 | Phase 22 | Pending |
-| EXAMPLE-04 | Phase 22 | Pending |
+| EXAMPLE-02 | Phase 22 | Complete |
+| EXAMPLE-03 | Phase 22 | Complete |
+| EXAMPLE-04 | Phase 22 | Complete |
 | E2E-01 | Phase 23 | Pending |
 | E2E-02 | Phase 23 | Pending |
 | E2E-03 | Phase 23 | Pending |
