@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Users can try any Hupyy formal verification or transpiler tool directly in the browser — upload code, see it run, get results — with zero local setup.
-**Current focus:** v1.3 C# Formal Verification — Phase 22: C# Example Projects (complete)
+**Current focus:** v1.3 C# Formal Verification — Phase 23: E2E Tests (in progress)
 
 ## Current Position
 
-Phase: 22 of 23 (C# Example Projects)
-Plan: 3 of 3 in current phase (phase complete)
-Status: Complete
-Last activity: 2026-02-21 — Phase 22 Plan 03 complete (all three C# FV examples created)
+Phase: 23 of 23 (E2E Tests)
+Plan: 1 of 3 in current phase (plan 01 complete)
+Status: In Progress
+Last activity: 2026-02-20 — Phase 23 Plan 01 complete (ExecutionPage POM extended, csharp-fv-examples.spec.ts created, C# FV error scenario added)
 
 Progress: [█████████████████░░░] 91% (21/23 phases complete across all milestones)
 
@@ -78,6 +78,9 @@ Recent decisions affecting current work:
 - [Phase 22-02]: examples.test.ts updated to reference new example names (null-safe-repository, bank-account-invariant, calculator-contracts)
 - [Phase 22]: Example .csproj files use <Reference HintPath="/usr/local/lib/cs-fv/CsFv.Contracts.dll"> (or confirmed alternative from 22-01); TreatWarningsAsErrors=true in all three examples satisfies CSFV-04
 - [Phase 22]: bank-account-invariant uses Ensures("balance > 0") on Withdraw as the intentional SMT-provable violation (counterexample: amount == balance → balance == 0)
+- [Phase 23-01]: sample.zip (main.cpp only, no .csproj) used directly for C# FV no-.csproj test — no route interception needed since sample.zip already lacks .csproj
+- [Phase 23-01]: C# FV error test uses Promise.race between error alert and failedStatusBadge — covers both SSE error event path and FAILED status badge path
+- [Phase 23-01]: csharp-fv-examples.spec.ts outer describe has no isMobile skip — runs on all 9 Playwright matrix projects per E2E-01 requirement
 
 ### Pending Todos
 
@@ -93,11 +96,11 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-21
-Stopped at: Phase 22 Plan 03 complete — requirements tracking updated, E2E test fixed
+Last session: 2026-02-20
+Stopped at: Phase 23 Plan 01 complete — ExecutionPage POM extended, csharp-fv-examples.spec.ts created, C# FV error scenario added
 Resume file: None
-Next step: /gsd:execute-phase 23 — E2E Tests for C# FV user flow
+Next step: Execute Phase 23 Plan 02 — C# FV execution E2E tests (Docker required)
 
 ---
 *State initialized: 2026-02-12*
-*Last updated: 2026-02-21 — Phase 22 complete, position set to Phase 23 next*
+*Last updated: 2026-02-20 — Phase 23 Plan 01 complete*

@@ -30,7 +30,7 @@ Requirements for v1.3 C# Formal Verification milestone. Each maps to roadmap pha
 
 ### E2E Testing
 
-- [ ] **E2E-01**: E2E tests cover C# tool selection and example loading in ExampleSelector UI
+- [x] **E2E-01**: E2E tests cover C# tool selection and example loading in ExampleSelector UI
 - [ ] **E2E-02**: E2E tests cover C# FV execution with Docker streaming and progress display
 - [ ] **E2E-03**: E2E tests cover C# FV output file tree and results display
 - [ ] **E2E-04**: E2E test covers the known-bad example (verifies tool correctly surfaces FV violations)
@@ -82,7 +82,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXAMPLE-02 | Phase 22 | Complete |
 | EXAMPLE-03 | Phase 22 | Complete |
 | EXAMPLE-04 | Phase 22 | Complete |
-| E2E-01 | Phase 23 | Pending |
+| E2E-01 | Phase 23 | Complete |
 | E2E-02 | Phase 23 | Pending |
 | E2E-03 | Phase 23 | Pending |
 | E2E-04 | Phase 23 | Pending |

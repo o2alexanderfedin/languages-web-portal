@@ -142,7 +142,7 @@ Plans:
 | 20. Docker Image — .NET Runtime + Solver Binaries | v1.3 | Complete    | 2026-02-21 | 2026-02-21 |
 | 21. Wrapper Script + Tool Registry Activation | 3/3 | Complete    | 2026-02-21 | - |
 | 22. C# Example Projects | 3/3 | Complete    | 2026-02-21 | 2026-02-21 |
-| 23. E2E Tests | v1.3 | 0/TBD | Not started | - |
+| 23. E2E Tests | 1/2 | In Progress|  | - |
 
 ---
 *Roadmap created: 2026-02-12*
