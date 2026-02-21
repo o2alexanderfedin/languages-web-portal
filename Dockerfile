@@ -140,11 +140,31 @@ COPY --from=node-builder /app/packages/client/dist ./packages/client/dist
 # Copy examples directory for example projects endpoint
 COPY --from=node-builder /app/packages/server/examples ./packages/server/examples
 
+# Install .NET 8 runtime (Ubuntu Noble built-in apt feed — supports amd64 AND arm64, no Microsoft feed needed)
+RUN apt-get update && \
+    apt-get install -y dotnet-runtime-8.0 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy solver binaries from solver-builder (no curl/unzip tools in production)
+COPY --from=solver-builder /usr/local/bin/cvc5 /usr/local/bin/cvc5
+COPY --from=solver-builder /usr/local/bin/z3   /usr/local/bin/z3
+
+# Copy cs-fv CLI from dotnet-builder (framework-dependent; requires dotnet-runtime-8.0 above)
+COPY --from=dotnet-builder /publish/cs-fv /usr/local/lib/cs-fv
+
+# Copy pre-seeded NuGet packages from dotnet-builder (enables offline dotnet invocation at request time)
+COPY --from=dotnet-builder /nuget-packages /home/nodejs/.nuget/packages
+
+# NuGet global packages path — must match the directory owned by nodejs below
+ENV NUGET_PACKAGES=/home/nodejs/.nuget/packages
+
 # Create uploads directory before switching to non-root user
 RUN mkdir -p /app/uploads && \
     groupadd -g 1001 nodejs && \
     useradd -u 1001 -g nodejs -s /bin/false nodejs && \
-    chown nodejs:nodejs /app/uploads
+    chown nodejs:nodejs /app/uploads && \
+    chown -R nodejs:nodejs /home/nodejs
 
 USER nodejs
 
