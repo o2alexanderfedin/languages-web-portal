@@ -59,7 +59,10 @@ Users can try any Hupyy formal verification or transpiler tool directly in the b
 
 ### Active
 
-_(next milestone requirements go here)_
+- [ ] `npm run dev` at root starts server + client together with one command — v1.4
+- [ ] C# FV tool command configurable via `CSHARP_FV_CMD` env var (no hardcoded Docker paths) — v1.4
+- [ ] C# FV works end-to-end locally (upload zip → streaming verification output) — v1.4
+- [ ] README.md with prerequisites and local setup steps — v1.4
 
 ### Out of Scope
 
@@ -144,4 +147,4 @@ All tools are CLI-based: take input directory/files, produce output directory/fi
 | java-builder pre-built jar (tech debt) | FormulaAdapter.adaptForIncremental() undefined in source; jar tracked in git — maintenance risk | ⚠️ Revisit |
 
 ---
-*Last updated: 2026-02-21 after v1.3 C# Formal Verification milestone*
+*Last updated: 2026-02-21 — v1.4 Local Development Experience started*
