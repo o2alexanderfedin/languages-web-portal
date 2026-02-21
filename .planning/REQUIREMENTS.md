@@ -14,10 +14,10 @@ Requirements for v1.4 Local Development Experience milestone. Each maps to roadm
 
 ### Tool Configuration
 
-- [ ] **CONF-01**: C# FV command is configurable via `CSHARP_FV_CMD` env var in toolRegistry (falls back to `/usr/local/bin/hupyy-csharp-verify` when unset — preserves Docker behavior)
-- [ ] **CONF-02**: Local `.env` sets `CSHARP_FV_CMD` to the local wrapper script path and `CS_FV_DLL` to the local cs-fv publish output path
-- [ ] **CONF-03**: Local `.env` sets `JAVA_HOME` to the installed JDK path (jdk-21, not the stale jdk-22 reference)
-- [ ] **CONF-04**: Local `.env` sets `CVC5_PATH` to `~/bin/cvc5` so the C# FV wrapper can find the solver
+- [x] **CONF-01**: C# FV command is configurable via `CSHARP_FV_CMD` env var in toolRegistry (falls back to `/usr/local/bin/hupyy-csharp-verify` when unset — preserves Docker behavior)
+- [x] **CONF-02**: Local `.env` sets `CSHARP_FV_CMD` to the local wrapper script path and `CS_FV_DLL` to the local cs-fv publish output path
+- [x] **CONF-03**: Local `.env` sets `JAVA_HOME` to the installed JDK path (jdk-21, not the stale jdk-22 reference)
+- [x] **CONF-04**: Local `.env` sets `CVC5_PATH` to `~/bin/cvc5` so the C# FV wrapper can find the solver
 
 ### End-to-End
 
@@ -51,10 +51,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | START-01 | Phase 24 | Pending |
 | START-02 | Phase 24 | Pending |
-| CONF-01 | Phase 24 | Pending |
-| CONF-02 | Phase 24 | Pending |
-| CONF-03 | Phase 24 | Pending |
-| CONF-04 | Phase 24 | Pending |
+| CONF-01 | Phase 24 | Complete |
+| CONF-02 | Phase 24 | Complete |
+| CONF-03 | Phase 24 | Complete |
+| CONF-04 | Phase 24 | Complete |
 | E2E-01 | Phase 24 | Pending |
 | E2E-02 | Phase 24 | Pending |
 | DOC-01 | Phase 25 | Pending |
