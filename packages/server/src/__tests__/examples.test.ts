@@ -72,9 +72,9 @@ describe('Examples API', () => {
       const exampleNames = response.body.examples.map(
         (ex: { name: string }) => ex.name,
       );
-      expect(exampleNames).toContain('null-check');
-      expect(exampleNames).toContain('array-bounds');
-      expect(exampleNames).toContain('division-safety');
+      expect(exampleNames).toContain('null-safe-repository');
+      expect(exampleNames).toContain('bank-account-invariant');
+      expect(exampleNames).toContain('calculator-contracts');
     });
 
     it('should return list of examples for java-verification', async () => {
@@ -159,18 +159,20 @@ describe('Examples API', () => {
       expect(files).toContain('README.md');
     });
 
-    it('should load C# null-check example successfully', async () => {
+    it('should load C# null-safe-repository example successfully', async () => {
       const response = await request(app).post(
-        '/api/examples/csharp-verification/null-check',
+        '/api/examples/csharp-verification/null-safe-repository',
       );
 
       expect(response.status).toBe(201);
       expect(response.body.toolId).toBe('csharp-verification');
-      expect(response.body.exampleName).toBe('null-check');
+      expect(response.body.exampleName).toBe('null-safe-repository');
 
       const projectPath = join(testUploadDir, response.body.projectId);
       const files = await readdir(projectPath);
-      expect(files).toContain('Program.cs');
+      expect(files).toContain('NullSafeRepository.cs');
+      expect(files).toContain('Example.csproj');
+      expect(files).toContain('README.md');
     });
 
     it('should load bank-account-records Java example successfully', async () => {

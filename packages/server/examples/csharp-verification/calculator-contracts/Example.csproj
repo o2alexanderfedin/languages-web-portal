@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <OutputType>Library</OutputType>
+    <!-- CSFV-04: Convert Roslyn Warning diagnostics to errors so cs-fv exits 1 on contract issues -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- CsFv.Contracts: not on NuGet.org — reference DLL from cs-fv publish output (IDE support only) -->
+    <!-- cs-fv verify resolves CsFv.Contracts internally; this Reference is for IDE IntelliSense only -->
+    <Reference Include="CsFv.Contracts">
+      <HintPath>/usr/local/lib/cs-fv/CsFv.Contracts.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
