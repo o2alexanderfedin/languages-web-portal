@@ -19,7 +19,7 @@ const toolExecutionConfigs: ToolExecutionConfig[] = [
   },
   {
     id: 'csharp-verification',
-    command: '/usr/local/bin/hupyy-csharp-verify',
+    command: process.env.CSHARP_FV_CMD ?? '/usr/local/bin/hupyy-csharp-verify',
     defaultArgs: ['--input'],
     maxExecutionTimeMs: 180000,
     available: true,
