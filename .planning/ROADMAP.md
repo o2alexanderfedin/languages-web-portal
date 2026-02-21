@@ -98,7 +98,9 @@ Plans:
   2. A developer following only the README steps (clone, install prerequisites, set env vars, `npm run dev`) can reach the running portal in their browser
   3. The README covers both the one-time setup and the daily start command — no supplemental knowledge required
 
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 25-01-PLAN.md — Write README.md and packages/server/.env.example for full local onboarding
 
 ## Progress
 
@@ -127,9 +129,9 @@ Plans:
 | 21. Wrapper Script + Tool Registry Activation | v1.3 | 3/3 | Complete | 2026-02-21 |
 | 22. C# Example Projects | v1.3 | 3/3 | Complete | 2026-02-21 |
 | 23. E2E Tests | v1.3 | 2/2 | Complete | 2026-02-21 |
-| 24. Local Dev Setup & C# FV Configuration | 2/3 | Complete    | 2026-02-21 | - |
+| 24. Local Dev Setup & C# FV Configuration | v1.4 | 3/3 | Complete | 2026-02-21 |
 | 25. Developer README | v1.4 | 0/1 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-12*
-*Last updated: 2026-02-21 — Phase 24 planned (3 plans: toolRegistry config, concurrently dev script, E2E verification)*
+*Last updated: 2026-02-21 — Phase 25 planned (1 plan: README.md + .env.example)*
