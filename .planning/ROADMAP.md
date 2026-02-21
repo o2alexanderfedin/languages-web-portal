@@ -60,7 +60,7 @@
 ### v1.4 Local Development Experience
 
 - [x] **Phase 24: Local Dev Setup & C# FV Configuration** — Wire root dev script, env-based tool config, and verify C# FV works end-to-end locally — completed 2026-02-21
-- [ ] **Phase 25: Developer README** — Document prerequisites and local setup so any developer can onboard without prior context
+- [x] **Phase 25: Developer README** — Document prerequisites and local setup so any developer can onboard without prior context (completed 2026-02-21)
 
 ## Phase Details
 
@@ -130,7 +130,7 @@ Plans:
 | 22. C# Example Projects | v1.3 | 3/3 | Complete | 2026-02-21 |
 | 23. E2E Tests | v1.3 | 2/2 | Complete | 2026-02-21 |
 | 24. Local Dev Setup & C# FV Configuration | v1.4 | 3/3 | Complete | 2026-02-21 |
-| 25. Developer README | v1.4 | 0/1 | Not started | - |
+| 25. Developer README | 1/1 | Complete   | 2026-02-21 | - |
 
 ---
 *Roadmap created: 2026-02-12*

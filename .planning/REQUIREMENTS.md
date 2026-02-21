@@ -26,7 +26,7 @@ Requirements for v1.4 Local Development Experience milestone. Each maps to roadm
 
 ### Documentation
 
-- [ ] **DOC-01**: `README.md` at project root documents prerequisites (Node.js, .NET, Java, Z3, CVC5), one-time setup steps, and how to start the portal locally
+- [x] **DOC-01**: `README.md` at project root documents prerequisites (Node.js, .NET, Java, Z3, CVC5), one-time setup steps, and how to start the portal locally
 
 ## Future Requirements
 
@@ -57,7 +57,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONF-04 | Phase 24 | Complete |
 | E2E-01 | Phase 24 | Complete |
 | E2E-02 | Phase 24 | Complete |
-| DOC-01 | Phase 25 | Pending |
+| DOC-01 | Phase 25 | Complete |
 
 **Coverage:**
 - v1.4 requirements: 9 total
