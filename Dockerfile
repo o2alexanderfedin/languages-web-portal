@@ -107,6 +107,10 @@ RUN apt-get update && \
 COPY languages-web-portal/scripts/hupyy-java-verify.sh /usr/local/bin/hupyy-java-verify
 RUN chmod +x /usr/local/bin/hupyy-java-verify
 
+# Install C# FV wrapper script
+COPY languages-web-portal/scripts/hupyy-csharp-verify.sh /usr/local/bin/hupyy-csharp-verify
+RUN chmod +x /usr/local/bin/hupyy-csharp-verify
+
 # Copy Java FV CLI jar from java-builder stage
 COPY --from=java-builder /build/cli-1.1.0-jar-with-dependencies.jar /usr/local/lib/java-fv-cli.jar
 
