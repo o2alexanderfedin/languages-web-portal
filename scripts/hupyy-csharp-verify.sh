@@ -63,11 +63,17 @@ if [[ ${#CS_FILES[@]} -eq 0 ]]; then
   exit 2
 fi
 
+# Build optional --cvc5-path argument from CVC5_PATH env var
+CVC5_ARGS=()
+if [[ -n "${CVC5_PATH:-}" && -x "${CVC5_PATH}" ]]; then
+  CVC5_ARGS=(--cvc5-path "$CVC5_PATH")
+fi
+
 # Run cs-fv verify for each .cs file
 # 2>&1 merges cs-fv stderr into stdout for portal SSE streaming
 OVERALL_EXIT=0
 for cs_file in "${CS_FILES[@]}"; do
-  "$DOTNET_BIN" "$CS_FV_DLL" verify "$cs_file" 2>&1 || OVERALL_EXIT=$?
+  "$DOTNET_BIN" "$CS_FV_DLL" verify "$cs_file" "${CVC5_ARGS[@]}" 2>&1 || OVERALL_EXIT=$?
 done
 
 exit $OVERALL_EXIT

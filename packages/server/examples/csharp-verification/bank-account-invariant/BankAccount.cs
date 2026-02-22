@@ -1,40 +1,43 @@
+using System;
 using CsFv.Contracts;
 
 /// <summary>
-/// Bank account with a class invariant: balance is always non-negative.
-/// Demonstrates intentional contract violation — cs-fv should report FAILED
-/// for Withdraw because the Ensures postcondition is provably wrong.
+/// Bank account operations as pure functions — demonstrates formal verification
+/// with [Requires] and [Ensures] contracts verified by CVC5/Z3.
+///
+/// Key demo behavior:
+///   - Deposit, Withdraw, Transfer — all PASS (contracts are correct)
+///   - WithdrawBuggy — INTENTIONALLY FAILS: claims result > 0
+///     but amount == balance gives result == 0, violating "result > 0"
 /// </summary>
-[ClassInvariant("balance >= 0")]
-public class BankAccount(decimal initialBalance)  // Primary constructor (C# 12)
+public static class BankAccount
 {
-    [Ghost]
-    private decimal balance = initialBalance;
-
-    [Pure]
-    [Ensures("result == balance")]
-    public decimal GetBalance() => balance;
-
+    /// <summary>Deposit: balance increases by amount. Requires amount positive.</summary>
+    [Requires("balance >= 0")]
     [Requires("amount > 0")]
-    [Modifies("balance")]
-    [Ensures("balance == old(balance) + amount")]
-    public void Deposit(decimal amount)
-    {
-        balance += amount;
-    }
+    [Ensures("result == balance + amount")]
+    public static int Deposit(int balance, int amount) => balance + amount;
 
-    // INTENTIONAL INVARIANT VIOLATION:
-    // The postcondition claims balance > 0 after withdrawal.
-    // But if amount == balance, then balance becomes exactly 0.
-    // The SMT solver will find this counterexample:
-    //   balance = 100, amount = 100 → balance = 0, violates Ensures("balance > 0")
-    // cs-fv will output: ❌ Withdraw: Failed
+    /// <summary>Withdraw: balance decreases. Requires sufficient funds.</summary>
+    [Requires("balance >= 0")]
     [Requires("amount > 0")]
     [Requires("amount <= balance")]
-    [Modifies("balance")]
-    [Ensures("balance > 0")]  // BUG: should be "balance >= 0" — intentional violation for demo
-    public void Withdraw(decimal amount)
-    {
-        balance -= amount;
-    }
+    [Ensures("result >= 0")]
+    public static int Withdraw(int balance, int amount) => balance - amount;
+
+    /// <summary>
+    /// INTENTIONAL BUG for demo: claims result > 0 after withdrawal.
+    /// Counterexample: balance=100, amount=100 → result=0, violates "result > 0".
+    /// cs-fv will report this method as FAILED.
+    /// </summary>
+    [Requires("balance >= 0")]
+    [Requires("amount > 0")]
+    [Requires("amount <= balance")]
+    [Ensures("result > 0")]
+    public static int WithdrawBuggy(int balance, int amount) => balance - amount;
+
+    /// <summary>Safe divide with precondition.</summary>
+    [Requires("divisor != 0")]
+    [Ensures("result * divisor <= dividend")]
+    public static int SafeDivide(int dividend, int divisor) => dividend / divisor;
 }

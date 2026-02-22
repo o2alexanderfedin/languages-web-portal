@@ -1,3 +1,4 @@
+using System;
 using CsFv.Contracts;
 
 // Discriminated union using abstract records (C# 9+)

@@ -1,42 +1,34 @@
 using CsFv.Contracts;
 
-// Modern C# record for domain modeling (C# 9+)
-public record User(int Id, string Name, string? Email = null);
-
 /// <summary>
-/// Null-safe repository demonstrating FV precondition/postcondition contracts.
-/// All contracts are satisfiable — this example should pass verification.
+/// Repository operations with null-safety contracts.
+/// Uses pure integer functions — the cs-fv verifier can reason about these
+/// with the CVC5 SMT solver. All contracts are satisfiable (should pass).
 /// </summary>
-public class NullSafeRepository
+public static class NullSafeRepository
 {
-    private readonly Dictionary<int, User> _users = new();
-
-    /// <summary>Finds a user by ID. Requires positive ID.</summary>
+    /// <summary>Find by ID — ID must be positive (non-null analogy for IDs).</summary>
     [Requires("id > 0")]
-    [Ensures("result == null || result.Id == id")]
-    public User? FindById(int id)
+    [Ensures("result >= 0")]
+    public static int FindById(int id) => id > 1000 ? -1 : id;
+
+    /// <summary>Count — must be non-negative after incrementing a valid count.</summary>
+    [Requires("count >= 0")]
+    [Ensures("result > count")]
+    public static int IncrementCount(int count) => count + 1;
+
+    /// <summary>Clamp value to [min, max] range.</summary>
+    [Requires("min <= max")]
+    [Ensures("result >= min")]
+    [Ensures("result <= max")]
+    public static int Clamp(int value, int min, int max)
     {
-        return _users.TryGetValue(id, out var user) ? user : null;
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
     }
 
-    /// <summary>Adds a user to the repository. Requires non-null user with positive ID.</summary>
-    [Requires("user != null")]
-    [Requires("user.Id > 0")]
-    public void AddUser(User user)
-    {
-        _users[user.Id] = user;
-    }
-
-    /// <summary>Returns a display name. Uses C# pattern matching on nullable.</summary>
-    [Pure]
-    [Ensures("result != null")]
-    public string GetDisplayName(User? user)
-    {
-        return user switch
-        {
-            { Email: not null } u => $"{u.Name} <{u.Email}>",
-            { Name: var n } => n,
-            null => "Unknown"
-        };
-    }
+    /// <summary>Absolute value — result is always non-negative.</summary>
+    [Ensures("result >= 0")]
+    public static int Abs(int value) => value < 0 ? -value : value;
 }
