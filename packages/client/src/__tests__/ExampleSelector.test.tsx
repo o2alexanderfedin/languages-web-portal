@@ -16,17 +16,17 @@ function createTestStore() {
 }
 
 describe('ExampleSelector', () => {
-  it('renders nothing when toolId is null', () => {
+  it('renders a prompt to select a tool when toolId is null', () => {
     const store = createTestStore();
     const onExampleLoaded = vi.fn();
 
-    const { container } = render(
+    const { getByTestId } = render(
       <Provider store={store}>
         <ExampleSelector toolId={null} onExampleLoaded={onExampleLoaded} />
       </Provider>,
     );
 
-    expect(container.firstChild).toBeNull();
+    expect(getByTestId('example-selector-no-tool')).toBeDefined();
   });
 
   it('renders selector wrapper when toolId is provided', () => {

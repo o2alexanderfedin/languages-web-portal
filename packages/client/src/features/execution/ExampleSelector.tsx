@@ -20,9 +20,31 @@ export function ExampleSelector({ toolId, onExampleLoaded, disabled = false }: E
 
   const examples = examplesData?.examples ?? [];
 
-  // Return nothing if no tool selected or no examples available
-  if (!toolId || examples.length === 0) {
-    return null;
+  // No tool selected yet - show prompt
+  if (!toolId) {
+    return (
+      <p className="text-sm text-muted-foreground" data-testid="example-selector-no-tool">
+        Select a tool below to see available examples.
+      </p>
+    );
+  }
+
+  // Tool selected but still loading
+  if (isLoadingExamples) {
+    return (
+      <p className="text-sm text-muted-foreground" data-testid="example-selector-loading">
+        Loading examples...
+      </p>
+    );
+  }
+
+  // Tool selected but no examples available
+  if (examples.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground" data-testid="example-selector-empty">
+        No examples available for this tool.
+      </p>
+    );
   }
 
   const selectedExample = examples.find((ex) => ex.name === selectedExampleName);
