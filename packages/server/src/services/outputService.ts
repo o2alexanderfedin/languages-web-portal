@@ -145,8 +145,12 @@ export class OutputService {
       // Read only first 500KB for large files
       const buffer = Buffer.alloc(MAX_FILE_SIZE);
       const fd = await import('fs/promises').then((fs) => fs.open(fullPath, 'r'));
-      await fd.read(buffer, 0, MAX_FILE_SIZE, 0);
-      await fd.close();
+      try {
+        await fd.read(buffer, 0, MAX_FILE_SIZE, 0);
+      } finally {
+        // Always close the file descriptor to prevent fd leaks on read error
+        await fd.close();
+      }
       content = buffer.toString('utf8');
       truncated = true;
     } else {

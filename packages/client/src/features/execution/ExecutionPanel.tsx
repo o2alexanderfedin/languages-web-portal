@@ -41,9 +41,17 @@ export function ExecutionPanel({ projectId, initialToolId, onToolChange }: Execu
     onToolChange?.(toolId);
   };
 
+  // Maximum number of output lines to retain in state to prevent unbounded memory growth
+  const MAX_OUTPUT_LINES = 2000;
+
   // Wire SSE hook for streaming output
   const { connectionState } = useSSE(jobId, {
-    onOutput: (line) => setOutputLines((prev) => [...prev, line]),
+    onOutput: (line) =>
+      setOutputLines((prev) => {
+        const next = [...prev, line];
+        // Trim oldest lines when cap is exceeded
+        return next.length > MAX_OUTPUT_LINES ? next.slice(next.length - MAX_OUTPUT_LINES) : next;
+      }),
     onComplete: (result) => {
       setExecutionResult(result);
       setExecutionState('complete');
