@@ -12,11 +12,32 @@ set -euo pipefail
 RUST_FV_DRIVER="${RUST_FV_DRIVER:-/usr/local/bin/rust-fv-driver}"
 CARGO_VERIFY="${CARGO_VERIFY:-/usr/local/bin/cargo-verify}"
 
+# Resolve DYLD_LIBRARY_PATH so macOS dyld can find rustc_driver and other
+# rustc-private dylibs linked by the rust-fv binaries.
+# These libs live in the active rustup toolchain's sysroot/lib directory.
+# If RUST_SYSROOT is explicitly set, use it; otherwise ask rustc (using the
+# toolchain pinned by rust-toolchain.toml in the rust-fv project directory).
+RUST_SYSROOT="${RUST_SYSROOT:-}"
+if [[ -z "$RUST_SYSROOT" ]]; then
+  RUST_FV_DIR="$(dirname "$(dirname "$(dirname "$RUST_FV_DRIVER")")")"  # …/rust-fv/target/debug/binary → …/rust-fv
+  if [[ -f "$RUST_FV_DIR/rust-toolchain.toml" ]]; then
+    RUST_SYSROOT=$(cd "$RUST_FV_DIR" && rustc --print sysroot 2>/dev/null) || RUST_SYSROOT=""
+  fi
+  if [[ -z "$RUST_SYSROOT" ]]; then
+    RUST_SYSROOT=$(rustc --print sysroot 2>/dev/null) || RUST_SYSROOT=""
+  fi
+fi
+if [[ -n "$RUST_SYSROOT" && -d "$RUST_SYSROOT/lib" ]]; then
+  export DYLD_LIBRARY_PATH="$RUST_SYSROOT/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
+fi
+
 echo "=== hupyy-rust-verify ==="
 echo "Working directory : $(pwd)"
 echo "Script            : $(realpath "$0")"
 echo "RUST_FV_DRIVER    : $RUST_FV_DRIVER"
 echo "CARGO_VERIFY      : $CARGO_VERIFY"
+echo "RUST_SYSROOT      : ${RUST_SYSROOT:-<not resolved>}"
+echo "DYLD_LIBRARY_PATH : ${DYLD_LIBRARY_PATH:-<not set>}"
 echo ""
 
 # Parse arguments
