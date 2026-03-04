@@ -33,10 +33,10 @@ const toolExecutionConfigs: ToolExecutionConfig[] = [
   },
   {
     id: 'rust-verification',
-    command: '/usr/local/bin/hupyy-rust-verify',
+    command: process.env.RUST_FV_CMD ?? '/usr/local/bin/hupyy-rust-verify',
     defaultArgs: ['--input'],
-    maxExecutionTimeMs: 60000,
-    available: false,
+    maxExecutionTimeMs: 180000,
+    available: true,
   },
   {
     id: 'python-linter',

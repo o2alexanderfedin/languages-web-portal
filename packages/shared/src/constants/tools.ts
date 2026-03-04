@@ -38,8 +38,8 @@ export const TOOLS: Tool[] = [
   {
     id: 'rust-verification',
     name: 'Rust Verification',
-    description: 'Formal verification for Rust code',
-    status: 'in-development',
+    description: 'Prove your Rust code is correct — automated formal verification for safe and unsafe Rust',
+    status: 'available',
     category: 'verification',
     sourceLanguage: 'rust',
   },
